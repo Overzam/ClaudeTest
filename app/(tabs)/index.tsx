@@ -73,6 +73,20 @@ export default function HomeScreen() {
 
         <XPBar xp={gameStore.xp} level={gameStore.level} style={styles.xpBar} />
 
+        {/* Daily challenge banner */}
+        <TouchableOpacity
+          style={[styles.challengeBanner, { backgroundColor: c.secondary + '20', borderColor: c.secondary + '40' }]}
+          onPress={() => router.push('/daily-challenge')}
+          activeOpacity={0.85}
+        >
+          <Text style={styles.challengeEmoji}>🔥</Text>
+          <View style={styles.challengeInfo}>
+            <Text style={[styles.challengeLabel, { color: c.streakOrange }]}>DÉFI DU JOUR</Text>
+            <Text style={[styles.challengeTitle, { color: c.text }]}>Relève le défi quotidien !</Text>
+          </View>
+          <Text style={[styles.challengeArrow, { color: c.streakOrange }]}>→</Text>
+        </TouchableOpacity>
+
         {/* In-progress paths */}
         {inProgressPaths.length > 0 && (
           <>
@@ -195,4 +209,17 @@ const styles = StyleSheet.create({
   },
   pathTileTitle: { fontSize: Layout.fontSize.sm, fontWeight: '700', textAlign: 'center' },
   pathTileCount: { fontSize: Layout.fontSize.xs },
+  challengeBanner: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    borderRadius: Layout.radius.xl,
+    padding: Layout.spacing.md,
+    gap: Layout.spacing.md,
+    borderWidth: 1,
+  },
+  challengeEmoji: { fontSize: 36 },
+  challengeInfo: { flex: 1 },
+  challengeLabel: { fontSize: Layout.fontSize.xs, fontWeight: '800', letterSpacing: 1 },
+  challengeTitle: { fontSize: Layout.fontSize.md, fontWeight: '700' },
+  challengeArrow: { fontSize: 22, fontWeight: '700' },
 });

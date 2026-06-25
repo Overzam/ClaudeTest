@@ -4,7 +4,7 @@ import { router, useFocusEffect } from 'expo-router';
 import { ScreenWrapper } from '@/components/ui/ScreenWrapper';
 import { LeaderboardRow } from '@/components/social/LeaderboardRow';
 import { LoadingScreen } from '@/components/ui/LoadingScreen';
-import { Colors } from '@/constants/Colors';
+import { useThemeStore } from '@/stores/themeStore';
 import { Layout } from '@/constants/Layout';
 import { useAuthStore } from '@/stores/authStore';
 import { fetchLeaderboard } from '@/services/friendService';
@@ -15,6 +15,8 @@ export default function LeaderboardScreen() {
   const [entries, setEntries] = useState<LeaderboardEntry[]>([]);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
+  const { theme } = useThemeStore();
+  const c = theme.colors;
 
   async function load() {
     if (!session?.user.id) return;
@@ -31,17 +33,26 @@ export default function LeaderboardScreen() {
   return (
     <ScreenWrapper>
       <View style={styles.header}>
-        <Text style={styles.title}>🏆 Classement</Text>
-        <TouchableOpacity onPress={() => router.push('/friends')} style={styles.friendsBtn}>
-          <Text style={styles.friendsBtnText}>Amis</Text>
+        <Text style={[styles.title, { color: c.text }]}>🏆 Classement</Text>
+        <TouchableOpacity
+          onPress={() => router.push('/friends')}
+          style={[styles.friendsBtn, { backgroundColor: c.primary + '15' }]}
+        >
+          <Text style={[styles.friendsBtnText, { color: c.primary }]}>👥 Amis</Text>
         </TouchableOpacity>
       </View>
+
       {entries.length <= 1 ? (
         <View style={styles.empty}>
           <Text style={styles.emptyEmoji}>👥</Text>
-          <Text style={styles.emptyTitle}>Pas encore d'amis</Text>
-          <Text style={styles.emptyText}>Ajoute des amis pour voir le classement !</Text>
-          <TouchableOpacity style={styles.addBtn} onPress={() => router.push('/friends')}>
+          <Text style={[styles.emptyTitle, { color: c.text }]}>Pas encore d'amis</Text>
+          <Text style={[styles.emptyText, { color: c.textMuted }]}>
+            Ajoute des amis pour voir le classement !
+          </Text>
+          <TouchableOpacity
+            style={[styles.addBtn, { backgroundColor: c.primary }]}
+            onPress={() => router.push('/friends')}
+          >
             <Text style={styles.addBtnText}>+ Ajouter des amis</Text>
           </TouchableOpacity>
         </View>
@@ -51,7 +62,13 @@ export default function LeaderboardScreen() {
           keyExtractor={(e) => e.user_id}
           renderItem={({ item }) => <LeaderboardRow entry={item} />}
           contentContainerStyle={styles.list}
-          refreshControl={<RefreshControl refreshing={refreshing} onRefresh={() => { setRefreshing(true); load(); }} />}
+          refreshControl={
+            <RefreshControl
+              refreshing={refreshing}
+              onRefresh={() => { setRefreshing(true); load(); }}
+              tintColor={c.primary}
+            />
+          }
           ItemSeparatorComponent={() => <View style={{ height: Layout.spacing.sm }} />}
         />
       )}
@@ -61,14 +78,14 @@ export default function LeaderboardScreen() {
 
 const styles = StyleSheet.create({
   header: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', padding: Layout.spacing.lg },
-  title: { fontSize: Layout.fontSize.xxl, fontWeight: '900', color: Colors.text },
-  friendsBtn: { backgroundColor: Colors.primary + '15', paddingHorizontal: Layout.spacing.md, paddingVertical: 6, borderRadius: Layout.radius.full },
-  friendsBtnText: { color: Colors.primary, fontWeight: '700', fontSize: Layout.fontSize.sm },
-  list: { padding: Layout.spacing.lg, gap: Layout.spacing.sm },
+  title: { fontSize: Layout.fontSize.xxl, fontWeight: '900' },
+  friendsBtn: { paddingHorizontal: Layout.spacing.md, paddingVertical: 6, borderRadius: Layout.radius.full },
+  friendsBtnText: { fontWeight: '700', fontSize: Layout.fontSize.sm },
+  list: { padding: Layout.spacing.lg, paddingBottom: 40 },
   empty: { flex: 1, alignItems: 'center', justifyContent: 'center', gap: Layout.spacing.md, padding: Layout.spacing.xl },
   emptyEmoji: { fontSize: 56 },
-  emptyTitle: { fontSize: Layout.fontSize.xl, fontWeight: '800', color: Colors.text },
-  emptyText: { fontSize: Layout.fontSize.md, color: Colors.textMuted, textAlign: 'center' },
-  addBtn: { backgroundColor: Colors.primary, paddingHorizontal: Layout.spacing.xl, paddingVertical: Layout.spacing.md, borderRadius: Layout.radius.full },
+  emptyTitle: { fontSize: Layout.fontSize.xl, fontWeight: '800' },
+  emptyText: { fontSize: Layout.fontSize.md, textAlign: 'center' },
+  addBtn: { paddingHorizontal: Layout.spacing.xl, paddingVertical: Layout.spacing.md, borderRadius: Layout.radius.full },
   addBtnText: { color: '#fff', fontWeight: '700', fontSize: Layout.fontSize.md },
 });
