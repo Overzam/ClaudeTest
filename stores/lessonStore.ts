@@ -15,7 +15,7 @@ interface LessonState {
   mistakesCount: number;
   score: number;
 
-  loadLesson: (lessonId: string) => Promise<void>;
+  loadLesson: (lessonId: string, lessonTitle?: string) => Promise<void>;
   submitAnswer: (correct: boolean) => void;
   nextExercise: () => void;
   reset: () => void;
@@ -31,10 +31,10 @@ export const useLessonStore = create<LessonState>((set, get) => ({
   mistakesCount: 0,
   score: 0,
 
-  loadLesson: async (lessonId) => {
+  loadLesson: async (lessonId, lessonTitle?: string) => {
     set({ lessonId, phase: 'loading', currentIndex: 0, xpEarned: 0, mistakesCount: 0 });
-    const exercises = await fetchExercises(lessonId);
-    set({ exercises, phase: 'exercise' });
+    const exercises = await fetchExercises(lessonTitle ?? lessonId);
+    set({ exercises, phase: exercises.length > 0 ? 'exercise' : 'complete' });
   },
 
   submitAnswer: (correct) => {
