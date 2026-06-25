@@ -97,6 +97,7 @@ export default function ProfileScreen() {
             { emoji: '🏆', label: `Trophées${userBadges.length > 0 ? ` (${userBadges.length})` : ''}`, route: '/badges' },
             { emoji: isPremium() ? '✨' : '⭐', label: isPremium() ? 'Premium actif' : 'RecipeQuest+', route: '/premium', highlight: isPremium() },
             { emoji: '🛒', label: `Boutique · 🪙${coins}`, route: '/shop' },
+            { emoji: '📖', label: 'Carnet de Recettes', route: '/recipe-book' },
           ].map(({ emoji, label, route, highlight }) => (
             <TouchableOpacity
               key={route}
