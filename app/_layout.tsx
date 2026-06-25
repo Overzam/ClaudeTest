@@ -60,6 +60,7 @@ export default function RootLayout() {
           <Stack.Screen name="path/[slug]" />
           <Stack.Screen name="daily-challenge" />
           <Stack.Screen name="recipe-book" />
+          <Stack.Screen name="tips" />
         </Stack>
       </SafeAreaProvider>
     </GestureHandlerRootView>

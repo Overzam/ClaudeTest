@@ -7,6 +7,7 @@ import { MultipleChoice } from '@/components/lesson/exercises/MultipleChoice';
 import { StepOrdering } from '@/components/lesson/exercises/StepOrdering';
 import { PhotoIdentification } from '@/components/lesson/exercises/PhotoIdentification';
 import { Association } from '@/components/lesson/exercises/Association';
+import { FillInBlank } from '@/components/lesson/exercises/FillInBlank';
 import { LoadingScreen } from '@/components/ui/LoadingScreen';
 import { Colors } from '@/constants/Colors';
 import { useLessonStore } from '@/stores/lessonStore';
@@ -19,7 +20,7 @@ import { fetchLessons } from '@/services/pathService';
 import { useBadgeStore } from '@/stores/badgeStore';
 
 export default function LessonScreen() {
-  const { lessonId } = useLocalSearchParams<{ lessonId: string }>();
+  const { lessonId, lessonTitle } = useLocalSearchParams<{ lessonId: string; lessonTitle?: string }>();
   const { session } = useAuthStore();
   const lessonStore = useLessonStore();
   const gameStore = useGameStore();
@@ -27,7 +28,7 @@ export default function LessonScreen() {
   const { checkBadges } = useBadgeStore();
 
   useEffect(() => {
-    if (lessonId) lessonStore.loadLesson(lessonId);
+    if (lessonId) lessonStore.loadLesson(lessonId, lessonTitle);
     return () => lessonStore.reset();
   }, [lessonId]);
 
@@ -104,6 +105,8 @@ export default function LessonScreen() {
         return <PhotoIdentification question={exercise.question} data={exercise.data} onSubmit={submit} />;
       case 'association':
         return <Association question={exercise.question} data={exercise.data} onSubmit={submit} />;
+      case 'fill_in_blank':
+        return <FillInBlank question={exercise.question} data={exercise.data} onSubmit={submit} />;
     }
   }
 
