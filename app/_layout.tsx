@@ -3,8 +3,12 @@ import { AppState } from 'react-native';
 import { Stack } from 'expo-router';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
+import { I18nextProvider } from 'react-i18next';
 import { useAuthStore } from '@/stores/authStore';
 import { useGameStore } from '@/stores/gameStore';
+import { usePremiumStore } from '@/stores/premiumStore';
+import { useSettingsStore } from '@/stores/settingsStore';
+import i18n, { getSavedLanguage } from '@/i18n';
 import * as Notifications from 'expo-notifications';
 
 Notifications.setNotificationHandler({
@@ -20,19 +24,26 @@ Notifications.setNotificationHandler({
 export default function RootLayout() {
   const initialize = useAuthStore((s) => s.initialize);
   const regenHearts = useGameStore((s) => s.regenHearts);
+  const checkExpiry = usePremiumStore((s) => s.checkExpiry);
+  const { language } = useSettingsStore();
 
   useEffect(() => {
     initialize();
+    getSavedLanguage().then((lang) => i18n.changeLanguage(lang));
   }, []);
 
   useEffect(() => {
     const sub = AppState.addEventListener('change', (state) => {
-      if (state === 'active') regenHearts();
+      if (state === 'active') {
+        regenHearts();
+        checkExpiry();
+      }
     });
     return () => sub.remove();
   }, []);
 
   return (
+    <I18nextProvider i18n={i18n}>
     <GestureHandlerRootView style={{ flex: 1 }}>
       <SafeAreaProvider>
         <Stack screenOptions={{ headerShown: false }}>
@@ -42,8 +53,12 @@ export default function RootLayout() {
           <Stack.Screen name="lesson/complete" options={{ presentation: 'modal' }} />
           <Stack.Screen name="friends" />
           <Stack.Screen name="badges" />
+          <Stack.Screen name="premium" options={{ presentation: 'modal' }} />
+          <Stack.Screen name="shop" />
+          <Stack.Screen name="settings" />
         </Stack>
       </SafeAreaProvider>
     </GestureHandlerRootView>
+    </I18nextProvider>
   );
 }

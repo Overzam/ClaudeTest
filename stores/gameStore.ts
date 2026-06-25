@@ -4,6 +4,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import type { UserStats } from '@/types/database.types';
 import { MAX_HEARTS, HEARTS_REGEN_HOURS, calculateLevel, xpForNextLevel } from '@/constants/Config';
 import { updateXP, updateHearts } from '@/services/statsService';
+import { usePremiumStore } from './premiumStore';
 
 interface GameState {
   hearts: number;
@@ -52,6 +53,8 @@ export const useGameStore = create<GameState>()(
       },
 
       loseHeart: async () => {
+        // Premium users have unlimited hearts
+        if (usePremiumStore.getState().isPremium()) return;
         const { hearts, userId } = get();
         const newHearts = Math.max(0, hearts - 1);
         set({ hearts: newHearts });
@@ -60,10 +63,12 @@ export const useGameStore = create<GameState>()(
 
       gainXP: async (amount) => {
         const { xp, userId } = get();
-        const newXP = xp + amount;
+        const multiplier = usePremiumStore.getState().getXPMultiplier();
+        const boostedAmount = Math.round(amount * multiplier);
+        const newXP = xp + boostedAmount;
         const newLevel = calculateLevel(newXP);
         set({ xp: newXP, level: newLevel, xpForNextLevel: xpForNextLevel(newXP) });
-        if (userId) await updateXP(userId, amount);
+        if (userId) await updateXP(userId, boostedAmount);
       },
 
       regenHearts: async () => {

@@ -1,4 +1,5 @@
 import { supabase } from './supabase';
+import { cacheExercises, getCachedExercises } from './offlineCache';
 import type { Exercise } from '@/types/lesson.types';
 import type { ExerciseRow } from '@/types/database.types';
 
@@ -16,13 +17,18 @@ function rowToExercise(row: ExerciseRow): Exercise {
 }
 
 export async function fetchExercises(lessonId: string): Promise<Exercise[]> {
+  const cached = await getCachedExercises(lessonId);
+  if (cached) return cached;
+
   const { data, error } = await supabase
     .from('exercises')
     .select('*')
     .eq('lesson_id', lessonId)
     .order('order_index');
   if (error) throw error;
-  return (data ?? []).map(rowToExercise);
+  const exercises = (data ?? []).map(rowToExercise);
+  await cacheExercises(lessonId, exercises);
+  return exercises;
 }
 
 export async function submitLessonProgress(

@@ -15,12 +15,14 @@ import { Layout } from '@/constants/Layout';
 import { useAuthStore } from '@/stores/authStore';
 import { useGameStore } from '@/stores/gameStore';
 import { useBadgeStore } from '@/stores/badgeStore';
+import { usePremiumStore } from '@/stores/premiumStore';
 import { fetchUserStats } from '@/services/statsService';
 
 export default function ProfileScreen() {
   const { user, session, signOut } = useAuthStore();
   const { xp, level, streakDays, hearts, lessonsCompleted, setStats } = useGameStore();
   const { userBadges, newlyEarned, loadBadges, checkBadges, clearNewlyEarned } = useBadgeStore();
+  const { isPremium, coins } = usePremiumStore();
 
   useFocusEffect(
     useCallback(() => {
@@ -72,7 +74,7 @@ export default function ProfileScreen() {
           <Text style={styles.xpLabel}>accumulés depuis le début</Text>
         </Card>
 
-        {/* Social */}
+        {/* Social + actions */}
         <View style={styles.socialRow}>
           <TouchableOpacity style={styles.socialBtn} onPress={() => router.push('/friends')}>
             <Text style={styles.socialEmoji}>👥</Text>
@@ -83,6 +85,21 @@ export default function ProfileScreen() {
             <Text style={styles.socialLabel}>Trophées{userBadges.length > 0 ? ` (${userBadges.length})` : ''}</Text>
           </TouchableOpacity>
         </View>
+        <View style={styles.socialRow}>
+          <TouchableOpacity style={[styles.socialBtn, isPremium() && styles.premiumBtn]} onPress={() => router.push('/premium')}>
+            <Text style={styles.socialEmoji}>{isPremium() ? '✨' : '⭐'}</Text>
+            <Text style={[styles.socialLabel, isPremium() && styles.premiumLabel]}>
+              {isPremium() ? 'Premium actif' : 'RecipeQuest+'}
+            </Text>
+          </TouchableOpacity>
+          <TouchableOpacity style={styles.socialBtn} onPress={() => router.push('/shop')}>
+            <Text style={styles.socialEmoji}>🛒</Text>
+            <Text style={styles.socialLabel}>Boutique · 🪙{coins}</Text>
+          </TouchableOpacity>
+        </View>
+        <TouchableOpacity style={styles.settingsLink} onPress={() => router.push('/settings')}>
+          <Text style={styles.settingsText}>⚙️ Paramètres</Text>
+        </TouchableOpacity>
 
         {/* Recent badges */}
         {recentBadges.length > 0 && (
@@ -159,4 +176,8 @@ const styles = StyleSheet.create({
   seeAll: { fontSize: Layout.fontSize.sm, color: Colors.primary, fontWeight: '600' },
   badgeRow: { gap: Layout.spacing.sm, paddingVertical: 4 },
   signoutBtn: { marginTop: Layout.spacing.lg },
+  premiumBtn: { borderWidth: 2, borderColor: Colors.secondary },
+  premiumLabel: { color: Colors.secondary },
+  settingsLink: { alignItems: 'center', paddingVertical: Layout.spacing.sm },
+  settingsText: { fontSize: Layout.fontSize.sm, color: Colors.textMuted, fontWeight: '600' },
 });
