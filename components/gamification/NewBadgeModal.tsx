@@ -1,0 +1,79 @@
+import React, { useEffect, useRef } from 'react';
+import { Animated, Modal, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { Colors } from '@/constants/Colors';
+import { Layout } from '@/constants/Layout';
+import type { Badge } from '@/types/database.types';
+
+interface Props {
+  badge: Badge | null;
+  onClose: () => void;
+}
+
+export function NewBadgeModal({ badge, onClose }: Props) {
+  const scale = useRef(new Animated.Value(0)).current;
+  const opacity = useRef(new Animated.Value(0)).current;
+
+  useEffect(() => {
+    if (badge) {
+      Animated.parallel([
+        Animated.spring(scale, { toValue: 1, useNativeDriver: true, tension: 60, friction: 7 }),
+        Animated.timing(opacity, { toValue: 1, duration: 200, useNativeDriver: true }),
+      ]).start();
+    } else {
+      scale.setValue(0);
+      opacity.setValue(0);
+    }
+  }, [badge]);
+
+  if (!badge) return null;
+
+  return (
+    <Modal transparent animationType="none" visible={!!badge}>
+      <Animated.View style={[styles.backdrop, { opacity }]}>
+        <Animated.View style={[styles.card, { transform: [{ scale }] }]}>
+          <Text style={styles.newText}>Nouveau badge !</Text>
+          <Text style={styles.emoji}>{badge.emoji}</Text>
+          <Text style={styles.title}>{badge.title}</Text>
+          <Text style={styles.desc}>{badge.description}</Text>
+          <TouchableOpacity style={styles.btn} onPress={onClose}>
+            <Text style={styles.btnText}>Super !</Text>
+          </TouchableOpacity>
+        </Animated.View>
+      </Animated.View>
+    </Modal>
+  );
+}
+
+const styles = StyleSheet.create({
+  backdrop: {
+    flex: 1,
+    backgroundColor: 'rgba(0,0,0,0.6)',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  card: {
+    backgroundColor: Colors.surface,
+    borderRadius: Layout.radius.xl,
+    padding: Layout.spacing.xl,
+    alignItems: 'center',
+    gap: Layout.spacing.sm,
+    margin: Layout.spacing.xl,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 8 },
+    shadowOpacity: 0.3,
+    shadowRadius: 16,
+    elevation: 12,
+  },
+  newText: { fontSize: Layout.fontSize.sm, fontWeight: '700', color: Colors.secondary, textTransform: 'uppercase', letterSpacing: 1 },
+  emoji: { fontSize: 64, marginVertical: Layout.spacing.sm },
+  title: { fontSize: Layout.fontSize.xl, fontWeight: '900', color: Colors.text },
+  desc: { fontSize: Layout.fontSize.sm, color: Colors.textMuted, textAlign: 'center' },
+  btn: {
+    marginTop: Layout.spacing.md,
+    backgroundColor: Colors.primary,
+    paddingHorizontal: Layout.spacing.xl,
+    paddingVertical: Layout.spacing.md,
+    borderRadius: Layout.radius.full,
+  },
+  btnText: { color: '#fff', fontWeight: '700', fontSize: Layout.fontSize.md },
+});
