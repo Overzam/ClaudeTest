@@ -1,0 +1,173 @@
+export type ThemeName = 'light' | 'dark' | 'chef' | 'ocean' | 'sakura';
+
+export interface Theme {
+  name: ThemeName;
+  label: string;
+  emoji: string;
+  colors: {
+    primary: string;
+    primaryDark: string;
+    secondary: string;
+    danger: string;
+    success: string;
+    surface: string;
+    surfaceElevated: string;
+    background: string;
+    backgroundSecondary: string;
+    text: string;
+    textSecondary: string;
+    textMuted: string;
+    border: string;
+    heartRed: string;
+    streakOrange: string;
+    xpBlue: string;
+    locked: string;
+    tabBar: string;
+    tabBarBorder: string;
+    card: string;
+    cardShadow: string;
+  };
+}
+
+export const themes: Record<ThemeName, Theme> = {
+  light: {
+    name: 'light',
+    label: 'Classique',
+    emoji: '☀️',
+    colors: {
+      primary: '#58CC02',
+      primaryDark: '#45A800',
+      secondary: '#FFC800',
+      danger: '#FF4B4B',
+      success: '#58CC02',
+      surface: '#FFFFFF',
+      surfaceElevated: '#FFFFFF',
+      background: '#F7F7F7',
+      backgroundSecondary: '#EFEFEF',
+      text: '#3C3C3C',
+      textSecondary: '#5C5C5C',
+      textMuted: '#AFAFAF',
+      border: '#E5E5E5',
+      heartRed: '#FF4B4B',
+      streakOrange: '#FF9600',
+      xpBlue: '#1CB0F6',
+      locked: '#E5E5E5',
+      tabBar: '#FFFFFF',
+      tabBarBorder: '#E5E5E5',
+      card: '#FFFFFF',
+      cardShadow: '#000',
+    },
+  },
+  dark: {
+    name: 'dark',
+    label: 'Nuit',
+    emoji: '🌙',
+    colors: {
+      primary: '#58CC02',
+      primaryDark: '#45A800',
+      secondary: '#FFC800',
+      danger: '#FF4B4B',
+      success: '#58CC02',
+      surface: '#1F1F1F',
+      surfaceElevated: '#2A2A2A',
+      background: '#131313',
+      backgroundSecondary: '#1A1A1A',
+      text: '#FFFFFF',
+      textSecondary: '#CCCCCC',
+      textMuted: '#666666',
+      border: '#333333',
+      heartRed: '#FF4B4B',
+      streakOrange: '#FF9600',
+      xpBlue: '#1CB0F6',
+      locked: '#333333',
+      tabBar: '#1F1F1F',
+      tabBarBorder: '#333333',
+      card: '#1F1F1F',
+      cardShadow: '#000',
+    },
+  },
+  chef: {
+    name: 'chef',
+    label: 'Chef',
+    emoji: '👨‍🍳',
+    colors: {
+      primary: '#E07B39',
+      primaryDark: '#C4621E',
+      secondary: '#F4C842',
+      danger: '#C0392B',
+      success: '#27AE60',
+      surface: '#FFF8F0',
+      surfaceElevated: '#FFFFFF',
+      background: '#FEF3E2',
+      backgroundSecondary: '#FDEBD0',
+      text: '#2C1810',
+      textSecondary: '#4A2C1A',
+      textMuted: '#A0826D',
+      border: '#F0D5B8',
+      heartRed: '#C0392B',
+      streakOrange: '#E07B39',
+      xpBlue: '#2980B9',
+      locked: '#E8D5C0',
+      tabBar: '#FFF8F0',
+      tabBarBorder: '#F0D5B8',
+      card: '#FFFFFF',
+      cardShadow: '#7B3F00',
+    },
+  },
+  ocean: {
+    name: 'ocean',
+    label: 'Océan',
+    emoji: '🌊',
+    colors: {
+      primary: '#0096C7',
+      primaryDark: '#0077A8',
+      secondary: '#48CAE4',
+      danger: '#FF4B4B',
+      success: '#52B788',
+      surface: '#F0F9FF',
+      surfaceElevated: '#FFFFFF',
+      background: '#E8F4FD',
+      backgroundSecondary: '#D0EAF8',
+      text: '#03045E',
+      textSecondary: '#023E8A',
+      textMuted: '#90C2E7',
+      border: '#ADE8F4',
+      heartRed: '#FF4B4B',
+      streakOrange: '#FF9600',
+      xpBlue: '#0096C7',
+      locked: '#ADE8F4',
+      tabBar: '#F0F9FF',
+      tabBarBorder: '#ADE8F4',
+      card: '#FFFFFF',
+      cardShadow: '#03045E',
+    },
+  },
+  sakura: {
+    name: 'sakura',
+    label: 'Sakura',
+    emoji: '🌸',
+    colors: {
+      primary: '#E75480',
+      primaryDark: '#C73B6B',
+      secondary: '#FBBCD8',
+      danger: '#D63B5A',
+      success: '#7CB98A',
+      surface: '#FFF0F5',
+      surfaceElevated: '#FFFFFF',
+      background: '#FDE8F0',
+      backgroundSecondary: '#FACCDC',
+      text: '#3D0020',
+      textSecondary: '#6B0035',
+      textMuted: '#C48EA0',
+      border: '#F5C0D0',
+      heartRed: '#E75480',
+      streakOrange: '#FF7043',
+      xpBlue: '#7986CB',
+      locked: '#F5C0D0',
+      tabBar: '#FFF0F5',
+      tabBarBorder: '#F5C0D0',
+      card: '#FFFFFF',
+      cardShadow: '#3D0020',
+    },
+  },
+};

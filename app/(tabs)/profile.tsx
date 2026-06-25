@@ -10,7 +10,7 @@ import { HeartsDisplay } from '@/components/gamification/HeartsDisplay';
 import { StreakBadge } from '@/components/gamification/StreakBadge';
 import { BadgeCard } from '@/components/gamification/BadgeCard';
 import { NewBadgeModal } from '@/components/gamification/NewBadgeModal';
-import { Colors } from '@/constants/Colors';
+import { useThemeStore } from '@/stores/themeStore';
 import { Layout } from '@/constants/Layout';
 import { useAuthStore } from '@/stores/authStore';
 import { useGameStore } from '@/stores/gameStore';
@@ -23,6 +23,8 @@ export default function ProfileScreen() {
   const { xp, level, streakDays, hearts, lessonsCompleted, setStats } = useGameStore();
   const { userBadges, newlyEarned, loadBadges, checkBadges, clearNewlyEarned } = useBadgeStore();
   const { isPremium, coins } = usePremiumStore();
+  const { theme } = useThemeStore();
+  const c = theme.colors;
 
   useFocusEffect(
     useCallback(() => {
@@ -54,60 +56,80 @@ export default function ProfileScreen() {
 
   return (
     <ScreenWrapper>
-      <ScrollView contentContainerStyle={styles.content}>
-        <View style={styles.header}>
+      <ScrollView contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
+        {/* Header */}
+        <View style={[styles.header, { backgroundColor: c.primary + '12', borderRadius: Layout.radius.xl }]}>
           <Avatar name={user?.username} size={80} />
-          <Text style={styles.username}>{user?.username ?? '—'}</Text>
-          <Text style={styles.level}>Niveau {level}</Text>
+          <Text style={[styles.username, { color: c.text }]}>{user?.username ?? '—'}</Text>
+          <View style={[styles.levelBadge, { backgroundColor: c.primary }]}>
+            <Text style={styles.levelText}>Niv. {level}</Text>
+          </View>
         </View>
 
         <XPBar xp={xp} level={level} />
 
+        {/* Stats row */}
         <View style={styles.statsRow}>
-          <StatCard label="Série" value={<StreakBadge streakDays={streakDays} />} />
-          <StatCard label="Leçons" value={<Text style={styles.statValue}>{lessonsCompleted}</Text>} />
-          <StatCard label="Vies" value={<HeartsDisplay hearts={hearts} />} />
+          <View style={[styles.statCard, { backgroundColor: c.surfaceElevated, borderColor: c.border }]}>
+            <StreakBadge streakDays={streakDays} />
+            <Text style={[styles.statLabel, { color: c.textMuted }]}>Série</Text>
+          </View>
+          <View style={[styles.statCard, { backgroundColor: c.surfaceElevated, borderColor: c.border }]}>
+            <Text style={[styles.statValue, { color: c.text }]}>{lessonsCompleted}</Text>
+            <Text style={[styles.statLabel, { color: c.textMuted }]}>Leçons</Text>
+          </View>
+          <View style={[styles.statCard, { backgroundColor: c.surfaceElevated, borderColor: c.border }]}>
+            <HeartsDisplay hearts={hearts} />
+            <Text style={[styles.statLabel, { color: c.textMuted }]}>Vies</Text>
+          </View>
         </View>
 
-        <Card style={styles.xpCard}>
-          <Text style={styles.xpTotal}>{xp} XP total</Text>
-          <Text style={styles.xpLabel}>accumulés depuis le début</Text>
-        </Card>
+        {/* XP total */}
+        <View style={[styles.xpCard, { backgroundColor: c.xpBlue + '15', borderColor: c.xpBlue + '30', borderWidth: 1, borderRadius: Layout.radius.lg }]}>
+          <Text style={[styles.xpTotal, { color: c.xpBlue }]}>{xp} XP</Text>
+          <Text style={[styles.xpLabel, { color: c.textSecondary }]}>accumulés depuis le début</Text>
+        </View>
 
-        {/* Social + actions */}
-        <View style={styles.socialRow}>
-          <TouchableOpacity style={styles.socialBtn} onPress={() => router.push('/friends')}>
-            <Text style={styles.socialEmoji}>👥</Text>
-            <Text style={styles.socialLabel}>Amis</Text>
-          </TouchableOpacity>
-          <TouchableOpacity style={styles.socialBtn} onPress={() => router.push('/badges')}>
-            <Text style={styles.socialEmoji}>🏆</Text>
-            <Text style={styles.socialLabel}>Trophées{userBadges.length > 0 ? ` (${userBadges.length})` : ''}</Text>
-          </TouchableOpacity>
+        {/* Actions */}
+        <View style={styles.actionGrid}>
+          {[
+            { emoji: '👥', label: 'Amis', route: '/friends' },
+            { emoji: '🏆', label: `Trophées${userBadges.length > 0 ? ` (${userBadges.length})` : ''}`, route: '/badges' },
+            { emoji: isPremium() ? '✨' : '⭐', label: isPremium() ? 'Premium actif' : 'RecipeQuest+', route: '/premium', highlight: isPremium() },
+            { emoji: '🛒', label: `Boutique · 🪙${coins}`, route: '/shop' },
+          ].map(({ emoji, label, route, highlight }) => (
+            <TouchableOpacity
+              key={route}
+              style={[
+                styles.actionBtn,
+                { backgroundColor: c.surfaceElevated, borderColor: highlight ? c.secondary : c.border },
+                highlight && { borderWidth: 2 },
+              ]}
+              onPress={() => router.push(route as any)}
+              activeOpacity={0.8}
+            >
+              <Text style={styles.actionEmoji}>{emoji}</Text>
+              <Text style={[styles.actionLabel, { color: highlight ? c.secondary : c.text }]} numberOfLines={1}>
+                {label}
+              </Text>
+            </TouchableOpacity>
+          ))}
         </View>
-        <View style={styles.socialRow}>
-          <TouchableOpacity style={[styles.socialBtn, isPremium() && styles.premiumBtn]} onPress={() => router.push('/premium')}>
-            <Text style={styles.socialEmoji}>{isPremium() ? '✨' : '⭐'}</Text>
-            <Text style={[styles.socialLabel, isPremium() && styles.premiumLabel]}>
-              {isPremium() ? 'Premium actif' : 'RecipeQuest+'}
-            </Text>
-          </TouchableOpacity>
-          <TouchableOpacity style={styles.socialBtn} onPress={() => router.push('/shop')}>
-            <Text style={styles.socialEmoji}>🛒</Text>
-            <Text style={styles.socialLabel}>Boutique · 🪙{coins}</Text>
-          </TouchableOpacity>
-        </View>
-        <TouchableOpacity style={styles.settingsLink} onPress={() => router.push('/settings')}>
-          <Text style={styles.settingsText}>⚙️ Paramètres</Text>
+
+        <TouchableOpacity
+          style={[styles.settingsLink, { backgroundColor: c.surfaceElevated, borderColor: c.border, borderWidth: 1 }]}
+          onPress={() => router.push('/settings')}
+        >
+          <Text style={[styles.settingsText, { color: c.textSecondary }]}>⚙️ Paramètres</Text>
         </TouchableOpacity>
 
         {/* Recent badges */}
         {recentBadges.length > 0 && (
           <View>
             <View style={styles.sectionHeader}>
-              <Text style={styles.sectionTitle}>Derniers badges</Text>
+              <Text style={[styles.sectionTitle, { color: c.text }]}>Derniers badges</Text>
               <TouchableOpacity onPress={() => router.push('/badges')}>
-                <Text style={styles.seeAll}>Voir tout →</Text>
+                <Text style={[styles.seeAll, { color: c.primary }]}>Voir tout →</Text>
               </TouchableOpacity>
             </View>
             <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.badgeRow}>
@@ -118,66 +140,58 @@ export default function ProfileScreen() {
           </View>
         )}
 
-        <Button
-          label="Se déconnecter"
-          onPress={handleSignOut}
-          variant="ghost"
-          style={styles.signoutBtn}
-        />
+        <Button label="Se déconnecter" onPress={handleSignOut} variant="ghost" style={styles.signoutBtn} />
       </ScrollView>
 
-      <NewBadgeModal
-        badge={currentNewBadge}
-        onClose={() => clearNewlyEarned()}
-      />
+      <NewBadgeModal badge={currentNewBadge} onClose={() => clearNewlyEarned()} />
     </ScreenWrapper>
   );
 }
 
-function StatCard({ label, value }: { label: string; value: React.ReactNode }) {
-  return (
-    <Card style={styles.statCard}>
-      {value}
-      <Text style={styles.statLabel}>{label}</Text>
-    </Card>
-  );
-}
-
 const styles = StyleSheet.create({
-  content: { padding: Layout.spacing.lg, gap: Layout.spacing.md },
-  header: { alignItems: 'center', gap: Layout.spacing.sm, paddingVertical: Layout.spacing.lg },
-  username: { fontSize: Layout.fontSize.xl, fontWeight: '800', color: Colors.text },
-  level: { fontSize: Layout.fontSize.sm, color: Colors.textMuted },
+  content: { padding: Layout.spacing.lg, gap: Layout.spacing.md, paddingBottom: 40 },
+  header: { alignItems: 'center', gap: Layout.spacing.sm, paddingVertical: Layout.spacing.xl },
+  username: { fontSize: Layout.fontSize.xl, fontWeight: '800' },
+  levelBadge: {
+    paddingHorizontal: Layout.spacing.md,
+    paddingVertical: 4,
+    borderRadius: 20,
+  },
+  levelText: { color: '#fff', fontWeight: '800', fontSize: Layout.fontSize.sm },
   statsRow: { flexDirection: 'row', gap: Layout.spacing.sm },
-  statCard: { flex: 1, alignItems: 'center', gap: 4 },
-  statValue: { fontSize: Layout.fontSize.xl, fontWeight: '800', color: Colors.text },
-  statLabel: { fontSize: Layout.fontSize.xs, color: Colors.textMuted, fontWeight: '600' },
-  xpCard: { alignItems: 'center', gap: 4 },
-  xpTotal: { fontSize: Layout.fontSize.xl, fontWeight: '800', color: Colors.xpBlue },
-  xpLabel: { fontSize: Layout.fontSize.sm, color: Colors.textMuted },
-  socialRow: { flexDirection: 'row', gap: Layout.spacing.md },
-  socialBtn: {
+  statCard: {
     flex: 1,
-    backgroundColor: Colors.surface,
+    alignItems: 'center',
+    gap: 4,
+    padding: Layout.spacing.md,
+    borderRadius: Layout.radius.lg,
+    borderWidth: 1,
+  },
+  statValue: { fontSize: Layout.fontSize.xl, fontWeight: '800' },
+  statLabel: { fontSize: Layout.fontSize.xs, fontWeight: '600' },
+  xpCard: { alignItems: 'center', gap: 4, padding: Layout.spacing.md },
+  xpTotal: { fontSize: Layout.fontSize.xl, fontWeight: '800' },
+  xpLabel: { fontSize: Layout.fontSize.sm },
+  actionGrid: { flexDirection: 'row', flexWrap: 'wrap', gap: Layout.spacing.sm },
+  actionBtn: {
+    width: '47%',
     borderRadius: Layout.radius.lg,
     padding: Layout.spacing.md,
     alignItems: 'center',
-    gap: 4,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.07,
-    shadowRadius: 6,
-    elevation: 2,
+    gap: 6,
+    borderWidth: 1,
   },
-  socialEmoji: { fontSize: 28 },
-  socialLabel: { fontSize: Layout.fontSize.sm, fontWeight: '700', color: Colors.text },
+  actionEmoji: { fontSize: 28 },
+  actionLabel: { fontSize: Layout.fontSize.sm, fontWeight: '700', textAlign: 'center' },
+  settingsLink: {
+    alignItems: 'center',
+    paddingVertical: Layout.spacing.md,
+    borderRadius: Layout.radius.lg,
+  },
+  settingsText: { fontSize: Layout.fontSize.sm, fontWeight: '600' },
   sectionHeader: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: Layout.spacing.sm },
-  sectionTitle: { fontSize: Layout.fontSize.md, fontWeight: '700', color: Colors.text },
-  seeAll: { fontSize: Layout.fontSize.sm, color: Colors.primary, fontWeight: '600' },
+  sectionTitle: { fontSize: Layout.fontSize.md, fontWeight: '700' },
+  seeAll: { fontSize: Layout.fontSize.sm, fontWeight: '600' },
   badgeRow: { gap: Layout.spacing.sm, paddingVertical: 4 },
   signoutBtn: { marginTop: Layout.spacing.lg },
-  premiumBtn: { borderWidth: 2, borderColor: Colors.secondary },
-  premiumLabel: { color: Colors.secondary },
-  settingsLink: { alignItems: 'center', paddingVertical: Layout.spacing.sm },
-  settingsText: { fontSize: Layout.fontSize.sm, color: Colors.textMuted, fontWeight: '600' },
 });

@@ -56,6 +56,8 @@ export default function RootLayout() {
           <Stack.Screen name="premium" options={{ presentation: 'modal' }} />
           <Stack.Screen name="shop" />
           <Stack.Screen name="settings" />
+          <Stack.Screen name="lesson/ingredients" />
+          <Stack.Screen name="path/[slug]" />
         </Stack>
       </SafeAreaProvider>
     </GestureHandlerRootView>

@@ -87,6 +87,45 @@ export interface Friendship {
   created_at: string;
 }
 
+export interface Ingredient {
+  name: string;
+  quantity: string;
+  unit?: string;
+  emoji: string;
+  tip?: string;
+}
+
+export interface LessonDetail {
+  id: string;
+  path_id: string;
+  title: string;
+  description: string | null;
+  order_index: number;
+  xp_reward: number;
+  thumbnail_url: string | null;
+  duration_minutes: number;
+  difficulty: 'easy' | 'medium' | 'hard';
+  ingredients: Ingredient[];
+  anecdote: string;
+  chef_tip: string;
+  cultural_note: string;
+}
+
+export interface PathDetail {
+  id: string;
+  slug: string;
+  title: string;
+  description: string | null;
+  emoji: string;
+  color: string;
+  order_index: number;
+  is_active: boolean;
+  country: string;
+  history: string;
+  key_ingredients: string[];
+  famous_chefs: string[];
+}
+
 export interface LeaderboardEntry {
   user_id: string;
   username: string;

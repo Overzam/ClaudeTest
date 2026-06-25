@@ -1,6 +1,6 @@
 import React from 'react';
 import { StyleSheet, View, ViewStyle } from 'react-native';
-import { Colors } from '@/constants/Colors';
+import { useThemeStore } from '@/stores/themeStore';
 import { Layout } from '@/constants/Layout';
 
 interface Props {
@@ -9,15 +9,18 @@ interface Props {
 }
 
 export function Card({ children, style }: Props) {
-  return <View style={[styles.card, style]}>{children}</View>;
+  const { theme } = useThemeStore();
+  return (
+    <View style={[styles.card, { backgroundColor: theme.colors.surfaceElevated, shadowColor: theme.colors.cardShadow }, style]}>
+      {children}
+    </View>
+  );
 }
 
 const styles = StyleSheet.create({
   card: {
-    backgroundColor: Colors.surface,
     borderRadius: Layout.radius.lg,
     padding: Layout.spacing.md,
-    shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.08,
     shadowRadius: 8,
