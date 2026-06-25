@@ -11,6 +11,8 @@
       "supportsTablet": true
     },
     "android": {
+      "package": "com.recipequest.app",
+      "versionCode": 1,
       "adaptiveIcon": {
         "backgroundColor": "#58CC02",
         "foregroundImage": "./assets/android-icon-foreground.png",
