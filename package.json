@@ -39,5 +39,11 @@
     "ios": "expo start --ios",
     "web": "expo start --web"
   },
-  "private": true
+  "private": true,
+  "overrides": {
+    "babel-preset-expo": {
+      "@react-native/codegen": "0.85.3",
+      "@react-native/babel-plugin-codegen": "0.85.3"
+    }
+  }
 }
