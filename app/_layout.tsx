@@ -40,6 +40,8 @@ export default function RootLayout() {
           <Stack.Screen name="(tabs)" />
           <Stack.Screen name="lesson/[lessonId]" options={{ presentation: 'modal' }} />
           <Stack.Screen name="lesson/complete" options={{ presentation: 'modal' }} />
+          <Stack.Screen name="friends" />
+          <Stack.Screen name="badges" />
         </Stack>
       </SafeAreaProvider>
     </GestureHandlerRootView>

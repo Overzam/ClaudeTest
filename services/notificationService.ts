@@ -11,8 +11,9 @@ export async function requestNotificationPermissions(): Promise<boolean> {
 }
 
 export async function scheduleStreakReminder() {
-  await Notifications.cancelAllScheduledNotificationsAsync();
+  await Notifications.cancelScheduledNotificationAsync('streak-reminder').catch(() => {});
   await Notifications.scheduleNotificationAsync({
+    identifier: 'streak-reminder',
     content: {
       title: '🔥 Maintiens ta série !',
       body: "Tu n'as pas encore cuisiné aujourd'hui. Continue ta série !",
@@ -26,6 +27,17 @@ export async function scheduleStreakReminder() {
   });
 }
 
+export async function sendBadgeNotification(badgeEmoji: string, badgeTitle: string) {
+  await Notifications.scheduleNotificationAsync({
+    content: {
+      title: `${badgeEmoji} Nouveau badge débloqué !`,
+      body: `Tu as obtenu "${badgeTitle}". Continue comme ça !`,
+      sound: true,
+    },
+    trigger: null,
+  });
+}
+
 export async function cancelStreakReminder() {
-  await Notifications.cancelAllScheduledNotificationsAsync();
+  await Notifications.cancelScheduledNotificationAsync('streak-reminder').catch(() => {});
 }

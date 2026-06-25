@@ -60,3 +60,40 @@ export interface UserProgress {
   completed_at: string | null;
   attempts: number;
 }
+
+export interface Badge {
+  id: string;
+  slug: string;
+  title: string;
+  description: string;
+  emoji: string;
+  condition_type: string;
+  condition_value: number;
+}
+
+export interface UserBadge {
+  id: string;
+  user_id: string;
+  badge_id: string;
+  earned_at: string;
+  badge?: Badge;
+}
+
+export interface Friendship {
+  id: string;
+  requester_id: string;
+  addressee_id: string;
+  status: 'pending' | 'accepted' | 'declined';
+  created_at: string;
+}
+
+export interface LeaderboardEntry {
+  user_id: string;
+  username: string;
+  avatar_url: string | null;
+  xp: number;
+  level: number;
+  streak_days: number;
+  rank: number;
+  isMe?: boolean;
+}

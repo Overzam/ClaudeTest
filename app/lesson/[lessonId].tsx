@@ -16,6 +16,7 @@ import { useAuthStore } from '@/stores/authStore';
 import { submitLessonProgress, unlockNextLesson } from '@/services/lessonService';
 import { updateStreak, incrementLessonsCompleted } from '@/services/statsService';
 import { fetchLessons } from '@/services/pathService';
+import { useBadgeStore } from '@/stores/badgeStore';
 
 export default function LessonScreen() {
   const { lessonId } = useLocalSearchParams<{ lessonId: string }>();
@@ -23,6 +24,7 @@ export default function LessonScreen() {
   const lessonStore = useLessonStore();
   const gameStore = useGameStore();
   const { markComplete } = useProgressStore();
+  const { checkBadges } = useBadgeStore();
 
   useEffect(() => {
     if (lessonId) lessonStore.loadLesson(lessonId);
@@ -54,6 +56,7 @@ export default function LessonScreen() {
       }
     }
     markComplete(lessonId);
+    checkBadges(userId);
 
     router.replace({
       pathname: '/lesson/complete',
