@@ -1,0 +1,109 @@
+import type { Path, Lesson } from '@/types/database.types';
+
+// Static paths — mirrors Supabase data
+export const LOCAL_PATHS: Path[] = [
+  { id: 'path-french',   slug: 'french',   title: 'Cuisine Française',     description: 'Maîtrise les classiques de la gastronomie française', emoji: '🇫🇷', color: '#0055A4', order_index: 0, is_active: true },
+  { id: 'path-italian',  slug: 'italian',  title: 'Cuisine Italienne',     description: 'Pasta, pizza e molto altro!',                          emoji: '🇮🇹', color: '#CE2B37', order_index: 1, is_active: true },
+  { id: 'path-japanese', slug: 'japanese', title: 'Cuisine Japonaise',     description: "Sushi, ramen, et l'art du dashi",                     emoji: '🇯🇵', color: '#BC002D', order_index: 2, is_active: true },
+  { id: 'path-moroccan', slug: 'moroccan', title: 'Cuisine Marocaine',     description: 'Tajine, couscous et ras-el-hanout',                    emoji: '🇲🇦', color: '#C1272D', order_index: 3, is_active: true },
+  { id: 'path-mexican',  slug: 'mexican',  title: 'Cuisine Mexicaine',     description: 'Tacos, guacamole et mole',                            emoji: '🇲🇽', color: '#006847', order_index: 4, is_active: true },
+  { id: 'path-indian',   slug: 'indian',   title: 'Cuisine Indienne',      description: 'Curry, masala et pains naan',                         emoji: '🇮🇳', color: '#FF9933', order_index: 5, is_active: true },
+  { id: 'path-thai',     slug: 'thai',     title: 'Cuisine Thaïlandaise',  description: 'Pad thaï, laak et soupes de coco',                    emoji: '🇹🇭', color: '#A51931', order_index: 6, is_active: true },
+  { id: 'path-greek',    slug: 'greek',    title: 'Cuisine Grecque',       description: 'Mezze, moussaka et tzatziki',                         emoji: '🇬🇷', color: '#0D5EAF', order_index: 7, is_active: true },
+  { id: 'path-chinese',  slug: 'chinese',  title: 'Cuisine Chinoise',      description: 'Wok, dim sum et sauces authentiques',                 emoji: '🇨🇳', color: '#DE2910', order_index: 8, is_active: true },
+  { id: 'path-pastry',   slug: 'pastry',   title: 'Pâtisserie',            description: 'Gâteaux, éclairs et macarons',                        emoji: '🎂',  color: '#F4A6C0', order_index: 9, is_active: true },
+  { id: 'path-bbq',      slug: 'bbq',      title: 'Barbecue & Grillades',  description: 'Marinades, fumage et cuissons directes',              emoji: '🔥',  color: '#8B0000', order_index: 10, is_active: true },
+  { id: 'path-vegan',    slug: 'vegan',    title: 'Cuisine Vegan',         description: '100% végétal, 100% savoureux',                        emoji: '🌿',  color: '#2E7D32', order_index: 11, is_active: true },
+];
+
+// Static lessons per path — IDs match exercise lessonId in exercisesData.ts
+export const LOCAL_LESSONS: Record<string, Lesson[]> = {
+  'path-french': [
+    { id: 'fr-1', path_id: 'path-french', title: 'Les Bases du Couteau',       description: 'Prise en pince, main en griffe, taille en brunoise',  order_index: 0, xp_reward: 20, thumbnail_url: null },
+    { id: 'fr-2', path_id: 'path-french', title: 'Les Sauces de Base',          description: 'Béchamel, velouté, hollandaise…',                    order_index: 1, xp_reward: 30, thumbnail_url: null },
+    { id: 'fr-3', path_id: 'path-french', title: 'La Quiche Lorraine',          description: 'Tarte salée aux lardons et crème',                   order_index: 2, xp_reward: 30, thumbnail_url: null },
+    { id: 'fr-4', path_id: 'path-french', title: 'Les Crêpes',                  description: 'Fine crêpe dorée sucrée ou salée',                   order_index: 3, xp_reward: 25, thumbnail_url: null },
+    { id: 'fr-5', path_id: 'path-french', title: 'Le Bœuf Bourguignon',         description: 'Mijotage et braising à la française',                order_index: 4, xp_reward: 50, thumbnail_url: null },
+    { id: 'fr-6', path_id: 'path-french', title: 'Le Soufflé au Fromage',       description: 'La technique du soufflé et ses secrets',             order_index: 5, xp_reward: 60, thumbnail_url: null },
+  ],
+  'path-italian': [
+    { id: 'it-1', path_id: 'path-italian', title: "L'Huile d'Olive",            description: 'Choisir, déguster et utiliser l\'huile d\'olive',    order_index: 0, xp_reward: 20, thumbnail_url: null },
+    { id: 'it-2', path_id: 'path-italian', title: 'Les Pâtes Fraîches',         description: 'Tagliatelle, fettuccine maison',                     order_index: 1, xp_reward: 35, thumbnail_url: null },
+    { id: 'it-3', path_id: 'path-italian', title: 'La Pizza Napoletana',        description: 'Pâte à pizza, sauce, cuisson au four',               order_index: 2, xp_reward: 35, thumbnail_url: null },
+    { id: 'it-4', path_id: 'path-italian', title: 'Le Tiramisu',                description: 'Mascarpone, café, savoiardi',                        order_index: 3, xp_reward: 30, thumbnail_url: null },
+    { id: 'it-5', path_id: 'path-italian', title: 'Le Risotto',                 description: 'Al dente avec mantecatura',                          order_index: 4, xp_reward: 50, thumbnail_url: null },
+    { id: 'it-6', path_id: 'path-italian', title: 'La Carbonara Authentique',   description: 'Guanciale, pecorino, sans crème',                    order_index: 5, xp_reward: 60, thumbnail_url: null },
+  ],
+  'path-japanese': [
+    { id: 'jp-1', path_id: 'path-japanese', title: 'Les 5 Saveurs Japonaises',  description: 'Sucré, salé, acide, amer, umami',                   order_index: 0, xp_reward: 20, thumbnail_url: null },
+    { id: 'jp-2', path_id: 'path-japanese', title: 'Le Dashi',                  description: 'Le bouillon fondateur de la cuisine japonaise',       order_index: 1, xp_reward: 30, thumbnail_url: null },
+    { id: 'jp-3', path_id: 'path-japanese', title: 'Les Sushis',                description: 'Riz vinaigré, nori et garnitures',                   order_index: 2, xp_reward: 50, thumbnail_url: null },
+    { id: 'jp-4', path_id: 'path-japanese', title: 'Le Ramen',                  description: 'Bouillon, nouilles et garnitures',                   order_index: 3, xp_reward: 50, thumbnail_url: null },
+    { id: 'jp-5', path_id: 'path-japanese', title: 'La Tempura',                description: 'Pâte légère et friture parfaite',                   order_index: 4, xp_reward: 55, thumbnail_url: null },
+    { id: 'jp-6', path_id: 'path-japanese', title: 'Le Wagyu & Yakitori',       description: 'Viandes japonaises et brochettes',                   order_index: 5, xp_reward: 65, thumbnail_url: null },
+  ],
+  'path-moroccan': [
+    { id: 'ma-1', path_id: 'path-moroccan', title: 'Les Épices Marocaines',     description: 'Ras-el-hanout, safran, cumin et coriandre',          order_index: 0, xp_reward: 20, thumbnail_url: null },
+    { id: 'ma-2', path_id: 'path-moroccan', title: 'Le Couscous Royal',         description: 'Semoule vapeur et légumes mijotés',                  order_index: 1, xp_reward: 35, thumbnail_url: null },
+    { id: 'ma-3', path_id: 'path-moroccan', title: "Le Tajine d'Agneau",        description: 'Viande fondante aux pruneaux et amandes',            order_index: 2, xp_reward: 50, thumbnail_url: null },
+    { id: 'ma-4', path_id: 'path-moroccan', title: 'La Pastilla au Poulet',     description: 'Feuilleté sucré-salé à la cannelle',                 order_index: 3, xp_reward: 60, thumbnail_url: null },
+    { id: 'ma-5', path_id: 'path-moroccan', title: 'Les Cornes de Gazelle',     description: 'Pâtisserie aux amandes et eau de fleur',             order_index: 4, xp_reward: 55, thumbnail_url: null },
+  ],
+  'path-mexican': [
+    { id: 'mx-1', path_id: 'path-mexican', title: 'Les Ingrédients Clés',      description: 'Piments, tomatilles, masa, avocats',                 order_index: 0, xp_reward: 20, thumbnail_url: null },
+    { id: 'mx-2', path_id: 'path-mexican', title: 'Le Guacamole',              description: 'Avocats, citron vert, coriandre',                    order_index: 1, xp_reward: 25, thumbnail_url: null },
+    { id: 'mx-3', path_id: 'path-mexican', title: 'Les Tacos al Pastor',       description: 'Porc mariné à la broche style libanais',             order_index: 2, xp_reward: 40, thumbnail_url: null },
+    { id: 'mx-4', path_id: 'path-mexican', title: 'La Salsa Verde',            description: 'Tomatilles rôties, piments et herbes',              order_index: 3, xp_reward: 35, thumbnail_url: null },
+    { id: 'mx-5', path_id: 'path-mexican', title: 'Les Tortillas Maison',      description: 'Masa harina et comal — la base',                    order_index: 4, xp_reward: 40, thumbnail_url: null },
+    { id: 'mx-6', path_id: 'path-mexican', title: 'Le Mole Negro',             description: '36 ingrédients, 3 jours de préparation',            order_index: 5, xp_reward: 70, thumbnail_url: null },
+  ],
+  'path-indian': [
+    { id: 'in-1', path_id: 'path-indian', title: 'Les Épices Indiennes',       description: 'Garam masala, cumin, cardamome, safran',            order_index: 0, xp_reward: 20, thumbnail_url: null },
+    { id: 'in-2', path_id: 'path-indian', title: 'Le Dal Makhani',             description: 'Lentilles noires en sauce crémeuse',                order_index: 1, xp_reward: 30, thumbnail_url: null },
+    { id: 'in-3', path_id: 'path-indian', title: 'Le Curry Butter Chicken',    description: 'Poulet en sauce tomate-crème épicée',               order_index: 2, xp_reward: 45, thumbnail_url: null },
+    { id: 'in-4', path_id: 'path-indian', title: 'Le Pain Naan',               description: 'Pain plat au four tandoor',                         order_index: 3, xp_reward: 35, thumbnail_url: null },
+    { id: 'in-5', path_id: 'path-indian', title: 'Le Biryani Royal',           description: 'Riz aux épices et viande marinée',                  order_index: 4, xp_reward: 65, thumbnail_url: null },
+  ],
+  'path-thai': [
+    { id: 'th-1', path_id: 'path-thai', title: 'Les 4 Saveurs Thaïlandaises', description: 'Sucré, salé, acide et pimenté en équilibre',        order_index: 0, xp_reward: 20, thumbnail_url: null },
+    { id: 'th-2', path_id: 'path-thai', title: 'Le Pad Thaï',                 description: 'Nouilles de riz sautées style Bangkok',             order_index: 1, xp_reward: 35, thumbnail_url: null },
+    { id: 'th-3', path_id: 'path-thai', title: 'La Soupe Tom Kha Gaï',        description: 'Poulet à la citronnelle et coco',                   order_index: 2, xp_reward: 40, thumbnail_url: null },
+    { id: 'th-4', path_id: 'path-thai', title: 'La Pâte de Curry Vert',       description: 'Préparation maison de la pâte de base',             order_index: 3, xp_reward: 55, thumbnail_url: null },
+    { id: 'th-5', path_id: 'path-thai', title: 'Le Larb de Viande',           description: 'Salade de viande épicée du nord de la Thaïlande',  order_index: 4, xp_reward: 60, thumbnail_url: null },
+  ],
+  'path-greek': [
+    { id: 'gr-1', path_id: 'path-greek', title: 'Les Bases Méditerranéennes', description: 'Huile d\'olive, citron, herbes de la mer',          order_index: 0, xp_reward: 20, thumbnail_url: null },
+    { id: 'gr-2', path_id: 'path-greek', title: 'Le Tzatziki',                description: 'Yaourt grec, concombre, ail, aneth',                order_index: 1, xp_reward: 25, thumbnail_url: null },
+    { id: 'gr-3', path_id: 'path-greek', title: 'Les Mezze',                  description: 'Houmous, tarama, dolmades et spanakopita',           order_index: 2, xp_reward: 35, thumbnail_url: null },
+    { id: 'gr-4', path_id: 'path-greek', title: 'La Moussaka',                description: 'Aubergines, viande hachée et béchamel',              order_index: 3, xp_reward: 55, thumbnail_url: null },
+    { id: 'gr-5', path_id: 'path-greek', title: 'Le Baklava',                 description: 'Feuilleté miel-pistaches-noix',                      order_index: 4, xp_reward: 60, thumbnail_url: null },
+  ],
+  'path-chinese': [
+    { id: 'cn-1', path_id: 'path-chinese', title: 'Les Techniques au Wok',    description: 'Chao (sauté), zheng (vapeur), hong shao (braisé)',   order_index: 0, xp_reward: 20, thumbnail_url: null },
+    { id: 'cn-2', path_id: 'path-chinese', title: 'Les Dim Sum',              description: 'Har gow, siu mai et raviolis vapeur',               order_index: 1, xp_reward: 40, thumbnail_url: null },
+    { id: 'cn-3', path_id: 'path-chinese', title: 'Le Mapo Tofu',             description: 'Tofu soyeux, porc haché, piment du Sichuan',        order_index: 2, xp_reward: 45, thumbnail_url: null },
+    { id: 'cn-4', path_id: 'path-chinese', title: 'Le Porc Laqué',            description: 'Char Siu — marinade miel-soja-cinq-épices',         order_index: 3, xp_reward: 55, thumbnail_url: null },
+    { id: 'cn-5', path_id: 'path-chinese', title: 'Le Canard Laqué de Pékin', description: 'Technique du canard à la peau croustillante',       order_index: 4, xp_reward: 70, thumbnail_url: null },
+  ],
+  'path-pastry': [
+    { id: 'pa-1', path_id: 'path-pastry', title: 'Les Bases Pâtissières',     description: 'Peser, tamiser, températures et textures',          order_index: 0, xp_reward: 20, thumbnail_url: null },
+    { id: 'pa-2', path_id: 'path-pastry', title: 'La Crème Pâtissière',       description: 'Base de tartes, éclairs et mille-feuilles',         order_index: 1, xp_reward: 30, thumbnail_url: null },
+    { id: 'pa-3', path_id: 'path-pastry', title: 'Les Éclairs au Chocolat',   description: 'Pâte à choux, crème, glaçage',                      order_index: 2, xp_reward: 45, thumbnail_url: null },
+    { id: 'pa-4', path_id: 'path-pastry', title: 'Les Macarons',              description: 'Tant pour tant, meringue italienne',                order_index: 3, xp_reward: 60, thumbnail_url: null },
+    { id: 'pa-5', path_id: 'path-pastry', title: 'La Pâte Feuilletée',        description: 'Tourage, beurrage et feuilletage',                   order_index: 4, xp_reward: 70, thumbnail_url: null },
+  ],
+  'path-bbq': [
+    { id: 'bb-1', path_id: 'path-bbq', title: 'Choisir son Bois de Fumage',  description: 'Hickory, mesquite, cerisier — goûts et usages',     order_index: 0, xp_reward: 20, thumbnail_url: null },
+    { id: 'bb-2', path_id: 'path-bbq', title: 'Les Marinades',               description: 'Dry rub, sauce, lacage — les 3 méthodes',           order_index: 1, xp_reward: 30, thumbnail_url: null },
+    { id: 'bb-3', path_id: 'path-bbq', title: 'Le Pulled Pork',              description: 'Épaule de porc fumée 12h, sauce vinaigre',          order_index: 2, xp_reward: 50, thumbnail_url: null },
+    { id: 'bb-4', path_id: 'path-bbq', title: 'Les Ribs Kansas City',        description: 'Travers de porc, sauce tomate sucrée',              order_index: 3, xp_reward: 55, thumbnail_url: null },
+    { id: 'bb-5', path_id: 'path-bbq', title: 'Le Brisket Texas',            description: 'Poitrine de bœuf fumée low & slow',                order_index: 4, xp_reward: 65, thumbnail_url: null },
+  ],
+  'path-vegan': [
+    { id: 'vg-1', path_id: 'path-vegan', title: 'Les Bases du Vegan',        description: 'Remplacer les produits animaux intelligemment',       order_index: 0, xp_reward: 20, thumbnail_url: null },
+    { id: 'vg-2', path_id: 'path-vegan', title: 'Le Buddha Bowl',            description: 'Grains, légumes rôtis, sauce tahini',                order_index: 1, xp_reward: 25, thumbnail_url: null },
+    { id: 'vg-3', path_id: 'path-vegan', title: 'Protéines Végétales',       description: 'Tofu, tempeh, seitan et légumineuses',              order_index: 2, xp_reward: 40, thumbnail_url: null },
+    { id: 'vg-4', path_id: 'path-vegan', title: 'Les Fromages Végétaux',     description: 'Noix de cajou, levure nutritionnelle, fermentation', order_index: 3, xp_reward: 55, thumbnail_url: null },
+    { id: 'vg-5', path_id: 'path-vegan', title: 'Le Rôti de Seitan',         description: 'Gluten de blé travaillé et farci',                  order_index: 4, xp_reward: 60, thumbnail_url: null },
+  ],
+};
