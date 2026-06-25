@@ -4,10 +4,14 @@
 -- ============================================================
 
 -- ============================================================
--- 1. TABLES
+-- 1. TABLES (drop + recreate pour forcer les types text)
 -- ============================================================
 
-create table if not exists public.paths (
+drop table if exists public.exercises cascade;
+drop table if exists public.lessons cascade;
+drop table if exists public.paths cascade;
+
+create table public.paths (
   id text primary key,
   slug text unique not null,
   title text not null,
@@ -18,7 +22,7 @@ create table if not exists public.paths (
   is_active boolean default true
 );
 
-create table if not exists public.lessons (
+create table public.lessons (
   id text primary key,
   path_id text references public.paths(id) on delete cascade,
   title text not null,
@@ -28,7 +32,7 @@ create table if not exists public.lessons (
   thumbnail_url text
 );
 
-create table if not exists public.exercises (
+create table public.exercises (
   id text primary key,
   lesson_id text references public.lessons(id) on delete cascade,
   type text not null check (type in ('multiple_choice','step_ordering','association','fill_in_blank')),
@@ -68,7 +72,7 @@ insert into public.paths (id, slug, title, description, emoji, color, order_inde
   ('path-pastry',   'pastry',   'Pâtisserie',           'Gâteaux, éclairs et macarons',                         '🎂',  '#F4A6C0', 9,  true),
   ('path-bbq',      'bbq',      'Barbecue & Grillades', 'Marinades, fumage et cuissons directes',               '🔥',  '#8B0000', 10, true),
   ('path-vegan',    'vegan',    'Cuisine Vegan',        '100% végétal, 100% savoureux',                         '🌿',  '#2E7D32', 11, true)
-on conflict (id) do update set title = excluded.title, description = excluded.description;
+
 
 -- ============================================================
 -- 3. LESSONS
@@ -151,7 +155,7 @@ insert into public.lessons (id, path_id, title, description, order_index, xp_rew
 ('vg-3','path-vegan','Protéines Végétales',         'Tofu, tempeh, seitan et légumineuses',                 2, 40),
 ('vg-4','path-vegan','Les Fromages Végétaux',       'Cashew cheese, tofu fumé et levure nutritionnelle',    3, 55),
 ('vg-5','path-vegan','Le Rôti de Seitan',           'Gluten de blé, bouillon et herbes — rôti festif',     4, 65)
-on conflict (id) do update set title = excluded.title, description = excluded.description;
+
 
 -- ============================================================
 -- 4. EXERCISES
@@ -980,4 +984,4 @@ insert into public.exercises (id, lesson_id, type, question, data, order_index, 
 ('vg-5-3','vg-5','step_ordering','Préparer un rôti de seitan :',
  '{"steps":["Mélanger gluten de blé, levure nutritionnelle et épices","Ajouter bouillon, sauce soja et huile pour former une pâte","Pétrir 5 min pour développer la texture fibreuse","Façonner en rôti et envelopper dans du film alimentaire","Cuire à la vapeur 45 min","Déballer, badigeonner de marinade et rôtir au four 25 min à 200°C pour dorer"],"correctOrder":[0,1,2,3,4,5]}')
 
-on conflict (id) do update set question = excluded.question, data = excluded.data;
+
