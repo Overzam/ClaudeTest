@@ -982,6 +982,5 @@ insert into public.exercises (id, lesson_id, type, question, data, order_index, 
  '{"answer":"gluten","hint":"On dit aussi ''vital wheat gluten''"}', 1, 15),
 
 ('vg-5-3','vg-5','step_ordering','Préparer un rôti de seitan :',
- '{"steps":["Mélanger gluten de blé, levure nutritionnelle et épices","Ajouter bouillon, sauce soja et huile pour former une pâte","Pétrir 5 min pour développer la texture fibreuse","Façonner en rôti et envelopper dans du film alimentaire","Cuire à la vapeur 45 min","Déballer, badigeonner de marinade et rôtir au four 25 min à 200°C pour dorer"],"correctOrder":[0,1,2,3,4,5]}')
-
+ '{"steps":["Mélanger gluten de blé, levure nutritionnelle et épices","Ajouter bouillon, sauce soja et huile pour former une pâte","Pétrir 5 min pour développer la texture fibreuse","Façonner en rôti et envelopper dans du film alimentaire","Cuire à la vapeur 45 min","Déballer, badigeonner de marinade et rôtir au four 25 min à 200°C pour dorer"],"correctOrder":[0,1,2,3,4,5]}', 2, 40);
 
