@@ -60,8 +60,9 @@ export default function LessonScreen() {
     checkBadges(userId);
 
     router.replace({
-      pathname: '/lesson/complete',
+      pathname: '/lesson/recipe',
       params: {
+        lessonId,
         xpEarned: String(lessonStore.xpEarned),
         score: String(lessonStore.score),
         mistakes: String(lessonStore.mistakesCount),
