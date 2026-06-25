@@ -15,6 +15,23 @@ import { fetchPaths, fetchLessons } from '@/services/pathService';
 import { fetchUserStats } from '@/services/statsService';
 import type { Path, Lesson } from '@/types/database.types';
 
+const QUICK_TIPS = [
+  "Un couteau aiguisé est plus sûr qu'un couteau émoussé — il glisse moins.",
+  "Tempérez la viande 30 min avant cuisson pour une cuisson uniforme.",
+  "L'eau des pâtes doit être salée comme la mer : 10g de sel par litre.",
+  "Laissez toujours reposer la viande après cuisson pour garder les jus.",
+  "Le beurre froid monte les sauces — ajoutez-le hors du feu en fouettant.",
+  "La moutarde émulsionne : c'est le secret d'une vinaigrette qui tient.",
+  "Faites « bloomer » vos épices 30s à sec pour doubler leur intensité.",
+  "Un trait de citron en fin de cuisson réveille toutes les saveurs du plat.",
+  "Les herbes fraîches se mettent en fin de cuisson, les séchées en début.",
+  "Réservez l'eau de cuisson des pâtes — l'amidon lie la sauce naturellement.",
+  "L'umami se cache dans le parmesan, les champignons et la sauce soja.",
+  "Congèle les herbes fraîches dans de l'huile d'olive en glaçons.",
+  "Tamisez toujours le matcha avant d'infuser pour éviter les grumeaux.",
+  "Pour un falafel croustillant, utilisez des pois chiches crus, pas en boîte.",
+];
+
 export default function HomeScreen() {
   const { user, session } = useAuthStore();
   const gameStore = useGameStore();
@@ -85,6 +102,19 @@ export default function HomeScreen() {
             <Text style={[styles.challengeTitle, { color: c.text }]}>Relève le défi quotidien !</Text>
           </View>
           <Text style={[styles.challengeArrow, { color: c.streakOrange }]}>→</Text>
+        </TouchableOpacity>
+
+        {/* Quick tip banner */}
+        <TouchableOpacity
+          style={[styles.tipBanner, { backgroundColor: c.xpBlue + '12', borderColor: c.xpBlue + '30' }]}
+          onPress={() => router.push('/tips' as any)}
+          activeOpacity={0.85}
+        >
+          <Text style={styles.tipBannerEmoji}>💡</Text>
+          <View style={styles.challengeInfo}>
+            <Text style={[styles.challengeLabel, { color: c.xpBlue }]}>ASTUCE DU CHEF</Text>
+            <Text style={[styles.challengeTitle, { color: c.text }]}>{QUICK_TIPS[Math.floor(Date.now() / 86400000) % QUICK_TIPS.length]}</Text>
+          </View>
         </TouchableOpacity>
 
         {/* In-progress paths */}
@@ -222,4 +252,13 @@ const styles = StyleSheet.create({
   challengeLabel: { fontSize: Layout.fontSize.xs, fontWeight: '800', letterSpacing: 1 },
   challengeTitle: { fontSize: Layout.fontSize.md, fontWeight: '700' },
   challengeArrow: { fontSize: 22, fontWeight: '700' },
+  tipBanner: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    borderRadius: Layout.radius.xl,
+    padding: Layout.spacing.md,
+    gap: Layout.spacing.md,
+    borderWidth: 1,
+  },
+  tipBannerEmoji: { fontSize: 28 },
 });
