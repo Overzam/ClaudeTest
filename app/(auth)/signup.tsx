@@ -3,7 +3,7 @@ import { Alert, KeyboardAvoidingView, Platform, ScrollView, StyleSheet, Text, Te
 import { router } from 'expo-router';
 import { ScreenWrapper } from '@/components/ui/ScreenWrapper';
 import { Button } from '@/components/ui/Button';
-import { Colors } from '@/constants/Colors';
+import { useThemeStore } from '@/stores/themeStore';
 import { Layout } from '@/constants/Layout';
 import { signUp } from '@/services/authService';
 import { requestNotificationPermissions, scheduleStreakReminder } from '@/services/notificationService';
@@ -13,6 +13,8 @@ export default function SignupScreen() {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
+  const { theme } = useThemeStore();
+  const c = theme.colors;
 
   async function handleSignup() {
     if (!email.trim() || !username.trim() || password.length < 8) {
@@ -34,39 +36,37 @@ export default function SignupScreen() {
 
   return (
     <ScreenWrapper>
-      <KeyboardAvoidingView
-        style={{ flex: 1 }}
-        behavior={Platform.OS === 'ios' ? 'padding' : undefined}
-      >
+      <KeyboardAvoidingView style={{ flex: 1 }} behavior={Platform.OS === 'ios' ? 'padding' : undefined}>
         <ScrollView contentContainerStyle={styles.container} keyboardShouldPersistTaps="handled">
-          <Text style={styles.title}>Crée ton compte</Text>
-          <Text style={styles.subtitle}>Rejoins des milliers de cuistots en herbe !</Text>
+          <Text style={styles.logo}>🍽️</Text>
+          <Text style={[styles.title, { color: c.text }]}>Crée ton compte</Text>
+          <Text style={[styles.subtitle, { color: c.textMuted }]}>Rejoins des milliers de cuistots en herbe !</Text>
 
           <View style={styles.form}>
             <TextInput
-              style={styles.input}
+              style={[styles.input, { borderColor: c.border, color: c.text, backgroundColor: c.surfaceElevated }]}
               placeholder="Pseudo"
               value={username}
               onChangeText={setUsername}
               autoCapitalize="none"
-              placeholderTextColor={Colors.textMuted}
+              placeholderTextColor={c.textMuted}
             />
             <TextInput
-              style={styles.input}
+              style={[styles.input, { borderColor: c.border, color: c.text, backgroundColor: c.surfaceElevated }]}
               placeholder="Email"
               value={email}
               onChangeText={setEmail}
               autoCapitalize="none"
               keyboardType="email-address"
-              placeholderTextColor={Colors.textMuted}
+              placeholderTextColor={c.textMuted}
             />
             <TextInput
-              style={styles.input}
+              style={[styles.input, { borderColor: c.border, color: c.text, backgroundColor: c.surfaceElevated }]}
               placeholder="Mot de passe (min. 8 caractères)"
               value={password}
               onChangeText={setPassword}
               secureTextEntry
-              placeholderTextColor={Colors.textMuted}
+              placeholderTextColor={c.textMuted}
             />
             <Button label="Créer mon compte" onPress={handleSignup} loading={loading} />
           </View>
@@ -91,17 +91,15 @@ const styles = StyleSheet.create({
     padding: Layout.spacing.xl,
     gap: Layout.spacing.md,
   },
-  title: { fontSize: Layout.fontSize.xxl, fontWeight: '900', color: Colors.text },
-  subtitle: { fontSize: Layout.fontSize.md, color: Colors.textMuted, textAlign: 'center', marginBottom: Layout.spacing.lg },
+  logo: { fontSize: 64 },
+  title: { fontSize: Layout.fontSize.xxl, fontWeight: '900' },
+  subtitle: { fontSize: Layout.fontSize.md, textAlign: 'center', marginBottom: Layout.spacing.lg },
   form: { width: '100%', gap: Layout.spacing.md },
   input: {
     borderWidth: 2,
-    borderColor: Colors.border,
     borderRadius: Layout.radius.md,
     padding: Layout.spacing.md,
     fontSize: Layout.fontSize.md,
-    color: Colors.text,
-    backgroundColor: Colors.surface,
   },
   loginBtn: { marginTop: Layout.spacing.sm },
 });

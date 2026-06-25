@@ -7,7 +7,7 @@ import {
   ViewStyle,
   TextStyle,
 } from 'react-native';
-import { Colors } from '@/constants/Colors';
+import { useThemeStore } from '@/stores/themeStore';
 import { Layout } from '@/constants/Layout';
 
 type Variant = 'primary' | 'secondary' | 'ghost' | 'danger';
@@ -22,26 +22,40 @@ interface Props {
   textStyle?: TextStyle;
 }
 
-export function Button({
-  label,
-  onPress,
-  variant = 'primary',
-  disabled,
-  loading,
-  style,
-  textStyle,
-}: Props) {
+export function Button({ label, onPress, variant = 'primary', disabled, loading, style, textStyle }: Props) {
+  const { theme } = useThemeStore();
+  const c = theme.colors;
+
+  const bgMap: Record<Variant, string> = {
+    primary: c.primary,
+    secondary: c.secondary,
+    ghost: 'transparent',
+    danger: c.danger,
+  };
+  const colorMap: Record<Variant, string> = {
+    primary: '#fff',
+    secondary: c.text,
+    ghost: c.primary,
+    danger: '#fff',
+  };
+
   return (
     <TouchableOpacity
-      style={[styles.base, styles[variant], (disabled || loading) && styles.disabled, style]}
+      style={[
+        styles.base,
+        { backgroundColor: bgMap[variant] },
+        variant === 'ghost' && { borderWidth: 2, borderColor: c.primary },
+        (disabled || loading) && styles.disabled,
+        style,
+      ]}
       onPress={onPress}
       disabled={disabled || loading}
       activeOpacity={0.85}
     >
       {loading ? (
-        <ActivityIndicator color={variant === 'ghost' ? Colors.primary : Colors.surface} />
+        <ActivityIndicator color={colorMap[variant]} />
       ) : (
-        <Text style={[styles.text, styles[`${variant}Text`], textStyle]}>{label}</Text>
+        <Text style={[styles.text, { color: colorMap[variant] }, textStyle]}>{label}</Text>
       )}
     </TouchableOpacity>
   );
@@ -56,14 +70,6 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     minHeight: 52,
   },
-  primary: { backgroundColor: Colors.primary },
-  secondary: { backgroundColor: Colors.secondary },
-  ghost: { backgroundColor: 'transparent', borderWidth: 2, borderColor: Colors.primary },
-  danger: { backgroundColor: Colors.danger },
   disabled: { opacity: 0.5 },
   text: { fontSize: Layout.fontSize.md, fontWeight: '700' },
-  primaryText: { color: Colors.surface },
-  secondaryText: { color: Colors.text },
-  ghostText: { color: Colors.primary },
-  dangerText: { color: Colors.surface },
 });
