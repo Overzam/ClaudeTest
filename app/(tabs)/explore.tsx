@@ -101,7 +101,7 @@ export default function ExploreScreen() {
                       isLocked && { backgroundColor: c.locked },
                     ]}
                     onPress={() =>
-                      !isLocked && router.push({ pathname: '/lesson/[lessonId]', params: { lessonId: lesson.id } })
+                      !isLocked && router.push({ pathname: '/lesson/[lessonId]', params: { lessonId: lesson.id, lessonTitle: lesson.title } })
                     }
                     disabled={isLocked}
                     activeOpacity={0.85}
