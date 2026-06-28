@@ -66,6 +66,11 @@ export default function RecipeScreen() {
           <Text style={[styles.heroTitle, { color: c.text }]}>{recipe.title}</Text>
           <Text style={[styles.heroDesc, { color: c.textMuted }]}>{recipe.description}</Text>
 
+          {/* Total time pill */}
+          <View style={[styles.totalTimePill, { backgroundColor: c.primary + '20' }]}>
+            <Text style={[styles.totalTimeText, { color: c.primary }]}>⏰ {totalTime} min au total</Text>
+          </View>
+
           {/* Stats row */}
           <View style={styles.statsRow}>
             <Stat icon="⏱️" label="Prépa" value={`${recipe.prep_time_min} min`} c={c} />
@@ -191,6 +196,8 @@ const styles = StyleSheet.create({
   statIcon: { fontSize: 20 },
   statValue: { fontSize: Layout.fontSize.sm, fontWeight: '800', marginTop: 2 },
   statLabel: { fontSize: 10, fontWeight: '500' },
+  totalTimePill: { borderRadius: Layout.radius.full, paddingHorizontal: Layout.spacing.md, paddingVertical: 6, marginTop: Layout.spacing.xs },
+  totalTimeText: { fontSize: Layout.fontSize.sm, fontWeight: '700' },
   diffBadge: { paddingHorizontal: Layout.spacing.md, paddingVertical: 4, borderRadius: Layout.radius.full, marginTop: Layout.spacing.xs },
   diffText: { fontSize: Layout.fontSize.sm, fontWeight: '700' },
 
