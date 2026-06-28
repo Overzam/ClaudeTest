@@ -92,6 +92,15 @@ function generateGenericExercises(lessonId: string): Exercise[] {
   ];
 }
 
+export async function fetchLessonById(lessonId: string) {
+  const { data } = await supabase
+    .from('lessons')
+    .select('id, path_id, order_index')
+    .eq('id', lessonId)
+    .single();
+  return data ?? null;
+}
+
 export async function submitLessonProgress(
   userId: string,
   lessonId: string,

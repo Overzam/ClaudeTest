@@ -14,9 +14,8 @@ import { useLessonStore } from '@/stores/lessonStore';
 import { useGameStore } from '@/stores/gameStore';
 import { useProgressStore } from '@/stores/progressStore';
 import { useAuthStore } from '@/stores/authStore';
-import { submitLessonProgress, unlockNextLesson } from '@/services/lessonService';
+import { submitLessonProgress, unlockNextLesson, fetchLessonById } from '@/services/lessonService';
 import { updateStreak, incrementLessonsCompleted } from '@/services/statsService';
-import { fetchLessons } from '@/services/pathService';
 import { useBadgeStore } from '@/stores/badgeStore';
 
 export default function LessonScreen() {
@@ -46,15 +45,11 @@ export default function LessonScreen() {
     await updateStreak(userId);
     await incrementLessonsCompleted(userId);
 
-    const currentExercise = lessonStore.exercises[0];
-    if (currentExercise) {
-      const lessons = await fetchLessons(currentExercise.lessonId);
-      const current = lessons.find((l) => l.id === lessonId);
-      if (current) {
-        const pathId = current.path_id ?? '';
-        await submitLessonProgress(userId, lessonId, pathId, lessonStore.score);
-        await unlockNextLesson(userId, current.order_index, pathId);
-      }
+    const lessonData = await fetchLessonById(lessonId);
+    if (lessonData) {
+      const pathId = lessonData.path_id ?? '';
+      await submitLessonProgress(userId, lessonId, pathId, lessonStore.score);
+      await unlockNextLesson(userId, lessonData.order_index, pathId);
     }
     markComplete(lessonId);
     checkBadges(userId);

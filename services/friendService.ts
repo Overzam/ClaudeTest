@@ -42,21 +42,41 @@ export async function removeFriend(friendshipId: string) {
 }
 
 export async function fetchPendingRequests(userId: string) {
-  const { data } = await supabase
+  const { data: friendships } = await supabase
     .from('friendships')
-    .select('*, requester:users!requester_id(*)')
+    .select('*')
     .eq('addressee_id', userId)
     .eq('status', 'pending');
-  return data ?? [];
+  if (!friendships || friendships.length === 0) return [];
+
+  const requesterIds = friendships.map((f) => f.requester_id);
+  const { data: profiles } = await supabase.from('users').select('*').in('id', requesterIds);
+  const profileMap = Object.fromEntries((profiles ?? []).map((p) => [p.id, p]));
+
+  return friendships.map((f) => ({ ...f, requester: profileMap[f.requester_id] ?? null }));
 }
 
 export async function fetchFriends(userId: string) {
-  const { data } = await supabase
+  const { data: friendships } = await supabase
     .from('friendships')
-    .select('*, requester:users!requester_id(*), addressee:users!addressee_id(*)')
+    .select('*')
     .or(`requester_id.eq.${userId},addressee_id.eq.${userId}`)
     .eq('status', 'accepted');
-  return data ?? [];
+  if (!friendships || friendships.length === 0) return [];
+
+  const friendIds = friendships.map((f) =>
+    f.requester_id === userId ? f.addressee_id : f.requester_id
+  );
+  const { data: profiles } = await supabase
+    .from('users')
+    .select('*')
+    .in('id', friendIds);
+  const profileMap = Object.fromEntries((profiles ?? []).map((p) => [p.id, p]));
+
+  return friendships.map((f) => {
+    const friendId = f.requester_id === userId ? f.addressee_id : f.requester_id;
+    return { ...f, requester: profileMap[f.requester_id] ?? null, addressee: profileMap[f.addressee_id] ?? null };
+  });
 }
 
 export async function fetchLeaderboard(userId: string): Promise<LeaderboardEntry[]> {
