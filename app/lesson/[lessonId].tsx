@@ -82,8 +82,8 @@ export default function LessonScreen() {
   const progress = (lessonStore.currentIndex + (lessonStore.phase === 'feedback' ? 1 : 0)) / lessonStore.exercises.length;
 
   function renderExercise() {
-    const submit = (correct: boolean) => {
-      lessonStore.submitAnswer(correct);
+    const submit = (correct: boolean, correctAnswerText?: string) => {
+      lessonStore.submitAnswer(correct, correctAnswerText);
       if (!correct) gameStore.loseHeart();
       if (gameStore.hearts <= 1 && !correct) {
         setTimeout(() => {
@@ -119,6 +119,7 @@ export default function LessonScreen() {
       {lessonStore.phase === 'feedback' && lessonStore.lastAnswerCorrect !== null && (
         <AnswerFeedback
           correct={lessonStore.lastAnswerCorrect}
+          correctAnswerText={lessonStore.correctAnswerText}
           onContinue={lessonStore.nextExercise}
         />
       )}

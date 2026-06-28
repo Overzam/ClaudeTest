@@ -15,7 +15,7 @@ interface StepItem {
 interface Props {
   question: string;
   data: StepOrderingData;
-  onSubmit: (correct: boolean) => void;
+  onSubmit: (correct: boolean, correctAnswerText?: string) => void;
 }
 
 export function StepOrdering({ question, data, onSubmit }: Props) {
@@ -32,7 +32,8 @@ export function StepOrdering({ question, data, onSubmit }: Props) {
   function handleVerify() {
     const currentOrder = items.map((item) => item.originalIndex);
     const correct = JSON.stringify(currentOrder) === JSON.stringify(data.correctOrder);
-    onSubmit(correct);
+    const correctText = data.correctOrder.map((i) => data.steps[i]).join(' → ');
+    onSubmit(correct, correctText);
   }
 
   function renderItem({ item, drag, isActive }: RenderItemParams<StepItem>) {
@@ -82,5 +83,5 @@ const styles = StyleSheet.create({
   itemActive: { borderColor: Colors.primary, shadowOpacity: 0.2, elevation: 8 },
   handle: { fontSize: 18, color: Colors.textMuted },
   label: { flex: 1, fontSize: Layout.fontSize.md, color: Colors.text, fontWeight: '600' },
-  button: { marginTop: 'auto' },
+  button: {},
 });

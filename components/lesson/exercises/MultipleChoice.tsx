@@ -1,64 +1,87 @@
 import React, { useState } from 'react';
-import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { Button } from '@/components/ui/Button';
-import { Colors } from '@/constants/Colors';
+import { useThemeStore } from '@/stores/themeStore';
 import { Layout } from '@/constants/Layout';
 import type { MultipleChoiceData } from '@/types/lesson.types';
 
 interface Props {
   question: string;
   data: MultipleChoiceData;
-  onSubmit: (correct: boolean) => void;
+  onSubmit: (correct: boolean, correctAnswerText?: string) => void;
 }
 
 export function MultipleChoice({ question, data, onSubmit }: Props) {
   const [selected, setSelected] = useState<number | null>(null);
+  const { theme } = useThemeStore();
+  const c = theme.colors;
 
   function handleVerify() {
     if (selected === null) return;
-    onSubmit(selected === data.correctIndex);
+    const correct = selected === data.correctIndex;
+    onSubmit(correct, data.options[data.correctIndex]);
   }
 
   return (
     <View style={styles.container}>
-      <Text style={styles.question}>{question}</Text>
-      <View style={styles.options}>
-        {data.options.map((option, i) => (
-          <TouchableOpacity
-            key={i}
-            style={[styles.option, selected === i && styles.optionSelected]}
-            onPress={() => setSelected(i)}
-            activeOpacity={0.8}
-          >
-            <Text style={[styles.optionText, selected === i && styles.optionTextSelected]}>
-              {option}
-            </Text>
-          </TouchableOpacity>
-        ))}
+      <ScrollView contentContainerStyle={styles.scroll} showsVerticalScrollIndicator={false}>
+        <Text style={[styles.question, { color: c.text }]}>{question}</Text>
+        <View style={styles.options}>
+          {data.options.map((option, i) => (
+            <TouchableOpacity
+              key={i}
+              style={[
+                styles.option,
+                { borderColor: c.border, backgroundColor: c.surfaceElevated },
+                selected === i && { borderColor: c.primary, backgroundColor: c.primary + '12' },
+              ]}
+              onPress={() => setSelected(i)}
+              activeOpacity={0.75}
+            >
+              <View style={[styles.optionDot, { borderColor: selected === i ? c.primary : c.border, backgroundColor: selected === i ? c.primary : 'transparent' }]}>
+                {selected === i && <View style={styles.optionDotInner} />}
+              </View>
+              <Text style={[styles.optionText, { color: selected === i ? c.primary : c.text }]}>
+                {option}
+              </Text>
+            </TouchableOpacity>
+          ))}
+        </View>
+      </ScrollView>
+      <View style={[styles.footer, { borderTopColor: c.border }]}>
+        <Button
+          label="Vérifier"
+          onPress={handleVerify}
+          disabled={selected === null}
+        />
       </View>
-      <Button
-        label="Vérifier"
-        onPress={handleVerify}
-        disabled={selected === null}
-        style={styles.button}
-      />
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, padding: Layout.spacing.lg, gap: Layout.spacing.lg },
-  question: { fontSize: Layout.fontSize.lg, fontWeight: '700', color: Colors.text, textAlign: 'center' },
+  container: { flex: 1 },
+  scroll: { padding: Layout.spacing.lg, gap: Layout.spacing.lg, paddingBottom: Layout.spacing.sm },
+  question: { fontSize: Layout.fontSize.lg, fontWeight: '700', textAlign: 'center', lineHeight: 28 },
   options: { gap: Layout.spacing.sm },
   option: {
     borderWidth: 2,
-    borderColor: Colors.border,
-    borderRadius: Layout.radius.md,
+    borderRadius: Layout.radius.lg,
     padding: Layout.spacing.md,
-    backgroundColor: Colors.surface,
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: Layout.spacing.md,
   },
-  optionSelected: { borderColor: Colors.primary, backgroundColor: Colors.primary + '10' },
-  optionText: { fontSize: Layout.fontSize.md, color: Colors.text, fontWeight: '600' },
-  optionTextSelected: { color: Colors.primary },
-  button: { marginTop: 'auto' },
+  optionDot: {
+    width: 22,
+    height: 22,
+    borderRadius: 11,
+    borderWidth: 2,
+    alignItems: 'center',
+    justifyContent: 'center',
+    flexShrink: 0,
+  },
+  optionDotInner: { width: 10, height: 10, borderRadius: 5, backgroundColor: '#fff' },
+  optionText: { fontSize: Layout.fontSize.md, fontWeight: '600', flex: 1 },
+  footer: { padding: Layout.spacing.lg, paddingTop: Layout.spacing.md, borderTopWidth: 1 },
 });

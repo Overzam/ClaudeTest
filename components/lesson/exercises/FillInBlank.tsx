@@ -7,7 +7,7 @@ import type { FillInBlankData } from '@/types/lesson.types';
 interface Props {
   question: string;
   data: FillInBlankData;
-  onSubmit: (correct: boolean) => void;
+  onSubmit: (correct: boolean, correctAnswerText?: string) => void;
 }
 
 export function FillInBlank({ question, data, onSubmit }: Props) {
@@ -21,7 +21,7 @@ export function FillInBlank({ question, data, onSubmit }: Props) {
     Keyboard.dismiss();
     const normalized = value.trim().toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '');
     const correct = normalized === data.answer.toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '');
-    onSubmit(correct);
+    onSubmit(correct, data.answer);
   }
 
   return (
@@ -93,7 +93,6 @@ const styles = StyleSheet.create({
     borderRadius: Layout.radius.full,
     padding: Layout.spacing.md,
     alignItems: 'center',
-    marginTop: 'auto',
   },
   buttonText: { color: '#fff', fontWeight: '800', fontSize: Layout.fontSize.md },
 });
