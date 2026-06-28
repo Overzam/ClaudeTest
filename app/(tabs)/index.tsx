@@ -65,6 +65,17 @@ export default function HomeScreen() {
 
   if (loading) return <LoadingScreen />;
 
+  // Find the next available (unlocked but not completed) lesson across all paths
+  let nextLesson: { lesson: Lesson; path: Path } | null = null;
+  outer: for (const path of paths) {
+    for (const lesson of lessonsMap[path.id] ?? []) {
+      if (lessonProgress[lesson.id] === 'available') {
+        nextLesson = { lesson, path };
+        break outer;
+      }
+    }
+  }
+
   const inProgressPaths = paths.filter((p) => {
     const lessons = lessonsMap[p.id] ?? [];
     const done = lessons.filter((l) => lessonProgress[l.id] === 'completed').length;
@@ -89,6 +100,24 @@ export default function HomeScreen() {
         </View>
 
         <XPBar xp={gameStore.xp} level={gameStore.level} style={styles.xpBar} />
+
+        {/* Next lesson shortcut */}
+        {nextLesson && (
+          <TouchableOpacity
+            style={[styles.nextLessonCard, { backgroundColor: nextLesson.path.color + '15', borderColor: nextLesson.path.color + '40' }]}
+            onPress={() => router.push({ pathname: '/lesson/[lessonId]', params: { lessonId: nextLesson!.lesson.id, lessonTitle: nextLesson!.lesson.title } })}
+            activeOpacity={0.85}
+          >
+            <Text style={styles.nextLessonEmoji}>{nextLesson.path.emoji}</Text>
+            <View style={styles.challengeInfo}>
+              <Text style={[styles.challengeLabel, { color: nextLesson.path.color }]}>PROCHAINE LEÇON</Text>
+              <Text style={[styles.challengeTitle, { color: c.text }]} numberOfLines={1}>{nextLesson.lesson.title}</Text>
+            </View>
+            <View style={[styles.nextLessonXP, { backgroundColor: nextLesson.path.color }]}>
+              <Text style={styles.nextLessonXPText}>+{nextLesson.lesson.xp_reward} XP</Text>
+            </View>
+          </TouchableOpacity>
+        )}
 
         {/* Daily challenge banner */}
         <TouchableOpacity
@@ -261,4 +290,19 @@ const styles = StyleSheet.create({
     borderWidth: 1,
   },
   tipBannerEmoji: { fontSize: 28 },
+  nextLessonCard: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    borderRadius: Layout.radius.xl,
+    padding: Layout.spacing.md,
+    gap: Layout.spacing.md,
+    borderWidth: 1.5,
+  },
+  nextLessonEmoji: { fontSize: 32 },
+  nextLessonXP: {
+    borderRadius: Layout.radius.full,
+    paddingHorizontal: Layout.spacing.sm,
+    paddingVertical: 4,
+  },
+  nextLessonXPText: { color: '#fff', fontWeight: '800', fontSize: Layout.fontSize.xs },
 });

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { ActivityIndicator, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { ActivityIndicator, ScrollView, StyleSheet, Text, TouchableOpacity, View, Animated } from 'react-native';
 import { router, useLocalSearchParams } from 'expo-router';
 import { useThemeStore } from '@/stores/themeStore';
 import { Layout } from '@/constants/Layout';
@@ -23,6 +23,7 @@ export default function RecipeScreen() {
   const c = theme.colors;
   const [recipe, setRecipe] = useState<Recipe | null>(null);
   const [loading, setLoading] = useState(true);
+  const [checkedIngredients, setCheckedIngredients] = useState<Set<number>>(new Set());
 
   useEffect(() => {
     if (lessonId) {
@@ -81,14 +82,34 @@ export default function RecipeScreen() {
         </View>
 
         {/* Ingrédients */}
-        <Section title="🛒 Ingrédients" c={c}>
-          {recipe.ingredients.map((ing, i) => (
-            <View key={i} style={[styles.ingRow, { borderBottomColor: c.border }]}>
-              <Text style={[styles.ingQty, { color: c.primary }]}>{ing.qty}</Text>
-              <Text style={[styles.ingItem, { color: c.text }]}>{ing.item}</Text>
-              {ing.tip && <Text style={[styles.ingTip, { color: c.textMuted }]}> · {ing.tip}</Text>}
+        <Section title={`🛒 Ingrédients (${checkedIngredients.size}/${recipe.ingredients.length})`} c={c}>
+          {recipe.ingredients.map((ing, i) => {
+            const checked = checkedIngredients.has(i);
+            return (
+              <TouchableOpacity
+                key={i}
+                onPress={() => setCheckedIngredients((prev) => {
+                  const next = new Set(prev);
+                  if (next.has(i)) next.delete(i); else next.add(i);
+                  return next;
+                })}
+                activeOpacity={0.75}
+                style={[styles.ingRow, { borderBottomColor: c.border, opacity: checked ? 0.45 : 1 }]}
+              >
+                <View style={[styles.checkbox, { borderColor: checked ? c.primary : c.border, backgroundColor: checked ? c.primary : 'transparent' }]}>
+                  {checked && <Text style={styles.checkmark}>✓</Text>}
+                </View>
+                <Text style={[styles.ingQty, { color: c.primary, textDecorationLine: checked ? 'line-through' : 'none' }]}>{ing.qty}</Text>
+                <Text style={[styles.ingItem, { color: c.text, textDecorationLine: checked ? 'line-through' : 'none' }]}>{ing.item}</Text>
+                {ing.tip && <Text style={[styles.ingTip, { color: c.textMuted }]}> · {ing.tip}</Text>}
+              </TouchableOpacity>
+            );
+          })}
+          {checkedIngredients.size === recipe.ingredients.length && recipe.ingredients.length > 0 && (
+            <View style={[styles.allCheckedBanner, { backgroundColor: c.success + '20' }]}>
+              <Text style={[styles.allCheckedText, { color: c.success ?? '#22c55e' }]}>✅ Tous les ingrédients prêts !</Text>
             </View>
-          ))}
+          )}
         </Section>
 
         {/* Instructions */}
@@ -183,9 +204,13 @@ const styles = StyleSheet.create({
   sectionContent: { gap: Layout.spacing.sm },
 
   ingRow: { flexDirection: 'row', alignItems: 'center', paddingVertical: 8, borderBottomWidth: StyleSheet.hairlineWidth, flexWrap: 'wrap', gap: 4 },
+  checkbox: { width: 22, height: 22, borderRadius: 11, borderWidth: 2, alignItems: 'center', justifyContent: 'center', marginRight: 4, flexShrink: 0 },
+  checkmark: { color: '#fff', fontSize: 13, fontWeight: '800' },
   ingQty: { fontSize: Layout.fontSize.sm, fontWeight: '800', minWidth: 70 },
   ingItem: { fontSize: Layout.fontSize.sm, fontWeight: '600', flex: 1 },
   ingTip: { fontSize: 11, fontStyle: 'italic' },
+  allCheckedBanner: { borderRadius: Layout.radius.md, padding: Layout.spacing.md, alignItems: 'center', marginTop: Layout.spacing.sm },
+  allCheckedText: { fontSize: Layout.fontSize.sm, fontWeight: '700' },
 
   stepRow: { flexDirection: 'row', gap: Layout.spacing.md, alignItems: 'flex-start' },
   stepNum: { width: 28, height: 28, borderRadius: 14, alignItems: 'center', justifyContent: 'center', marginTop: 2, flexShrink: 0 },

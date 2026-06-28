@@ -17,7 +17,9 @@ export default function LessonCompleteScreen() {
   const c = theme.colors;
 
   const scoreNum = Number(score);
-  const perfect = scoreNum === 100 && Number(mistakes) === 0;
+  const mistakesNum = Number(mistakes);
+  const perfect = scoreNum === 100 && mistakesNum === 0;
+  const stars = mistakesNum === 0 ? 3 : mistakesNum <= 2 ? 2 : 1;
 
   return (
     <ScreenWrapper>
@@ -27,6 +29,11 @@ export default function LessonCompleteScreen() {
           <Text style={[styles.title, { color: c.text }]}>
             {perfect ? 'Parfait !' : 'Félicitations !'}
           </Text>
+          <View style={styles.starsRow}>
+            {[1, 2, 3].map((s) => (
+              <Text key={s} style={[styles.star, { opacity: s <= stars ? 1 : 0.25 }]}>⭐</Text>
+            ))}
+          </View>
           {perfect && (
             <Text style={[styles.perfectMsg, { color: c.success }]}>Zéro erreur — tu maîtrises !</Text>
           )}
@@ -69,6 +76,8 @@ const styles = StyleSheet.create({
   },
   celebrationEmoji: { fontSize: 64 },
   title: { fontSize: Layout.fontSize.xxl, fontWeight: '900', textAlign: 'center' },
+  starsRow: { flexDirection: 'row', gap: 4 },
+  star: { fontSize: 36 },
   perfectMsg: { fontSize: Layout.fontSize.md, fontWeight: '600' },
   buttons: { gap: Layout.spacing.md },
 });
