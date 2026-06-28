@@ -47,17 +47,20 @@ export default function HomeScreen() {
       if (!session?.user.id) return;
       async function load() {
         setLoading(true);
-        const [stats, pathList] = await Promise.all([
-          fetchUserStats(session!.user.id),
-          fetchPaths(),
-        ]);
-        if (stats) gameStore.setStats(stats, session!.user.id);
-        await loadProgress(session!.user.id);
-        const map: Record<string, Lesson[]> = {};
-        await Promise.all(pathList.map(async (p) => { map[p.id] = await fetchLessons(p.id); }));
-        setPaths(pathList);
-        setLessonsMap(map);
-        setLoading(false);
+        try {
+          const [stats, pathList] = await Promise.all([
+            fetchUserStats(session!.user.id),
+            fetchPaths(),
+          ]);
+          if (stats) gameStore.setStats(stats, session!.user.id);
+          await loadProgress(session!.user.id);
+          const map: Record<string, Lesson[]> = {};
+          await Promise.all(pathList.map(async (p) => { map[p.id] = await fetchLessons(p.id); }));
+          setPaths(pathList);
+          setLessonsMap(map);
+        } finally {
+          setLoading(false);
+        }
       }
       load();
     }, [session?.user.id])

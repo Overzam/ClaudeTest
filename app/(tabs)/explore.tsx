@@ -27,14 +27,17 @@ export default function ExploreScreen() {
       if (!session?.user.id) return;
       async function load() {
         setLoading(true);
-        const pathList = await fetchPaths();
-        await loadProgress(session!.user.id);
-        const map: Record<string, Lesson[]> = {};
-        await Promise.all(pathList.map(async (p) => { map[p.id] = await fetchLessons(p.id); }));
-        setPaths(pathList);
-        setLessonsMap(map);
-        if (pathId) setSelectedPath(pathId);
-        setLoading(false);
+        try {
+          const pathList = await fetchPaths();
+          await loadProgress(session!.user.id);
+          const map: Record<string, Lesson[]> = {};
+          await Promise.all(pathList.map(async (p) => { map[p.id] = await fetchLessons(p.id); }));
+          setPaths(pathList);
+          setLessonsMap(map);
+          if (pathId) setSelectedPath(pathId);
+        } finally {
+          setLoading(false);
+        }
       }
       load();
     }, [session?.user.id])

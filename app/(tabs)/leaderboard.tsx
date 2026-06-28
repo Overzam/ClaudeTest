@@ -32,15 +32,18 @@ export default function LeaderboardScreen() {
   const c = theme.colors;
 
   async function load() {
-    if (!session?.user.id) return;
-    const [friends, global] = await Promise.all([
-      fetchLeaderboard(session.user.id),
-      fetchGlobalLeaderboard(),
-    ]);
-    setFriendEntries(friends);
-    setGlobalEntries(global);
-    setLoading(false);
-    setRefreshing(false);
+    if (!session?.user.id) { setLoading(false); return; }
+    try {
+      const [friends, global] = await Promise.all([
+        fetchLeaderboard(session.user.id),
+        fetchGlobalLeaderboard(),
+      ]);
+      setFriendEntries(friends);
+      setGlobalEntries(global);
+    } finally {
+      setLoading(false);
+      setRefreshing(false);
+    }
   }
 
   useFocusEffect(useCallback(() => { load(); }, [session?.user.id]));
