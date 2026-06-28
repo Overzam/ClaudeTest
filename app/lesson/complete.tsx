@@ -4,6 +4,7 @@ import { router, useLocalSearchParams } from 'expo-router';
 import { ScreenWrapper } from '@/components/ui/ScreenWrapper';
 import { LessonCompleteCard } from '@/components/gamification/LessonCompleteCard';
 import { Button } from '@/components/ui/Button';
+import { DuoCuistot } from '@/components/mascot/DuoCuistot';
 import { useThemeStore } from '@/stores/themeStore';
 import { Layout } from '@/constants/Layout';
 
@@ -25,7 +26,7 @@ export default function LessonCompleteScreen() {
     <ScreenWrapper>
       <View style={styles.container}>
         <View style={[styles.celebrationBox, { backgroundColor: c.success + '15' }]}>
-          <Text style={styles.celebrationEmoji}>{perfect ? '🏆' : '🎉'}</Text>
+          <DuoCuistot size={90} animate />
           <Text style={[styles.title, { color: c.text }]}>
             {perfect ? 'Parfait !' : 'Félicitations !'}
           </Text>

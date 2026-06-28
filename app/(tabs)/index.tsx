@@ -13,6 +13,7 @@ import { useGameStore } from '@/stores/gameStore';
 import { useProgressStore } from '@/stores/progressStore';
 import { fetchPaths, fetchLessons } from '@/services/pathService';
 import { fetchUserStats } from '@/services/statsService';
+import { DuoCuistot } from '@/components/mascot/DuoCuistot';
 import type { Path, Lesson } from '@/types/database.types';
 
 const QUICK_TIPS = [
@@ -90,11 +91,14 @@ export default function HomeScreen() {
       <ScrollView contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
         {/* Header */}
         <View style={styles.header}>
-          <View>
-            <Text style={[styles.greeting, { color: c.text }]}>
-              Bonjour {user?.username ?? ''} 👋
-            </Text>
-            <Text style={[styles.subGreeting, { color: c.textMuted }]}>Prêt à cuisiner ?</Text>
+          <View style={styles.headerLeft}>
+            <DuoCuistot size={64} />
+            <View>
+              <Text style={[styles.greeting, { color: c.text }]}>
+                Bonjour {user?.username ?? ''} 👋
+              </Text>
+              <Text style={[styles.subGreeting, { color: c.textMuted }]}>Prêt à cuisiner ?</Text>
+            </View>
           </View>
           <View style={styles.headerRight}>
             <StreakBadge streakDays={gameStore.streakDays} />
@@ -216,8 +220,9 @@ export default function HomeScreen() {
 
 const styles = StyleSheet.create({
   content: { padding: Layout.spacing.lg, gap: Layout.spacing.md, paddingBottom: 40 },
-  header: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'flex-start' },
-  greeting: { fontSize: Layout.fontSize.xl, fontWeight: '800' },
+  header: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
+  headerLeft: { flexDirection: 'row', alignItems: 'center', gap: Layout.spacing.sm },
+  greeting: { fontSize: Layout.fontSize.lg, fontWeight: '800' },
   subGreeting: { fontSize: Layout.fontSize.sm },
   headerRight: { alignItems: 'flex-end', gap: Layout.spacing.xs },
   xpBar: { marginVertical: Layout.spacing.sm },
