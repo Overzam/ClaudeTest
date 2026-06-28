@@ -21,7 +21,14 @@ export default function LoginScreen() {
       await signIn(email.trim(), password);
       router.replace('/(tabs)');
     } catch (e: unknown) {
-      Alert.alert('Erreur', e instanceof Error ? e.message : 'Connexion impossible');
+      const msg = e instanceof Error ? e.message : 'Connexion impossible';
+      const isConfirm = msg.toLowerCase().includes('confirm') || msg.toLowerCase().includes('email not confirmed');
+      Alert.alert(
+        isConfirm ? 'Email non confirmé' : 'Erreur',
+        isConfirm
+          ? 'Tu dois confirmer ton adresse email avant de te connecter. Vérifie ta boîte mail (et les spams).'
+          : msg
+      );
     } finally {
       setLoading(false);
     }
