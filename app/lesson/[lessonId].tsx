@@ -1,5 +1,6 @@
 import React, { useEffect } from 'react';
 import { Alert, StyleSheet, View } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { router, useLocalSearchParams } from 'expo-router';
 import { ExerciseHeader } from '@/components/lesson/ExerciseHeader';
 import { AnswerFeedback } from '@/components/lesson/AnswerFeedback';
@@ -19,6 +20,7 @@ import { updateStreak, incrementLessonsCompleted } from '@/services/statsService
 import { useBadgeStore } from '@/stores/badgeStore';
 
 export default function LessonScreen() {
+  const insets = useSafeAreaInsets();
   const { lessonId, lessonTitle } = useLocalSearchParams<{ lessonId: string; lessonTitle?: string }>();
   const { session } = useAuthStore();
   const lessonStore = useLessonStore();
@@ -107,7 +109,7 @@ export default function LessonScreen() {
   }
 
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, { paddingTop: insets.top }]}>
       <ExerciseHeader
         progress={progress}
         hearts={gameStore.hearts}
@@ -128,3 +130,4 @@ const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: Colors.background },
   exercise: { flex: 1 },
 });
+
