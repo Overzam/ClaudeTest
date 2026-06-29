@@ -27,6 +27,12 @@ export const RECIPE_IMAGE_MAP: Record<string, string> = {
   'Le Millefeuille':          U('1551183053-bf91798d4fad'),
 
   // ── ITALIAN ─────────────────────────────────────────────────────────────────
+  "L'Huile d'Olive":              U('1474979880729-42b0c2a4d0f4'),
+  'Les Pâtes Fraîches':           U('1551183053-bf91798d4fad'),
+  'La Pizza Napoletana':          U('1565299624246-b9b673f89f58'),
+  'Le Tiramisu':                  U('1571877227200-a0d98ea607e9'),
+  'Le Risotto':                   U('1476887334197-8580b4e8f58e'),
+  'La Carbonara Authentique':     U('1612929633738-8fe44f7ec841'),
   'Le Pesto Genovese':            U('1473093226795-af9932fe5856'),
   'Les Gnocchi di Patate':        U('1476887334197-8580b4e8f58e'),
   'La Focaccia Genovese':         U('1565299507177-b84f25e3d3cd'),
@@ -43,6 +49,13 @@ export const RECIPE_IMAGE_MAP: Record<string, string> = {
   'Le Cannolo Sicilien':          U('1570145820259-b5f2b35a0e14'),
 
   // ── JAPANESE ────────────────────────────────────────────────────────────────
+  'Les 5 Saveurs Japonaises':  U('1617196034194-4a20d025c48d'),
+  'Le Dashi':                  U('1549421263-5ec394a5ad4c'),
+  'Les Sushis':                U('1617196034234-66c2a4d1bb2d'),
+  'Le Ramen':                  U('1569050467447-ce54b3bbc37d'),
+  'La Tempura':                U('1562802378-063ec186a863'),
+  'Le Wagyu & Yakitori':       U('1546548694-8e5de0769f5a'),
+  'Le Mochi':                  U('1572457994-7ef8a6e42f8d'),
   'La Soupe Miso':        U('1549421263-5ec394a5ad4c'),
   'Les Gyoza':            U('1617196034183-421b4040ed20'),
   'Le Tonkatsu':          U('1562802378-063ec186a863'),
@@ -59,6 +72,10 @@ export const RECIPE_IMAGE_MAP: Record<string, string> = {
   'Le Matcha Parfait':    U('1572457994-7ef8a6e42f8d'),
 
   // ── MOROCCAN ────────────────────────────────────────────────────────────────
+  'Les Épices Marocaines':   U('1506368249539-f6cb6429afb9'),
+  "Le Tajine d'Agneau":      U('1598515214211-89d3c73ae83b'),
+  'La Pastilla au Poulet':   U('1565299507177-b84f25e3d3cd'),
+  'Les Cornes de Gazelle':   U('1571167366636-9f1ceb543f24'),
   'Le Couscous Royal':    U('1504674900247-0877df9cc836'),
   'Le Tajine de Poulet':  U('1598515214211-89d3c73ae83b'),
   "La Pastilla d'Agneau": U('1555939594-58d7cb561ad1'),
@@ -70,6 +87,10 @@ export const RECIPE_IMAGE_MAP: Record<string, string> = {
   'Le Thé à la Menthe':   U('1556909114-f6e7ad7d3136'),
 
   // ── MEXICAN ─────────────────────────────────────────────────────────────────
+  'Les Ingrédients Clés':  U('1506368249539-f6cb6429afb9'),
+  'La Salsa Verde':        U('1512621776951-a57141f2eefd'),
+  'Les Tortillas Maison':  U('1565299585323-38d6b0865b47'),
+  'Le Mole Negro':         U('1598515214211-89d3c73ae83b'),
   'Les Tacos al Pastor':   U('1565299585323-38d6b0865b47'),
   'Le Guacamole':          U('1512621776951-a57141f2eefd'),
   'Les Enchiladas':        U('1565299507177-b84f25e3d3cd'),
@@ -79,6 +100,10 @@ export const RECIPE_IMAGE_MAP: Record<string, string> = {
   'Les Churros con Chocolate': U('1516684732201-9f0c4eb0a4d4'),
 
   // ── INDIAN ──────────────────────────────────────────────────────────────────
+  'Les Épices Indiennes':    U('1506368249539-f6cb6429afb9'),
+  'Le Curry Butter Chicken': U('1585937421612-70a008356fbe'),
+  'Le Pain Naan':            U('1567620905732-2d1ec7ab7445'),
+  'Le Biryani Royal':        U('1504674900247-0877df9cc836'),
   'Le Poulet Tikka Masala': U('1585937421612-70a008356fbe'),
   'Le Dal Makhani':         U('1547592180-85f173990554'),
   'Le Palak Paneer':        U('1512621776951-a57141f2eefd'),
@@ -88,6 +113,10 @@ export const RECIPE_IMAGE_MAP: Record<string, string> = {
   'Le Gulab Jamun':         U('1571167366636-9f1ceb543f24'),
 
   // ── THAI ────────────────────────────────────────────────────────────────────
+  'Les 4 Saveurs Thaïlandaises': U('1506368249539-f6cb6429afb9'),
+  'La Soupe Tom Kha Gaï':       U('1540420773420-6fc83f4e6ded'),
+  'La Pâte de Curry Vert':      U('1512621776951-a57141f2eefd'),
+  'Le Larb de Viande':          U('1547592180-85f173990554'),
   'Le Pad Thaï':             U('1473093226795-af9932fe5856'),
   'Le Tom Yum':              U('1540420773420-6fc83f4e6ded'),
   'Le Som Tum':              U('1512621776951-a57141f2eefd'),
@@ -97,6 +126,9 @@ export const RECIPE_IMAGE_MAP: Record<string, string> = {
   'Le Mango Sticky Rice':    U('1563805042-7049a4d63a52'),
 
   // ── GREEK ───────────────────────────────────────────────────────────────────
+  'Les Bases Méditerranéennes': U('1474979880729-42b0c2a4d0f4'),
+  'Les Mezze':                  U('1565299507177-b84f25e3d3cd'),
+  'Le Baklava':                 U('1571167366636-9f1ceb543f24'),
   'La Moussaka':          U('1504674900247-0877df9cc836'),
   'Le Tzatziki':          U('1563805042-7049a4d63a52'),
   'La Spanakopita':       U('1565299507177-b84f25e3d3cd'),
@@ -106,6 +138,11 @@ export const RECIPE_IMAGE_MAP: Record<string, string> = {
   "L'Agneau de Pâques":   U('1546548694-8e5de0769f5a'),
 
   // ── CHINESE ─────────────────────────────────────────────────────────────────
+  'Les Techniques au Wok':   U('1562802378-063ec186a863'),
+  'Les Dim Sum':             U('1617196034183-421b4040ed20'),
+  'Le Mapo Tofu':            U('1547592180-85f173990554'),
+  'Le Porc Laqué':           U('1568901346375-23c9450c58cd'),
+  'Le Canard Laqué de Pékin': U('1546548694-8e5de0769f5a'),
   'Le Kung Pao Poulet':   U('1562802378-063ec186a863'),
   'Les Bao Buns':         U('1617196034183-421b4040ed20'),
   'Les Nouilles Lo Mein': U('1473093226795-af9932fe5856'),
@@ -113,6 +150,10 @@ export const RECIPE_IMAGE_MAP: Record<string, string> = {
   "Les Egg Tarts":        U('1563245372-f21724e3856d'),
 
   // ── PASTRY ──────────────────────────────────────────────────────────────────
+  'Les Bases Pâtissières':   U('1516684732201-9f0c4eb0a4d4'),
+  'La Crème Pâtissière':     U('1563805042-7049a4d63a52'),
+  'Les Éclairs au Chocolat': U('1578985545062-6d596e8c2b3a'),
+  'La Pâte Feuilletée':      U('1565299507177-b84f25e3d3cd'),
   'Les Macarons':                  U('1563245372-f21724e3856d'),
   'Le Croissant':                  U('1565299507177-b84f25e3d3cd'),
   'La Tarte au Citron Meringuée':  U('1571167366636-9f1ceb543f24'),
@@ -122,6 +163,11 @@ export const RECIPE_IMAGE_MAP: Record<string, string> = {
   'Le Saint-Honoré':               U('1563245372-f21724e3856d'),
 
   // ── BBQ ─────────────────────────────────────────────────────────────────────
+  'Choisir son Bois de Fumage': U('1547592180-85f173990554'),
+  'Les Marinades':              U('1504674900247-0877df9cc836'),
+  'Le Pulled Pork':             U('1555939594-58d7cb561ad1'),
+  'Les Ribs Kansas City':       U('1546548694-8e5de0769f5a'),
+  'Le Brisket Texas':           U('1568901346375-23c9450c58cd'),
   'Les Ribs BBQ':                  U('1555939594-58d7cb561ad1'),
   'La Côte de Bœuf':               U('1546548694-8e5de0769f5a'),
   'Les Ailes de Poulet Buffalo':   U('1562802378-063ec186a863'),
@@ -131,6 +177,11 @@ export const RECIPE_IMAGE_MAP: Record<string, string> = {
   'La Sauce BBQ Maison':           U('1504674900247-0877df9cc836'),
 
   // ── VEGAN ───────────────────────────────────────────────────────────────────
+  'Les Bases du Vegan':         U('1512621776951-a57141f2eefd'),
+  'Le Buddha Bowl':             U('1546069901-ba9599a7e63c'),
+  'Protéines Végétales':        U('1547592180-85f173990554'),
+  'Les Fromages Végétaux':      U('1563805042-7049a4d63a52'),
+  'Le Rôti de Seitan':          U('1565299585323-38d6b0865b47'),
   'Le Jackfruit Pulled Pork':   U('1512621776951-a57141f2eefd'),
   'Les Falafels Croustillants': U('1565299585323-38d6b0865b47'),
   'La Tarte aux Légumes de Saison': U('1565299507177-b84f25e3d3cd'),

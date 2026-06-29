@@ -5,14 +5,13 @@ import { ScreenWrapper } from '@/components/ui/ScreenWrapper';
 import { useThemeStore } from '@/stores/themeStore';
 import { useSettingsStore } from '@/stores/settingsStore';
 import { Layout } from '@/constants/Layout';
-import { LANGUAGES, type SupportedLanguage } from '@/i18n';
 import { useTranslation } from 'react-i18next';
 import Constants from 'expo-constants';
 import { themes, type ThemeName } from '@/constants/themes';
 
 export default function SettingsScreen() {
   const { t } = useTranslation();
-  const { language, streakNotifEnabled, setLanguage, toggleStreakNotif } = useSettingsStore();
+  const { streakNotifEnabled, toggleStreakNotif } = useSettingsStore();
   const { themeName, setTheme, theme } = useThemeStore();
   const c = theme.colors;
 
@@ -52,27 +51,6 @@ export default function SettingsScreen() {
               </TouchableOpacity>
             );
           })}
-        </View>
-
-        {/* Language */}
-        <Text style={[styles.sectionTitle, { color: c.text }]}>{t('settings.language')}</Text>
-        <View style={[styles.card, { backgroundColor: c.surfaceElevated, borderColor: c.border }]}>
-          {LANGUAGES.map((lang) => (
-            <TouchableOpacity
-              key={lang.code}
-              style={[
-                styles.langRow,
-                language === lang.code && { backgroundColor: c.primary + '12' },
-              ]}
-              onPress={() => setLanguage(lang.code as SupportedLanguage)}
-            >
-              <Text style={styles.langFlag}>{lang.flag}</Text>
-              <Text style={[styles.langLabel, { color: language === lang.code ? c.primary : c.text }]}>
-                {lang.label}
-              </Text>
-              {language === lang.code && <Text style={[styles.check, { color: c.primary }]}>✓</Text>}
-            </TouchableOpacity>
-          ))}
         </View>
 
         {/* Notifications */}
@@ -126,15 +104,6 @@ const styles = StyleSheet.create({
   themeEmoji: { fontSize: 22 },
   themeLabel: { fontSize: Layout.fontSize.xs, fontWeight: '600' },
   card: { borderRadius: Layout.radius.lg, borderWidth: 1, overflow: 'hidden' },
-  langRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    padding: Layout.spacing.md,
-    gap: Layout.spacing.md,
-  },
-  langFlag: { fontSize: 22 },
-  langLabel: { flex: 1, fontSize: Layout.fontSize.md, fontWeight: '600' },
-  check: { fontSize: 18, fontWeight: '800' },
   notifRow: { flexDirection: 'row', alignItems: 'center', gap: Layout.spacing.md, padding: Layout.spacing.md },
   notifInfo: { flex: 1 },
   notifLabel: { fontSize: Layout.fontSize.md, fontWeight: '600' },

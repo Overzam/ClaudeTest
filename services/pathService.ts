@@ -18,7 +18,7 @@ export async function fetchPaths(): Promise<Path[]> {
         await cachePaths(data);
         return data;
       }
-    } catch (_) {}
+    } catch (e) { console.warn('[pathService] fetchPaths Supabase error:', e); }
   }
 
   return LOCAL_PATHS;
@@ -37,7 +37,7 @@ export async function fetchLessons(pathId: string): Promise<Lesson[]> {
         await cacheLessons(pathId, data);
         return data;
       }
-    } catch (_) {}
+    } catch (e) { console.warn('[pathService] fetchLessons Supabase error:', e); }
   }
 
   // Offline fallback: cache then local static data

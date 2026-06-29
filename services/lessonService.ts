@@ -37,7 +37,7 @@ export async function fetchExercises(lessonId: string, lessonTitle?: string): Pr
         await cacheExercises(lessonId, exercises);
         return exercises;
       }
-    } catch (_) {}
+    } catch (e) { console.warn('[lessonService] fetchExercises Supabase error:', e); }
   }
 
   // Fall back to local static exercises keyed by title, then by id
