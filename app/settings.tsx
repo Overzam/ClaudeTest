@@ -15,7 +15,7 @@ export default function SettingsScreen() {
   const { themeName, setTheme, theme } = useThemeStore();
   const c = theme.colors;
 
-  const themeList: ThemeName[] = ['light', 'dark', 'chef', 'ocean', 'sakura'];
+  const themeList: ThemeName[] = ['light', 'dark', 'chef', 'ocean', 'sakura', 'foret', 'epices'];
 
   return (
     <ScreenWrapper>

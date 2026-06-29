@@ -1738,51 +1738,6 @@ export const STATIC_EXERCISES: Record<string, Exercise[]> = {
     },
   ],
 
-  'Le Risotto': [
-    {
-      id: 'local-it-risotto-1', lessonId: 'local', orderIndex: 0, xpReward: 10,
-      type: 'multiple_choice',
-      question: 'Quel riz est indispensable pour un risotto crémeux ?',
-      data: {
-        options: ['Arborio, Carnaroli ou Vialone Nano', 'Riz basmati', 'Riz long grain', 'Riz à sushi'],
-        correctIndex: 0,
-      },
-    },
-    {
-      id: 'local-it-risotto-2', lessonId: 'local', orderIndex: 1, xpReward: 10,
-      type: 'fill_in_blank',
-      question: 'La technique finale du risotto où on incorpore beurre froid et parmesan hors du feu s\'appelle la ___.',
-      data: { answer: 'mantecatura', hint: 'Mot italien qui signifie crémer' },
-    },
-    {
-      id: 'local-it-risotto-3', lessonId: 'local', orderIndex: 2, xpReward: 10,
-      type: 'step_ordering',
-      question: 'Remets les étapes du risotto dans l\'ordre :',
-      data: {
-        steps: ['Mantecatura : beurre + parmesan hors feu', 'Toaster le riz dans le soffritto 2 min', 'Déglacer au vin blanc', 'Ajouter le bouillon chaud louche par louche'],
-        correctOrder: [1, 2, 3, 0],
-      },
-    },
-    {
-      id: 'local-it-risotto-4', lessonId: 'local', orderIndex: 3, xpReward: 10,
-      type: 'multiple_choice',
-      question: 'Le risotto alla Milanese est coloré et parfumé au…',
-      data: {
-        options: ['Safran', 'Curcuma', 'Curry', 'Paprika'],
-        correctIndex: 0,
-      },
-    },
-    {
-      id: 'local-it-risotto-5', lessonId: 'local', orderIndex: 4, xpReward: 10,
-      type: 'multiple_choice',
-      question: 'La consistance idéale d\'un risotto servi dans l\'assiette s\'appelle "all\'onda" — qu\'est-ce que cela signifie ?',
-      data: {
-        options: ['Il doit couler légèrement comme une vague', 'Il doit être ferme et tenir en boule', 'Il doit être très sec', 'Il doit être collant'],
-        correctIndex: 0,
-      },
-    },
-  ],
-
   'La Carbonara Authentique': [
     {
       id: 'local-it-carbonara-1', lessonId: 'local', orderIndex: 0, xpReward: 10,
