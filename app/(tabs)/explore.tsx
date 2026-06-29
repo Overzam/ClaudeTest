@@ -114,11 +114,14 @@ export default function ExploreScreen() {
                     activeOpacity={0.85}
                   >
                     {LESSON_THUMBNAIL_MAP[lesson.title] && !isLocked ? (
-                      <Image
-                        source={{ uri: LESSON_THUMBNAIL_MAP[lesson.title] }}
-                        style={[StyleSheet.absoluteFill, { borderRadius: 36, opacity: isDone ? 0.6 : 1 }]}
-                        contentFit="cover"
-                      />
+                      <>
+                        <Image
+                          source={{ uri: LESSON_THUMBNAIL_MAP[lesson.title] }}
+                          style={[StyleSheet.absoluteFill, { borderRadius: 36 }]}
+                          contentFit="cover"
+                        />
+                        <View style={[StyleSheet.absoluteFill, { borderRadius: 36, backgroundColor: isDone ? activePath.color + 'AA' : 'rgba(0,0,0,0.30)' }]} />
+                      </>
                     ) : null}
                     <Text style={[styles.nodeIcon, isLocked && { color: c.textMuted }]}>
                       {isDone ? '✓' : isLocked ? '🔒' : '▶'}
@@ -168,41 +171,44 @@ export default function ExploreScreen() {
           const lessons = lessonsMap[path.id] ?? [];
           const completed = lessons.filter((l) => lessonProgress[l.id] === 'completed').length;
           const progress = lessons.length > 0 ? completed / lessons.length : 0;
+          const photoUrl = PATH_IMAGE_MAP[path.slug];
 
           return (
             <TouchableOpacity
               key={path.id}
-              style={[styles.pathCard, { backgroundColor: c.surfaceElevated, borderColor: c.border }]}
+              style={styles.pathCard}
               onPress={() => setSelectedPath(path.id)}
-              activeOpacity={0.85}
+              activeOpacity={0.88}
             >
-              <View style={[styles.pathCardEmoji, { backgroundColor: path.color + '20', overflow: 'hidden' }]}>
-                {PATH_IMAGE_MAP[path.slug] ? (
-                  <Image
-                    source={{ uri: PATH_IMAGE_MAP[path.slug] }}
-                    style={[StyleSheet.absoluteFill, { opacity: 0.7 }]}
-                    contentFit="cover"
-                  />
-                ) : null}
-                <Text style={styles.pathCardEmojiText}>{path.emoji}</Text>
-              </View>
-              <View style={styles.pathCardContent}>
-                <Text style={[styles.pathCardTitle, { color: c.text }]}>{path.title}</Text>
-                {path.description && (
-                  <Text style={[styles.pathCardDesc, { color: c.textMuted }]} numberOfLines={1}>
-                    {path.description}
-                  </Text>
-                )}
-                <View style={[styles.progressTrack, { backgroundColor: c.border, marginTop: 6 }]}>
-                  <View style={[styles.progressFill, { width: `${progress * 100}%`, backgroundColor: path.color }]} />
-                </View>
-                <Text style={[styles.pathCardCount, { color: c.textMuted }]}>
-                  {completed}/{lessons.length} leçons
-                </Text>
-              </View>
-              {completed === lessons.length && lessons.length > 0 && (
-                <Text style={styles.completedBadge}>🏆</Text>
+              {/* Background photo */}
+              {photoUrl ? (
+                <Image source={{ uri: photoUrl }} style={[StyleSheet.absoluteFill, styles.pathCardPhoto]} contentFit="cover" transition={300} />
+              ) : (
+                <View style={[StyleSheet.absoluteFill, { backgroundColor: path.color + '60' }]} />
               )}
+              {/* Dark gradient overlay */}
+              <View style={styles.pathCardOverlay} />
+              <View style={[styles.pathCardGradient, { backgroundColor: path.color + '80' }]} />
+
+              {/* Content */}
+              <View style={styles.pathCardBody}>
+                <View style={styles.pathCardTop}>
+                  <Text style={styles.pathCardEmojiText}>{path.emoji}</Text>
+                  {completed === lessons.length && lessons.length > 0 && (
+                    <Text style={styles.completedBadge}>🏆</Text>
+                  )}
+                </View>
+                <Text style={styles.pathCardTitle}>{path.title}</Text>
+                {path.description ? (
+                  <Text style={styles.pathCardDesc} numberOfLines={1}>{path.description}</Text>
+                ) : null}
+                <View style={styles.pathCardFooter}>
+                  <View style={styles.progressTrackWhite}>
+                    <View style={[styles.progressFillWhite, { width: `${progress * 100}%` }]} />
+                  </View>
+                  <Text style={styles.pathCardCount}>{completed}/{lessons.length} leçons</Text>
+                </View>
+              </View>
             </TouchableOpacity>
           );
         })}
@@ -216,26 +222,36 @@ const styles = StyleSheet.create({
   screenTitle: { fontSize: Layout.fontSize.xxl, fontWeight: '900' },
   screenSubtitle: { fontSize: Layout.fontSize.md },
   pathCard: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    borderRadius: Layout.radius.xl,
-    padding: Layout.spacing.md,
-    gap: Layout.spacing.md,
-    borderWidth: 1,
+    height: 140,
+    borderRadius: 20,
+    overflow: 'hidden',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.2,
+    shadowRadius: 8,
+    elevation: 5,
   },
-  pathCardEmoji: {
-    width: 56,
-    height: 56,
-    borderRadius: Layout.radius.md,
-    alignItems: 'center',
-    justifyContent: 'center',
+  pathCardPhoto: { borderRadius: 20 },
+  pathCardOverlay: {
+    position: 'absolute', top: 0, left: 0, right: 0, bottom: 0,
+    backgroundColor: 'rgba(0,0,0,0.30)',
   },
-  pathCardEmojiText: { fontSize: 28 },
-  pathCardContent: { flex: 1 },
-  pathCardTitle: { fontSize: Layout.fontSize.md, fontWeight: '700' },
-  pathCardDesc: { fontSize: Layout.fontSize.sm },
-  pathCardCount: { fontSize: Layout.fontSize.xs, marginTop: 2 },
-  completedBadge: { fontSize: 24 },
+  pathCardGradient: {
+    position: 'absolute', bottom: 0, left: 0, right: 0, height: 80,
+    opacity: 0.6,
+  },
+  pathCardBody: {
+    flex: 1, padding: 16, justifyContent: 'space-between',
+  },
+  pathCardTop: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'flex-start' },
+  pathCardEmojiText: { fontSize: 32 },
+  completedBadge: { fontSize: 22 },
+  pathCardTitle: { fontSize: 20, fontWeight: '900', color: '#fff' },
+  pathCardDesc: { fontSize: 12, color: 'rgba(255,255,255,0.8)' },
+  pathCardFooter: { flexDirection: 'row', alignItems: 'center', gap: 10 },
+  progressTrackWhite: { flex: 1, height: 4, borderRadius: 2, backgroundColor: 'rgba(255,255,255,0.3)', overflow: 'hidden' },
+  progressFillWhite: { height: '100%', borderRadius: 2, backgroundColor: '#fff' },
+  pathCardCount: { fontSize: 11, fontWeight: '700', color: 'rgba(255,255,255,0.9)' },
   progressTrack: { height: 6, borderRadius: 3, overflow: 'hidden' },
   progressFill: { height: '100%', borderRadius: 3 },
 
