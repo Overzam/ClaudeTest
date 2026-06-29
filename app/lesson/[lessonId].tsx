@@ -146,6 +146,7 @@ export default function LessonScreen() {
         <AnswerFeedback
           correct={lessonStore.lastAnswerCorrect}
           correctAnswerText={lessonStore.correctAnswerText}
+          explanation={lessonStore.lastAnswerCorrect && (exercise?.data as any)?.anecdote ? (exercise.data as any).anecdote : undefined}
           onContinue={lessonStore.nextExercise}
         />
       )}
