@@ -20,11 +20,11 @@ function rowToExercise(row: ExerciseRow): Exercise {
   };
 }
 
-export async function fetchExercises(lessonId: string): Promise<Exercise[]> {
+export async function fetchExercises(lessonId: string, lessonTitle?: string): Promise<Exercise[]> {
   const cached = await getCachedExercises(lessonId);
   if (cached && cached.length > 0) return cached;
 
-  // Try Supabase first if configured
+  // Try Supabase first — always use the real lessonId (UUID), never the title
   if (isSupabaseConfigured) {
     try {
       const { data, error } = await supabase
@@ -40,11 +40,11 @@ export async function fetchExercises(lessonId: string): Promise<Exercise[]> {
     } catch (_) {}
   }
 
-  // Fall back to local static exercises using the lessonId as a title key
-  const local = getLocalExercises(lessonId);
+  // Fall back to local static exercises keyed by title, then by id
+  const local = getLocalExercises(lessonTitle ?? lessonId);
   if (local) return local;
 
-  // Generic fallback — works for any lesson
+  // Generic fallback
   return generateGenericExercises(lessonId);
 }
 
