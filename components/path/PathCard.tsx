@@ -1,7 +1,7 @@
 import React from 'react';
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { ProgressBar } from '@/components/ui/ProgressBar';
-import { Colors } from '@/constants/Colors';
+import { useThemeStore } from '@/stores/themeStore';
 import { Layout } from '@/constants/Layout';
 import type { Path } from '@/types/database.types';
 
@@ -14,11 +14,13 @@ interface Props {
 }
 
 export function PathCard({ path, completedLessons, totalLessons, onPress, locked }: Props) {
+  const { theme } = useThemeStore();
+  const c = theme.colors;
   const progress = totalLessons > 0 ? completedLessons / totalLessons : 0;
 
   return (
     <TouchableOpacity
-      style={[styles.card, locked && styles.locked]}
+      style={[styles.card, { backgroundColor: c.surface }, locked && styles.locked]}
       onPress={onPress}
       disabled={locked}
       activeOpacity={0.85}
@@ -27,10 +29,10 @@ export function PathCard({ path, completedLessons, totalLessons, onPress, locked
         <Text style={styles.emoji}>{path.emoji}</Text>
       </View>
       <View style={styles.content}>
-        <Text style={styles.title}>{path.title}</Text>
-        {path.description && <Text style={styles.desc} numberOfLines={1}>{path.description}</Text>}
+        <Text style={[styles.title, { color: c.text }]}>{path.title}</Text>
+        {path.description && <Text style={[styles.desc, { color: c.textMuted }]} numberOfLines={1}>{path.description}</Text>}
         <ProgressBar progress={progress} color={path.color} style={styles.bar} />
-        <Text style={styles.count}>{completedLessons}/{totalLessons} leçons</Text>
+        <Text style={[styles.count, { color: c.textMuted }]}>{completedLessons}/{totalLessons} leçons</Text>
       </View>
       {locked && <Text style={styles.lockIcon}>🔒</Text>}
     </TouchableOpacity>
@@ -41,7 +43,6 @@ const styles = StyleSheet.create({
   card: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: Colors.surface,
     borderRadius: Layout.radius.lg,
     padding: Layout.spacing.md,
     gap: Layout.spacing.md,
@@ -61,9 +62,9 @@ const styles = StyleSheet.create({
   },
   emoji: { fontSize: 28 },
   content: { flex: 1, gap: 4 },
-  title: { fontSize: Layout.fontSize.md, fontWeight: '700', color: Colors.text },
-  desc: { fontSize: Layout.fontSize.sm, color: Colors.textMuted },
+  title: { fontSize: Layout.fontSize.md, fontWeight: '700' },
+  desc: { fontSize: Layout.fontSize.sm },
   bar: { marginTop: 4 },
-  count: { fontSize: Layout.fontSize.xs, color: Colors.textMuted, marginTop: 2 },
+  count: { fontSize: Layout.fontSize.xs, marginTop: 2 },
   lockIcon: { fontSize: 20 },
 });

@@ -10,7 +10,7 @@ import { PhotoIdentification } from '@/components/lesson/exercises/PhotoIdentifi
 import { Association } from '@/components/lesson/exercises/Association';
 import { FillInBlank } from '@/components/lesson/exercises/FillInBlank';
 import { LoadingScreen } from '@/components/ui/LoadingScreen';
-import { Colors } from '@/constants/Colors';
+import { useThemeStore } from '@/stores/themeStore';
 import { useLessonStore } from '@/stores/lessonStore';
 import { useGameStore } from '@/stores/gameStore';
 import { useProgressStore } from '@/stores/progressStore';
@@ -21,6 +21,7 @@ import { useBadgeStore } from '@/stores/badgeStore';
 
 export default function LessonScreen() {
   const insets = useSafeAreaInsets();
+  const { theme } = useThemeStore();
   const { lessonId, lessonTitle } = useLocalSearchParams<{ lessonId: string; lessonTitle?: string }>();
   const { session } = useAuthStore();
   const lessonStore = useLessonStore();
@@ -109,7 +110,7 @@ export default function LessonScreen() {
   }
 
   return (
-    <View style={[styles.container, { paddingTop: insets.top }]}>
+    <View style={[styles.container, { paddingTop: insets.top, backgroundColor: theme.colors.background }]}>
       <ExerciseHeader
         progress={progress}
         hearts={gameStore.hearts}
@@ -128,7 +129,7 @@ export default function LessonScreen() {
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: Colors.background },
+  container: { flex: 1 },
   exercise: { flex: 1 },
 });
 

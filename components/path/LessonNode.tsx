@@ -1,6 +1,6 @@
 import React from 'react';
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
-import { Colors } from '@/constants/Colors';
+import { useThemeStore } from '@/stores/themeStore';
 import { Layout } from '@/constants/Layout';
 import type { Lesson } from '@/types/database.types';
 
@@ -14,6 +14,8 @@ interface Props {
 }
 
 export function LessonNode({ lesson, status, pathColor, onPress }: Props) {
+  const { theme } = useThemeStore();
+  const c = theme.colors;
   const isLocked = status === 'locked';
   const isDone = status === 'completed';
 
@@ -27,16 +29,17 @@ export function LessonNode({ lesson, status, pathColor, onPress }: Props) {
       <View
         style={[
           styles.node,
+          { backgroundColor: c.surface },
           isDone && { backgroundColor: pathColor },
           !isDone && !isLocked && { borderColor: pathColor, borderWidth: 3 },
-          isLocked && styles.nodeLocked,
+          isLocked && { backgroundColor: c.border, shadowOpacity: 0 },
         ]}
       >
-        <Text style={[styles.icon, isLocked && styles.iconLocked]}>
+        <Text style={[styles.icon, { color: isDone ? '#fff' : isLocked ? c.textMuted : c.text }]}>
           {isDone ? '✓' : isLocked ? '🔒' : '▶'}
         </Text>
       </View>
-      <Text style={[styles.label, isLocked && styles.labelLocked]} numberOfLines={2}>
+      <Text style={[styles.label, { color: isLocked ? c.textMuted : c.text }]} numberOfLines={2}>
         {lesson.title}
       </Text>
     </TouchableOpacity>
@@ -49,7 +52,6 @@ const styles = StyleSheet.create({
     width: 64,
     height: 64,
     borderRadius: 32,
-    backgroundColor: Colors.surface,
     alignItems: 'center',
     justifyContent: 'center',
     shadowColor: '#000',
@@ -58,9 +60,6 @@ const styles = StyleSheet.create({
     shadowRadius: 4,
     elevation: 3,
   },
-  nodeLocked: { backgroundColor: Colors.locked, shadowOpacity: 0 },
-  icon: { fontSize: 22, color: Colors.text },
-  iconLocked: { color: Colors.textMuted },
-  label: { fontSize: Layout.fontSize.xs, fontWeight: '600', color: Colors.text, textAlign: 'center' },
-  labelLocked: { color: Colors.textMuted },
+  icon: { fontSize: 22 },
+  label: { fontSize: Layout.fontSize.xs, fontWeight: '600', textAlign: 'center' },
 });

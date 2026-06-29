@@ -1,7 +1,7 @@
 import React from 'react';
 import { StyleSheet, Text, View, ViewStyle } from 'react-native';
 import { Card } from '@/components/ui/Card';
-import { Colors } from '@/constants/Colors';
+import { useThemeStore } from '@/stores/themeStore';
 import { Layout } from '@/constants/Layout';
 import type { Badge } from '@/types/database.types';
 
@@ -13,17 +13,19 @@ interface Props {
 }
 
 export function BadgeCard({ badge, earned = false, earnedAt, style }: Props) {
+  const { theme } = useThemeStore();
+  const c = theme.colors;
   return (
     <Card style={[styles.card, !earned && styles.locked, style]}>
-      <Text style={[styles.emoji, !earned && styles.emojiLocked]}>{badge.emoji}</Text>
-      <Text style={[styles.title, !earned && styles.textLocked]} numberOfLines={1}>
+      <Text style={styles.emoji}>{badge.emoji}</Text>
+      <Text style={[styles.title, { color: earned ? c.text : c.textMuted }]} numberOfLines={1}>
         {badge.title}
       </Text>
-      <Text style={styles.desc} numberOfLines={2}>
+      <Text style={[styles.desc, { color: c.textMuted }]} numberOfLines={2}>
         {badge.description}
       </Text>
       {earned && earnedAt && (
-        <Text style={styles.date}>
+        <Text style={[styles.date, { color: c.primary }]}>
           {new Date(earnedAt).toLocaleDateString('fr-FR', { day: 'numeric', month: 'short' })}
         </Text>
       )}
@@ -35,9 +37,7 @@ const styles = StyleSheet.create({
   card: { alignItems: 'center', gap: 4, padding: Layout.spacing.md, width: 110 },
   locked: { opacity: 0.4 },
   emoji: { fontSize: 32 },
-  emojiLocked: { grayscale: 1 } as never,
-  title: { fontSize: Layout.fontSize.xs, fontWeight: '700', color: Colors.text, textAlign: 'center' },
-  textLocked: { color: Colors.textMuted },
-  desc: { fontSize: 10, color: Colors.textMuted, textAlign: 'center', lineHeight: 13 },
-  date: { fontSize: 10, color: Colors.primary, fontWeight: '600' },
+  title: { fontSize: Layout.fontSize.xs, fontWeight: '700', textAlign: 'center' },
+  desc: { fontSize: 10, textAlign: 'center', lineHeight: 13 },
+  date: { fontSize: 10, fontWeight: '600' },
 });

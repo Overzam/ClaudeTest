@@ -2,7 +2,7 @@ import React, { useMemo, useState } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 import DraggableFlatList, { RenderItemParams, ScaleDecorator } from 'react-native-draggable-flatlist';
 import { Button } from '@/components/ui/Button';
-import { Colors } from '@/constants/Colors';
+import { useThemeStore } from '@/stores/themeStore';
 import { Layout } from '@/constants/Layout';
 import type { StepOrderingData } from '@/types/lesson.types';
 
@@ -19,6 +19,9 @@ interface Props {
 }
 
 export function StepOrdering({ question, data, onSubmit }: Props) {
+  const { theme } = useThemeStore();
+  const c = theme.colors;
+
   const initial = useMemo<StepItem[]>(
     () =>
       data.steps
@@ -39,9 +42,13 @@ export function StepOrdering({ question, data, onSubmit }: Props) {
   function renderItem({ item, drag, isActive }: RenderItemParams<StepItem>) {
     return (
       <ScaleDecorator>
-        <View style={[styles.item, isActive && styles.itemActive]}>
-          <Text style={styles.handle}>☰</Text>
-          <Text style={styles.label} onLongPress={drag}>
+        <View style={[
+          styles.item,
+          { backgroundColor: c.surfaceElevated, borderColor: c.border },
+          isActive && { borderColor: c.primary, elevation: 8 },
+        ]}>
+          <Text style={[styles.handle, { color: c.textMuted }]}>☰</Text>
+          <Text style={[styles.label, { color: c.text }]} onLongPress={drag}>
             {item.label}
           </Text>
         </View>
@@ -51,8 +58,8 @@ export function StepOrdering({ question, data, onSubmit }: Props) {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.question}>{question}</Text>
-      <Text style={styles.hint}>Maintenez et glissez pour réordonner</Text>
+      <Text style={[styles.question, { color: c.text }]}>{question}</Text>
+      <Text style={[styles.hint, { color: c.textMuted }]}>Maintenez et glissez pour réordonner</Text>
       <DraggableFlatList
         data={items}
         keyExtractor={(item) => item.key}
@@ -60,28 +67,27 @@ export function StepOrdering({ question, data, onSubmit }: Props) {
         onDragEnd={({ data: newData }) => setItems(newData)}
         contentContainerStyle={styles.list}
       />
-      <Button label="Vérifier" onPress={handleVerify} style={styles.button} />
+      <View style={[styles.footer, { borderTopColor: c.border }]}>
+        <Button label="Vérifier" onPress={handleVerify} />
+      </View>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, padding: Layout.spacing.lg, gap: Layout.spacing.md },
-  question: { fontSize: Layout.fontSize.lg, fontWeight: '700', color: Colors.text, textAlign: 'center' },
-  hint: { fontSize: Layout.fontSize.sm, color: Colors.textMuted, textAlign: 'center' },
-  list: { gap: Layout.spacing.sm },
+  container: { flex: 1 },
+  question: { fontSize: Layout.fontSize.lg, fontWeight: '700', textAlign: 'center', padding: Layout.spacing.lg, paddingBottom: Layout.spacing.sm },
+  hint: { fontSize: Layout.fontSize.sm, textAlign: 'center', paddingBottom: Layout.spacing.md },
+  list: { gap: Layout.spacing.sm, paddingHorizontal: Layout.spacing.lg },
   item: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: Colors.surface,
     borderWidth: 2,
-    borderColor: Colors.border,
     borderRadius: Layout.radius.md,
     padding: Layout.spacing.md,
     gap: Layout.spacing.md,
   },
-  itemActive: { borderColor: Colors.primary, shadowOpacity: 0.2, elevation: 8 },
-  handle: { fontSize: 18, color: Colors.textMuted },
-  label: { flex: 1, fontSize: Layout.fontSize.md, color: Colors.text, fontWeight: '600' },
-  button: {},
+  handle: { fontSize: 18 },
+  label: { flex: 1, fontSize: Layout.fontSize.md, fontWeight: '600' },
+  footer: { padding: Layout.spacing.lg, paddingTop: Layout.spacing.md, borderTopWidth: 1 },
 });
