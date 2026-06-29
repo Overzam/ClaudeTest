@@ -41,12 +41,10 @@ export default function LessonScreen() {
   }, [lessonStore.phase]);
 
   async function handleComplete() {
-    const userId = session?.user.id;
-    if (!userId || !lessonId) return;
+    if (!lessonId) return;
+    const userId = session?.user.id ?? 'guest-local';
 
-    await gameStore.gainXP(lessonStore.xpEarned);
-    await updateStreak(userId);
-    await incrementLessonsCompleted(userId);
+    markComplete(lessonId);
 
     const lessonData = await fetchLessonById(lessonId);
     if (lessonData) {
@@ -54,8 +52,13 @@ export default function LessonScreen() {
       await submitLessonProgress(userId, lessonId, pathId, lessonStore.score);
       await unlockNextLesson(userId, lessonData.order_index, pathId);
     }
-    markComplete(lessonId);
-    checkBadges(userId);
+
+    await gameStore.gainXP(lessonStore.xpEarned);
+    if (session?.user.id) {
+      await updateStreak(userId);
+      await incrementLessonsCompleted(userId);
+      checkBadges(userId);
+    }
 
     router.replace({
       pathname: '/lesson/recipe',
@@ -110,7 +113,7 @@ export default function LessonScreen() {
   }
 
   return (
-    <View style={[styles.container, { paddingTop: insets.top, backgroundColor: theme.colors.background }]}>
+    <View style={[styles.container, { paddingTop: insets.top, paddingBottom: insets.bottom, backgroundColor: theme.colors.background }]}>
       <ExerciseHeader
         progress={progress}
         hearts={gameStore.hearts}

@@ -35,7 +35,7 @@ export const useLessonStore = create<LessonState>((set, get) => ({
 
   loadLesson: async (lessonId, lessonTitle?: string) => {
     set({ lessonId, phase: 'loading', currentIndex: 0, xpEarned: 0, mistakesCount: 0 });
-    const exercises = await fetchExercises(lessonTitle ?? lessonId);
+    const exercises = await fetchExercises(lessonId, lessonTitle);
     set({ exercises, phase: exercises.length > 0 ? 'exercise' : 'complete' });
   },
 
