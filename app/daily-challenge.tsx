@@ -1,8 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import { ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { LinearGradient } from 'expo-linear-gradient';
+import * as Haptics from 'expo-haptics';
 import { router } from 'expo-router';
 import { ScreenWrapper } from '@/components/ui/ScreenWrapper';
 import { useThemeStore } from '@/stores/themeStore';
+import { useGameStore } from '@/stores/gameStore';
 import { Layout } from '@/constants/Layout';
 
 interface Challenge {
@@ -215,8 +218,15 @@ const DIFFICULTY_COLORS: Record<string, string> = {
 export default function DailyChallengeScreen() {
   const { theme } = useThemeStore();
   const c = theme.colors;
+  const gameStore = useGameStore();
   const [challenge] = useState<Challenge>(getDailyChallenge);
   const [completed, setCompleted] = useState(false);
+
+  async function handleComplete() {
+    setCompleted(true);
+    Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+    await gameStore.gainXP(challenge.xpReward);
+  }
 
   const diffColor = DIFFICULTY_COLORS[challenge.difficulty] ?? c.primary;
 
@@ -231,14 +241,19 @@ export default function DailyChallengeScreen() {
 
       <ScrollView contentContainerStyle={styles.content}>
         {/* Hero */}
-        <View style={[styles.hero, { backgroundColor: diffColor + '15', borderColor: diffColor + '30', borderWidth: 1 }]}>
+        <LinearGradient
+          colors={[diffColor + 'CC', diffColor + '66']}
+          style={styles.hero}
+          start={{ x: 0, y: 0 }}
+          end={{ x: 1, y: 1 }}
+        >
           <Text style={styles.heroEmoji}>{challenge.emoji}</Text>
-          <View style={[styles.diffBadge, { backgroundColor: diffColor }]}>
+          <View style={styles.diffBadge}>
             <Text style={styles.diffText}>{challenge.difficulty}</Text>
           </View>
-          <Text style={[styles.heroTitle, { color: c.text }]}>{challenge.title}</Text>
-          <Text style={[styles.heroCategory, { color: c.textSecondary }]}>{challenge.category}</Text>
-        </View>
+          <Text style={styles.heroTitle}>{challenge.title}</Text>
+          <Text style={styles.heroCategory}>{challenge.category}</Text>
+        </LinearGradient>
 
         {/* Description */}
         <View style={[styles.card, { backgroundColor: c.surfaceElevated, borderColor: c.border }]}>
@@ -275,7 +290,7 @@ export default function DailyChallengeScreen() {
         {!completed ? (
           <TouchableOpacity
             style={[styles.completeBtn, { backgroundColor: c.primary }]}
-            onPress={() => setCompleted(true)}
+            onPress={handleComplete}
             activeOpacity={0.85}
           >
             <Text style={styles.completeBtnText}>✓ Marquer comme complété</Text>
@@ -317,10 +332,10 @@ const styles = StyleSheet.create({
     gap: Layout.spacing.sm,
   },
   heroEmoji: { fontSize: 64 },
-  diffBadge: { paddingHorizontal: Layout.spacing.md, paddingVertical: 4, borderRadius: 20 },
+  diffBadge: { paddingHorizontal: Layout.spacing.md, paddingVertical: 4, borderRadius: 20, backgroundColor: 'rgba(255,255,255,0.3)' },
   diffText: { color: '#fff', fontWeight: '800', fontSize: Layout.fontSize.sm },
-  heroTitle: { fontSize: Layout.fontSize.xl, fontWeight: '900', textAlign: 'center' },
-  heroCategory: { fontSize: Layout.fontSize.sm },
+  heroTitle: { fontSize: Layout.fontSize.xl, fontWeight: '900', textAlign: 'center', color: '#fff' },
+  heroCategory: { fontSize: Layout.fontSize.sm, color: 'rgba(255,255,255,0.85)' },
   card: {
     borderRadius: Layout.radius.lg,
     padding: Layout.spacing.md,
