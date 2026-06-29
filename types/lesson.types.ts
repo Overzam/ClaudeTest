@@ -17,6 +17,7 @@ interface BaseExercise {
 export interface MultipleChoiceData {
   options: string[];
   correctIndex: number;
+  anecdote?: string;
 }
 
 export interface StepOrderingData {

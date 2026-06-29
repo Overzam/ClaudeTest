@@ -89,7 +89,7 @@ export interface Friendship {
 
 export interface Ingredient {
   name: string;
-  quantity: string;
+  quantity?: string;
   unit?: string;
   emoji: string;
   tip?: string;
@@ -100,11 +100,12 @@ export interface LessonDetail {
   path_id: string;
   title: string;
   description: string | null;
+  emoji?: string;
   order_index: number;
   xp_reward: number;
   thumbnail_url: string | null;
-  duration_minutes: number;
-  difficulty: 'easy' | 'medium' | 'hard';
+  duration_minutes?: number;
+  difficulty?: 'easy' | 'medium' | 'hard';
   ingredients: Ingredient[];
   anecdote: string;
   chef_tip: string;
