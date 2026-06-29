@@ -1,5 +1,27 @@
 import React, { useEffect, useRef } from 'react';
-import { Animated, StyleSheet, Text, View } from 'react-native';
+import { Animated, Dimensions, StyleSheet, Text, View } from 'react-native';
+import * as Haptics from 'expo-haptics';
+
+const { width: W } = Dimensions.get('window');
+const CONFETTI = ['🎊', '⭐', '✨', '🎉', '🌟'];
+
+function ConfettiPiece({ delay, x }: { delay: number; x: number }) {
+  const y = useRef(new Animated.Value(-30)).current;
+  const opacity = useRef(new Animated.Value(1)).current;
+  useEffect(() => {
+    setTimeout(() => {
+      Animated.parallel([
+        Animated.timing(y, { toValue: 600, duration: 2000, useNativeDriver: true }),
+        Animated.timing(opacity, { toValue: 0, duration: 2000, useNativeDriver: true }),
+      ]).start();
+    }, delay);
+  }, []);
+  return (
+    <Animated.Text style={{ position: 'absolute', left: x, transform: [{ translateY: y }], opacity, fontSize: 20 }}>
+      {CONFETTI[Math.floor(x) % CONFETTI.length]}
+    </Animated.Text>
+  );
+}
 import { router, useLocalSearchParams } from 'expo-router';
 import { ScreenWrapper } from '@/components/ui/ScreenWrapper';
 import { LessonCompleteCard } from '@/components/gamification/LessonCompleteCard';
@@ -35,14 +57,29 @@ export default function LessonCompleteScreen() {
         Animated.spring(scaleAnim, { toValue: 1, useNativeDriver: true, tension: 80, friction: 6 }),
         Animated.timing(fadeAnim, { toValue: 1, duration: 400, useNativeDriver: true }),
       ]),
-      Animated.stagger(150, starAnims.slice(0, stars).map((anim) =>
-        Animated.spring(anim, { toValue: 1, useNativeDriver: true, tension: 100, friction: 5 })
-      )),
-    ]).start();
+      Animated.stagger(150, starAnims.slice(0, stars).map((anim, i) => {
+        const step = Animated.spring(anim, { toValue: 1, useNativeDriver: true, tension: 100, friction: 5 });
+        step.start(() => {
+          if (i === 0) Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+          if (i === 1) Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+          if (i === 2) Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy);
+        });
+        return step;
+      })),
+    ]).start(() => {
+      if (perfect) Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+    });
   }, []);
 
   return (
     <ScreenWrapper>
+      {perfect && (
+        <View style={StyleSheet.absoluteFill} pointerEvents="none">
+          {Array.from({ length: 12 }).map((_, i) => (
+            <ConfettiPiece key={i} delay={i * 120} x={(W / 12) * i + Math.random() * 20} />
+          ))}
+        </View>
+      )}
       <View style={styles.container}>
         <Animated.View
           style={[
