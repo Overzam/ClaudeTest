@@ -100,6 +100,9 @@ export default function TipsScreen() {
           <Text style={[styles.back, { color: c.primary }]}>← Retour</Text>
         </TouchableOpacity>
         <Text style={[styles.title, { color: c.text }]}>Astuces & Techniques</Text>
+        <TouchableOpacity onPress={() => router.push('/glossary' as any)} style={{ marginLeft: 'auto' }}>
+          <Text style={[styles.back, { color: c.primary }]}>Glossaire →</Text>
+        </TouchableOpacity>
       </View>
 
       {/* Search */}

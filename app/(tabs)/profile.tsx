@@ -103,6 +103,7 @@ export default function ProfileScreen() {
             { emoji: '🛒', label: `Boutique · 🪙${coins}`, route: '/shop' },
             { emoji: '📖', label: 'Carnet de Recettes', route: '/recipe-book' },
             { emoji: '💡', label: 'Astuces & Techniques', route: '/tips' },
+            { emoji: '📚', label: 'Glossaire Culinaire', route: '/glossary' },
           ].map(({ emoji, label, route, highlight }) => (
             <TouchableOpacity
               key={route}
