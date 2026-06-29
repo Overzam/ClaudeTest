@@ -1,6 +1,6 @@
 import React, { useEffect, useRef } from 'react';
 import { Animated, Modal, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
-import { Colors } from '@/constants/Colors';
+import { useThemeStore } from '@/stores/themeStore';
 import { Layout } from '@/constants/Layout';
 import type { Badge } from '@/types/database.types';
 
@@ -10,6 +10,8 @@ interface Props {
 }
 
 export function NewBadgeModal({ badge, onClose }: Props) {
+  const { theme } = useThemeStore();
+  const c = theme.colors;
   const scale = useRef(new Animated.Value(0)).current;
   const opacity = useRef(new Animated.Value(0)).current;
 
@@ -30,12 +32,12 @@ export function NewBadgeModal({ badge, onClose }: Props) {
   return (
     <Modal transparent animationType="none" visible={!!badge}>
       <Animated.View style={[styles.backdrop, { opacity }]}>
-        <Animated.View style={[styles.card, { transform: [{ scale }] }]}>
-          <Text style={styles.newText}>Nouveau badge !</Text>
+        <Animated.View style={[styles.card, { backgroundColor: c.surface, transform: [{ scale }] }]}>
+          <Text style={[styles.newText, { color: c.secondary }]}>Nouveau badge !</Text>
           <Text style={styles.emoji}>{badge.emoji}</Text>
-          <Text style={styles.title}>{badge.title}</Text>
-          <Text style={styles.desc}>{badge.description}</Text>
-          <TouchableOpacity style={styles.btn} onPress={onClose}>
+          <Text style={[styles.title, { color: c.text }]}>{badge.title}</Text>
+          <Text style={[styles.desc, { color: c.textMuted }]}>{badge.description}</Text>
+          <TouchableOpacity style={[styles.btn, { backgroundColor: c.primary }]} onPress={onClose}>
             <Text style={styles.btnText}>Super !</Text>
           </TouchableOpacity>
         </Animated.View>
@@ -52,7 +54,6 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   card: {
-    backgroundColor: Colors.surface,
     borderRadius: Layout.radius.xl,
     padding: Layout.spacing.xl,
     alignItems: 'center',
@@ -64,13 +65,12 @@ const styles = StyleSheet.create({
     shadowRadius: 16,
     elevation: 12,
   },
-  newText: { fontSize: Layout.fontSize.sm, fontWeight: '700', color: Colors.secondary, textTransform: 'uppercase', letterSpacing: 1 },
+  newText: { fontSize: Layout.fontSize.sm, fontWeight: '700', textTransform: 'uppercase', letterSpacing: 1 },
   emoji: { fontSize: 64, marginVertical: Layout.spacing.sm },
-  title: { fontSize: Layout.fontSize.xl, fontWeight: '900', color: Colors.text },
-  desc: { fontSize: Layout.fontSize.sm, color: Colors.textMuted, textAlign: 'center' },
+  title: { fontSize: Layout.fontSize.xl, fontWeight: '900' },
+  desc: { fontSize: Layout.fontSize.sm, textAlign: 'center' },
   btn: {
     marginTop: Layout.spacing.md,
-    backgroundColor: Colors.primary,
     paddingHorizontal: Layout.spacing.xl,
     paddingVertical: Layout.spacing.md,
     borderRadius: Layout.radius.full,

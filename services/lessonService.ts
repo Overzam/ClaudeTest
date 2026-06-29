@@ -1,6 +1,9 @@
 import { supabase, isSupabaseConfigured } from './supabase';
 import { cacheExercises, getCachedExercises } from './offlineCache';
 import { getLocalExercises } from '@/constants/exercisesData';
+import { LOCAL_LESSONS } from '@/constants/localData';
+import { GUEST_USER_ID } from '@/stores/authStore';
+import { useProgressStore } from '@/stores/progressStore';
 import type { Exercise } from '@/types/lesson.types';
 import type { ExerciseRow } from '@/types/database.types';
 
@@ -92,18 +95,39 @@ function generateGenericExercises(lessonId: string): Exercise[] {
   ];
 }
 
+export async function fetchLessonById(lessonId: string) {
+  // For guests or offline: search local data
+  for (const [, lessons] of Object.entries(LOCAL_LESSONS)) {
+    const found = lessons.find((l) => l.id === lessonId);
+    if (found) return { id: found.id, path_id: found.path_id, order_index: found.order_index };
+  }
+
+  if (!isSupabaseConfigured) return null;
+  const { data } = await supabase
+    .from('lessons')
+    .select('id, path_id, order_index')
+    .eq('id', lessonId)
+    .single();
+  return data ?? null;
+}
+
 export async function submitLessonProgress(
   userId: string,
   lessonId: string,
-  pathId: string,
-  score: number
+  _pathId: string,
+  _score: number
 ) {
+  if (userId === GUEST_USER_ID) {
+    useProgressStore.getState().markComplete(lessonId);
+    return;
+  }
+  if (!isSupabaseConfigured) return;
   const { error } = await supabase.from('user_progress').upsert({
     user_id: userId,
     lesson_id: lessonId,
-    path_id: pathId,
+    path_id: _pathId,
     status: 'completed',
-    score,
+    score: _score,
     completed_at: new Date().toISOString(),
   });
   if (error) throw error;
@@ -114,6 +138,14 @@ export async function unlockNextLesson(
   currentLessonOrderIndex: number,
   pathId: string
 ) {
+  if (userId === GUEST_USER_ID) {
+    const lessons = LOCAL_LESSONS[pathId] ?? [];
+    const next = lessons.find((l) => l.order_index === currentLessonOrderIndex + 1);
+    if (next) useProgressStore.getState().unlockLesson(next.id);
+    return;
+  }
+
+  if (!isSupabaseConfigured) return;
   const { data: nextLesson } = await supabase
     .from('lessons')
     .select('id')

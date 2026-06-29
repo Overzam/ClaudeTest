@@ -3,7 +3,7 @@ import { Alert, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'rea
 import { router } from 'expo-router';
 import { ScreenWrapper } from '@/components/ui/ScreenWrapper';
 import { Card } from '@/components/ui/Card';
-import { Colors } from '@/constants/Colors';
+import { useThemeStore } from '@/stores/themeStore';
 import { Layout } from '@/constants/Layout';
 import { usePremiumStore, SHOP_ITEMS } from '@/stores/premiumStore';
 import { useGameStore } from '@/stores/gameStore';
@@ -12,23 +12,21 @@ import { useTranslation } from 'react-i18next';
 
 export default function ShopScreen() {
   const { t } = useTranslation();
+  const { theme } = useThemeStore();
+  const c = theme.colors;
   const { coins, spendCoins, isPremium, activateXPBoost, addCoins } = usePremiumStore();
-  const { hearts, loseHeart } = useGameStore();
+  const { hearts } = useGameStore();
   const premium = isPremium();
 
   function handleBuy(itemId: string) {
     const item = SHOP_ITEMS.find((i) => i.id === itemId);
     if (!item) return;
-
     if (!spendCoins(item.coinCost)) {
       Alert.alert('Pas assez de pièces', `Il te faut ${item.coinCost} pièces.`);
       return;
     }
-
     if (item.type === 'hearts') {
-      // Add hearts via gameStore — cap at MAX_HEARTS
       const toAdd = Math.min(item.amount, MAX_HEARTS - hearts);
-      // We don't have addHearts directly, so we simulate via the store
       useGameStore.setState((s) => ({ hearts: Math.min(MAX_HEARTS, s.hearts + toAdd) }));
       Alert.alert('❤️ Cœurs ajoutés !', `+${toAdd} cœurs récupérés.`);
     } else if (item.type === 'xp_boost') {
@@ -38,7 +36,6 @@ export default function ShopScreen() {
   }
 
   function handleWatchAd() {
-    // In production: integrate AdMob or Expo Ads here
     addCoins(25);
     Alert.alert('🎉 +25 pièces !', 'Merci d\'avoir regardé la pub.');
   }
@@ -47,46 +44,47 @@ export default function ShopScreen() {
     <ScreenWrapper>
       <View style={styles.header}>
         <TouchableOpacity onPress={() => router.back()}>
-          <Text style={styles.back}>{t('common.back')}</Text>
+          <Text style={[styles.back, { color: c.primary }]}>{t('common.back')}</Text>
         </TouchableOpacity>
-        <Text style={styles.title}>{t('shop.title')}</Text>
-        <View style={styles.coinsBox}>
-          <Text style={styles.coinsText}>🪙 {coins}</Text>
+        <Text style={[styles.title, { color: c.text }]}>{t('shop.title')}</Text>
+        <View style={[styles.coinsBox, { backgroundColor: c.secondary + '25' }]}>
+          <Text style={[styles.coinsText, { color: c.text }]}>🪙 {coins}</Text>
         </View>
       </View>
 
       <ScrollView contentContainerStyle={styles.content}>
-        {/* Premium banner */}
         {!premium && (
-          <TouchableOpacity style={styles.premiumBanner} onPress={() => router.push('/premium')}>
+          <TouchableOpacity
+            style={[styles.premiumBanner, { backgroundColor: c.secondary + '20', borderColor: c.secondary }]}
+            onPress={() => router.push('/premium')}
+          >
             <Text style={styles.premiumEmoji}>✨</Text>
             <View style={styles.premiumInfo}>
-              <Text style={styles.premiumTitle}>{t('shop.premiumBanner')}</Text>
-              <Text style={styles.premiumDesc}>{t('shop.premiumDesc')}</Text>
+              <Text style={[styles.premiumTitle, { color: c.text }]}>{t('shop.premiumBanner')}</Text>
+              <Text style={[styles.premiumDesc, { color: c.textMuted }]}>{t('shop.premiumDesc')}</Text>
             </View>
-            <Text style={styles.premiumArrow}>›</Text>
+            <Text style={[styles.premiumArrow, { color: c.textMuted }]}>›</Text>
           </TouchableOpacity>
         )}
 
-        {/* Free coins */}
         <Card style={styles.freeCoinsCard}>
-          <Text style={styles.freeCoinsText}>{t('shop.freeCoins')}</Text>
-          <TouchableOpacity style={styles.watchBtn} onPress={handleWatchAd}>
+          <Text style={[styles.freeCoinsText, { color: c.text }]}>{t('shop.freeCoins')}</Text>
+          <TouchableOpacity style={[styles.watchBtn, { backgroundColor: c.xpBlue }]} onPress={handleWatchAd}>
             <Text style={styles.watchBtnText}>{t('shop.watch')} 🎥</Text>
           </TouchableOpacity>
         </Card>
 
-        <Text style={styles.sectionTitle}>{t('shop.hearts')}</Text>
+        <Text style={[styles.sectionTitle, { color: c.text }]}>{t('shop.hearts')}</Text>
         <View style={styles.grid}>
           {SHOP_ITEMS.filter((i) => i.type === 'hearts').map((item) => (
-            <ShopCard key={item.id} item={item} coins={coins} onBuy={() => handleBuy(item.id)} t={t} />
+            <ShopCard key={item.id} item={item} coins={coins} onBuy={() => handleBuy(item.id)} t={t} c={c} />
           ))}
         </View>
 
-        <Text style={styles.sectionTitle}>{t('shop.xpBoost')}</Text>
+        <Text style={[styles.sectionTitle, { color: c.text }]}>{t('shop.xpBoost')}</Text>
         <View style={styles.grid}>
           {SHOP_ITEMS.filter((i) => i.type === 'xp_boost').map((item) => (
-            <ShopCard key={item.id} item={item} coins={coins} onBuy={() => handleBuy(item.id)} t={t} />
+            <ShopCard key={item.id} item={item} coins={coins} onBuy={() => handleBuy(item.id)} t={t} c={c} />
           ))}
         </View>
       </ScrollView>
@@ -95,24 +93,22 @@ export default function ShopScreen() {
 }
 
 function ShopCard({
-  item,
-  coins,
-  onBuy,
-  t,
+  item, coins, onBuy, t, c,
 }: {
   item: typeof SHOP_ITEMS[0];
   coins: number;
   onBuy: () => void;
   t: (k: string, o?: object) => string;
+  c: ReturnType<typeof useThemeStore>['theme']['colors'];
 }) {
   const canAfford = coins >= item.coinCost;
   return (
     <Card style={styles.shopCard}>
       <Text style={styles.shopEmoji}>{item.emoji}</Text>
-      <Text style={styles.shopLabel}>{item.label}</Text>
-      <Text style={styles.shopCost}>🪙 {item.coinCost}</Text>
+      <Text style={[styles.shopLabel, { color: c.text }]}>{item.label}</Text>
+      <Text style={[styles.shopCost, { color: c.textMuted }]}>🪙 {item.coinCost}</Text>
       <TouchableOpacity
-        style={[styles.buyBtn, !canAfford && styles.buyBtnDisabled]}
+        style={[styles.buyBtn, { backgroundColor: canAfford ? c.primary : c.border }]}
         onPress={onBuy}
         disabled={!canAfford}
       >
@@ -124,37 +120,34 @@ function ShopCard({
 
 const styles = StyleSheet.create({
   header: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', padding: Layout.spacing.lg },
-  back: { color: Colors.primary, fontWeight: '600', fontSize: Layout.fontSize.md },
-  title: { fontSize: Layout.fontSize.xl, fontWeight: '900', color: Colors.text },
-  coinsBox: { backgroundColor: Colors.secondary + '25', paddingHorizontal: Layout.spacing.md, paddingVertical: 6, borderRadius: Layout.radius.full },
-  coinsText: { fontWeight: '700', color: Colors.text, fontSize: Layout.fontSize.sm },
+  back: { fontWeight: '600', fontSize: Layout.fontSize.md },
+  title: { fontSize: Layout.fontSize.xl, fontWeight: '900' },
+  coinsBox: { paddingHorizontal: Layout.spacing.md, paddingVertical: 6, borderRadius: Layout.radius.full },
+  coinsText: { fontWeight: '700', fontSize: Layout.fontSize.sm },
   content: { padding: Layout.spacing.lg, gap: Layout.spacing.lg },
   premiumBanner: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: Colors.secondary + '20',
     borderWidth: 2,
-    borderColor: Colors.secondary,
     borderRadius: Layout.radius.lg,
     padding: Layout.spacing.md,
     gap: Layout.spacing.md,
   },
   premiumEmoji: { fontSize: 32 },
   premiumInfo: { flex: 1 },
-  premiumTitle: { fontSize: Layout.fontSize.md, fontWeight: '800', color: Colors.text },
-  premiumDesc: { fontSize: Layout.fontSize.xs, color: Colors.textMuted },
-  premiumArrow: { fontSize: 24, color: Colors.textMuted },
+  premiumTitle: { fontSize: Layout.fontSize.md, fontWeight: '800' },
+  premiumDesc: { fontSize: Layout.fontSize.xs },
+  premiumArrow: { fontSize: 24 },
   freeCoinsCard: { flexDirection: 'row', alignItems: 'center', gap: Layout.spacing.md },
-  freeCoinsText: { flex: 1, fontSize: Layout.fontSize.sm, color: Colors.text, fontWeight: '600' },
-  watchBtn: { backgroundColor: Colors.xpBlue, paddingHorizontal: Layout.spacing.md, paddingVertical: 8, borderRadius: Layout.radius.full },
+  freeCoinsText: { flex: 1, fontSize: Layout.fontSize.sm, fontWeight: '600' },
+  watchBtn: { paddingHorizontal: Layout.spacing.md, paddingVertical: 8, borderRadius: Layout.radius.full },
   watchBtnText: { color: '#fff', fontWeight: '700', fontSize: Layout.fontSize.sm },
-  sectionTitle: { fontSize: Layout.fontSize.lg, fontWeight: '800', color: Colors.text },
+  sectionTitle: { fontSize: Layout.fontSize.lg, fontWeight: '800' },
   grid: { flexDirection: 'row', flexWrap: 'wrap', gap: Layout.spacing.md },
   shopCard: { alignItems: 'center', gap: Layout.spacing.xs, padding: Layout.spacing.md, width: 140 },
   shopEmoji: { fontSize: 32 },
-  shopLabel: { fontSize: Layout.fontSize.sm, fontWeight: '700', color: Colors.text, textAlign: 'center' },
-  shopCost: { fontSize: Layout.fontSize.sm, color: Colors.textMuted, fontWeight: '600' },
-  buyBtn: { backgroundColor: Colors.primary, paddingHorizontal: Layout.spacing.lg, paddingVertical: 6, borderRadius: Layout.radius.full, marginTop: 4 },
-  buyBtnDisabled: { backgroundColor: Colors.border },
+  shopLabel: { fontSize: Layout.fontSize.sm, fontWeight: '700', textAlign: 'center' },
+  shopCost: { fontSize: Layout.fontSize.sm, fontWeight: '600' },
+  buyBtn: { paddingHorizontal: Layout.spacing.lg, paddingVertical: 6, borderRadius: Layout.radius.full, marginTop: 4 },
   buyBtnText: { color: '#fff', fontWeight: '700', fontSize: Layout.fontSize.sm },
 });

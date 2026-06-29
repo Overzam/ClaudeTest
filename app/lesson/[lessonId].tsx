@@ -1,5 +1,6 @@
 import React, { useEffect } from 'react';
 import { Alert, StyleSheet, View } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { router, useLocalSearchParams } from 'expo-router';
 import { ExerciseHeader } from '@/components/lesson/ExerciseHeader';
 import { AnswerFeedback } from '@/components/lesson/AnswerFeedback';
@@ -9,17 +10,18 @@ import { PhotoIdentification } from '@/components/lesson/exercises/PhotoIdentifi
 import { Association } from '@/components/lesson/exercises/Association';
 import { FillInBlank } from '@/components/lesson/exercises/FillInBlank';
 import { LoadingScreen } from '@/components/ui/LoadingScreen';
-import { Colors } from '@/constants/Colors';
+import { useThemeStore } from '@/stores/themeStore';
 import { useLessonStore } from '@/stores/lessonStore';
 import { useGameStore } from '@/stores/gameStore';
 import { useProgressStore } from '@/stores/progressStore';
 import { useAuthStore } from '@/stores/authStore';
-import { submitLessonProgress, unlockNextLesson } from '@/services/lessonService';
+import { submitLessonProgress, unlockNextLesson, fetchLessonById } from '@/services/lessonService';
 import { updateStreak, incrementLessonsCompleted } from '@/services/statsService';
-import { fetchLessons } from '@/services/pathService';
 import { useBadgeStore } from '@/stores/badgeStore';
 
 export default function LessonScreen() {
+  const insets = useSafeAreaInsets();
+  const { theme } = useThemeStore();
   const { lessonId, lessonTitle } = useLocalSearchParams<{ lessonId: string; lessonTitle?: string }>();
   const { session } = useAuthStore();
   const lessonStore = useLessonStore();
@@ -46,22 +48,19 @@ export default function LessonScreen() {
     await updateStreak(userId);
     await incrementLessonsCompleted(userId);
 
-    const currentExercise = lessonStore.exercises[0];
-    if (currentExercise) {
-      const lessons = await fetchLessons(currentExercise.lessonId);
-      const current = lessons.find((l) => l.id === lessonId);
-      if (current) {
-        const pathId = current.path_id ?? '';
-        await submitLessonProgress(userId, lessonId, pathId, lessonStore.score);
-        await unlockNextLesson(userId, current.order_index, pathId);
-      }
+    const lessonData = await fetchLessonById(lessonId);
+    if (lessonData) {
+      const pathId = lessonData.path_id ?? '';
+      await submitLessonProgress(userId, lessonId, pathId, lessonStore.score);
+      await unlockNextLesson(userId, lessonData.order_index, pathId);
     }
     markComplete(lessonId);
     checkBadges(userId);
 
     router.replace({
-      pathname: '/lesson/complete',
+      pathname: '/lesson/recipe',
       params: {
+        lessonId,
         xpEarned: String(lessonStore.xpEarned),
         score: String(lessonStore.score),
         mistakes: String(lessonStore.mistakesCount),
@@ -84,8 +83,8 @@ export default function LessonScreen() {
   const progress = (lessonStore.currentIndex + (lessonStore.phase === 'feedback' ? 1 : 0)) / lessonStore.exercises.length;
 
   function renderExercise() {
-    const submit = (correct: boolean) => {
-      lessonStore.submitAnswer(correct);
+    const submit = (correct: boolean, correctAnswerText?: string) => {
+      lessonStore.submitAnswer(correct, correctAnswerText);
       if (!correct) gameStore.loseHeart();
       if (gameStore.hearts <= 1 && !correct) {
         setTimeout(() => {
@@ -111,7 +110,7 @@ export default function LessonScreen() {
   }
 
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, { paddingTop: insets.top, backgroundColor: theme.colors.background }]}>
       <ExerciseHeader
         progress={progress}
         hearts={gameStore.hearts}
@@ -121,6 +120,7 @@ export default function LessonScreen() {
       {lessonStore.phase === 'feedback' && lessonStore.lastAnswerCorrect !== null && (
         <AnswerFeedback
           correct={lessonStore.lastAnswerCorrect}
+          correctAnswerText={lessonStore.correctAnswerText}
           onContinue={lessonStore.nextExercise}
         />
       )}
@@ -129,6 +129,7 @@ export default function LessonScreen() {
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: Colors.background },
+  container: { flex: 1 },
   exercise: { flex: 1 },
 });
+

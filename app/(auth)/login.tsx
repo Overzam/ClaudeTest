@@ -4,8 +4,11 @@ import { router } from 'expo-router';
 import { ScreenWrapper } from '@/components/ui/ScreenWrapper';
 import { Button } from '@/components/ui/Button';
 import { useThemeStore } from '@/stores/themeStore';
+import { useAuthStore } from '@/stores/authStore';
+import { useProgressStore } from '@/stores/progressStore';
 import { Layout } from '@/constants/Layout';
 import { signIn } from '@/services/authService';
+import { GUEST_USER_ID } from '@/stores/authStore';
 
 export default function LoginScreen() {
   const [email, setEmail] = useState('');
@@ -13,6 +16,8 @@ export default function LoginScreen() {
   const [loading, setLoading] = useState(false);
   const { theme } = useThemeStore();
   const c = theme.colors;
+  const { loginAsGuest } = useAuthStore();
+  const { loadProgress } = useProgressStore();
 
   async function handleLogin() {
     if (!email.trim() || !password) return;
@@ -21,7 +26,14 @@ export default function LoginScreen() {
       await signIn(email.trim(), password);
       router.replace('/(tabs)');
     } catch (e: unknown) {
-      Alert.alert('Erreur', e instanceof Error ? e.message : 'Connexion impossible');
+      const msg = e instanceof Error ? e.message : 'Connexion impossible';
+      const isConfirm = msg.toLowerCase().includes('confirm') || msg.toLowerCase().includes('email not confirmed');
+      Alert.alert(
+        isConfirm ? 'Email non confirmé' : 'Erreur',
+        isConfirm
+          ? 'Tu dois confirmer ton adresse email avant de te connecter. Vérifie ta boîte mail (et les spams).'
+          : msg
+      );
     } finally {
       setLoading(false);
     }
@@ -62,6 +74,20 @@ export default function LoginScreen() {
             variant="ghost"
             style={styles.signupBtn}
           />
+          <View style={styles.divider}>
+            <View style={[styles.dividerLine, { backgroundColor: c.border }]} />
+            <Text style={[styles.dividerText, { color: c.textMuted }]}>ou</Text>
+            <View style={[styles.dividerLine, { backgroundColor: c.border }]} />
+          </View>
+          <Button
+            label="Continuer sans compte"
+            onPress={async () => {
+              await loginAsGuest();
+              await loadProgress(GUEST_USER_ID);
+              router.replace('/(tabs)');
+            }}
+            variant="secondary"
+          />
         </ScrollView>
       </KeyboardAvoidingView>
     </ScreenWrapper>
@@ -87,4 +113,7 @@ const styles = StyleSheet.create({
     fontSize: Layout.fontSize.md,
   },
   signupBtn: { marginTop: Layout.spacing.sm },
+  divider: { flexDirection: 'row', alignItems: 'center', gap: Layout.spacing.sm, marginVertical: Layout.spacing.sm },
+  dividerLine: { flex: 1, height: 1 },
+  dividerText: { fontSize: Layout.fontSize.sm },
 });

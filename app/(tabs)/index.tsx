@@ -13,7 +13,18 @@ import { useGameStore } from '@/stores/gameStore';
 import { useProgressStore } from '@/stores/progressStore';
 import { fetchPaths, fetchLessons } from '@/services/pathService';
 import { fetchUserStats } from '@/services/statsService';
+import { DuoCuistot } from '@/components/mascot/DuoCuistot';
 import type { Path, Lesson } from '@/types/database.types';
+
+function getGreeting(username: string | undefined): { text: string; sub: string } {
+  const hour = new Date().getHours();
+  const name = username ? ` ${username}` : '';
+  if (hour < 6) return { text: `Bonsoir${name} 🌙`, sub: 'La nuit des grands cuisiniers...' };
+  if (hour < 12) return { text: `Bonjour${name} ☀️`, sub: 'Prêt à cuisiner ce matin ?' };
+  if (hour < 14) return { text: `Bon appétit${name} 🍽️`, sub: 'L\'heure du déjeuner approche !' };
+  if (hour < 18) return { text: `Bel après-midi${name} 👋`, sub: 'Une leçon avant le dîner ?' };
+  return { text: `Bonsoir${name} 🍷`, sub: 'L\'heure du chef est venue.' };
+}
 
 const QUICK_TIPS = [
   "Un couteau aiguisé est plus sûr qu'un couteau émoussé — il glisse moins.",
@@ -41,29 +52,45 @@ export default function HomeScreen() {
   const [loading, setLoading] = useState(true);
   const { theme } = useThemeStore();
   const c = theme.colors;
+  const greeting = getGreeting(user?.username);
 
   useFocusEffect(
     useCallback(() => {
       if (!session?.user.id) return;
       async function load() {
         setLoading(true);
-        const [stats, pathList] = await Promise.all([
-          fetchUserStats(session!.user.id),
-          fetchPaths(),
-        ]);
-        if (stats) gameStore.setStats(stats, session!.user.id);
-        await loadProgress(session!.user.id);
-        const map: Record<string, Lesson[]> = {};
-        await Promise.all(pathList.map(async (p) => { map[p.id] = await fetchLessons(p.id); }));
-        setPaths(pathList);
-        setLessonsMap(map);
-        setLoading(false);
+        try {
+          const [stats, pathList] = await Promise.all([
+            fetchUserStats(session!.user.id),
+            fetchPaths(),
+          ]);
+          if (stats) gameStore.setStats(stats, session!.user.id);
+          await loadProgress(session!.user.id);
+          const map: Record<string, Lesson[]> = {};
+          await Promise.all(pathList.map(async (p) => { map[p.id] = await fetchLessons(p.id); }));
+          setPaths(pathList);
+          setLessonsMap(map);
+        } finally {
+          setLoading(false);
+        }
       }
       load();
     }, [session?.user.id])
   );
 
   if (loading) return <LoadingScreen />;
+
+  // Find the next available (unlocked but not completed) lesson across all paths
+  let nextLesson: { lesson: Lesson; path: Path } | null = null;
+  outer: for (const path of paths) {
+    for (const lesson of lessonsMap[path.id] ?? []) {
+      const effectiveStatus = lessonProgress[lesson.id] ?? (lesson.order_index === 0 ? 'available' : 'locked');
+      if (effectiveStatus === 'available') {
+        nextLesson = { lesson, path };
+        break outer;
+      }
+    }
+  }
 
   const inProgressPaths = paths.filter((p) => {
     const lessons = lessonsMap[p.id] ?? [];
@@ -76,11 +103,12 @@ export default function HomeScreen() {
       <ScrollView contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
         {/* Header */}
         <View style={styles.header}>
-          <View>
-            <Text style={[styles.greeting, { color: c.text }]}>
-              Bonjour {user?.username ?? ''} 👋
-            </Text>
-            <Text style={[styles.subGreeting, { color: c.textMuted }]}>Prêt à cuisiner ?</Text>
+          <View style={styles.headerLeft}>
+            <DuoCuistot size={64} />
+            <View>
+              <Text style={[styles.greeting, { color: c.text }]}>{greeting.text}</Text>
+              <Text style={[styles.subGreeting, { color: c.textMuted }]}>{greeting.sub}</Text>
+            </View>
           </View>
           <View style={styles.headerRight}>
             <StreakBadge streakDays={gameStore.streakDays} />
@@ -89,6 +117,24 @@ export default function HomeScreen() {
         </View>
 
         <XPBar xp={gameStore.xp} level={gameStore.level} style={styles.xpBar} />
+
+        {/* Next lesson shortcut */}
+        {nextLesson && (
+          <TouchableOpacity
+            style={[styles.nextLessonCard, { backgroundColor: nextLesson.path.color + '15', borderColor: nextLesson.path.color + '40' }]}
+            onPress={() => router.push({ pathname: '/lesson/[lessonId]', params: { lessonId: nextLesson!.lesson.id, lessonTitle: nextLesson!.lesson.title } })}
+            activeOpacity={0.85}
+          >
+            <Text style={styles.nextLessonEmoji}>{nextLesson.path.emoji}</Text>
+            <View style={styles.challengeInfo}>
+              <Text style={[styles.challengeLabel, { color: nextLesson.path.color }]}>PROCHAINE LEÇON</Text>
+              <Text style={[styles.challengeTitle, { color: c.text }]} numberOfLines={1}>{nextLesson.lesson.title}</Text>
+            </View>
+            <View style={[styles.nextLessonXP, { backgroundColor: nextLesson.path.color }]}>
+              <Text style={styles.nextLessonXPText}>+{nextLesson.lesson.xp_reward} XP</Text>
+            </View>
+          </TouchableOpacity>
+        )}
 
         {/* Daily challenge banner */}
         <TouchableOpacity
@@ -184,8 +230,9 @@ export default function HomeScreen() {
 
 const styles = StyleSheet.create({
   content: { padding: Layout.spacing.lg, gap: Layout.spacing.md, paddingBottom: 40 },
-  header: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'flex-start' },
-  greeting: { fontSize: Layout.fontSize.xl, fontWeight: '800' },
+  header: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
+  headerLeft: { flexDirection: 'row', alignItems: 'center', gap: Layout.spacing.sm },
+  greeting: { fontSize: Layout.fontSize.lg, fontWeight: '800' },
   subGreeting: { fontSize: Layout.fontSize.sm },
   headerRight: { alignItems: 'flex-end', gap: Layout.spacing.xs },
   xpBar: { marginVertical: Layout.spacing.sm },
@@ -261,4 +308,19 @@ const styles = StyleSheet.create({
     borderWidth: 1,
   },
   tipBannerEmoji: { fontSize: 28 },
+  nextLessonCard: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    borderRadius: Layout.radius.xl,
+    padding: Layout.spacing.md,
+    gap: Layout.spacing.md,
+    borderWidth: 1.5,
+  },
+  nextLessonEmoji: { fontSize: 32 },
+  nextLessonXP: {
+    borderRadius: Layout.radius.full,
+    paddingHorizontal: Layout.spacing.sm,
+    paddingVertical: 4,
+  },
+  nextLessonXPText: { color: '#fff', fontWeight: '800', fontSize: Layout.fontSize.xs },
 });

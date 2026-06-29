@@ -11,12 +11,13 @@ interface LessonState {
   currentIndex: number;
   phase: LessonPhase;
   lastAnswerCorrect: boolean | null;
+  correctAnswerText: string | null;
   xpEarned: number;
   mistakesCount: number;
   score: number;
 
   loadLesson: (lessonId: string, lessonTitle?: string) => Promise<void>;
-  submitAnswer: (correct: boolean) => void;
+  submitAnswer: (correct: boolean, correctAnswerText?: string) => void;
   nextExercise: () => void;
   reset: () => void;
 }
@@ -27,6 +28,7 @@ export const useLessonStore = create<LessonState>((set, get) => ({
   currentIndex: 0,
   phase: 'loading',
   lastAnswerCorrect: null,
+  correctAnswerText: null,
   xpEarned: 0,
   mistakesCount: 0,
   score: 0,
@@ -37,12 +39,13 @@ export const useLessonStore = create<LessonState>((set, get) => ({
     set({ exercises, phase: exercises.length > 0 ? 'exercise' : 'complete' });
   },
 
-  submitAnswer: (correct) => {
+  submitAnswer: (correct, correctAnswerText) => {
     const { xpEarned, mistakesCount, exercises, currentIndex } = get();
     const xpGain = correct ? exercises[currentIndex]?.xpReward ?? XP_PER_EXERCISE : 0;
     set({
       phase: 'feedback',
       lastAnswerCorrect: correct,
+      correctAnswerText: correct ? null : (correctAnswerText ?? null),
       xpEarned: xpEarned + xpGain,
       mistakesCount: correct ? mistakesCount : mistakesCount + 1,
     });
@@ -56,9 +59,9 @@ export const useLessonStore = create<LessonState>((set, get) => ({
       const correctAnswers = totalAnswered - mistakesCount;
       const score = Math.round((correctAnswers / totalAnswered) * 100);
       const bonusXP = mistakesCount === 0 ? XP_LESSON_COMPLETION_BONUS : 0;
-      set({ phase: 'complete', score, xpEarned: xpEarned + bonusXP });
+      set({ phase: 'complete', score, xpEarned: xpEarned + bonusXP, correctAnswerText: null });
     } else {
-      set({ currentIndex: currentIndex + 1, phase: 'exercise', lastAnswerCorrect: null });
+      set({ currentIndex: currentIndex + 1, phase: 'exercise', lastAnswerCorrect: null, correctAnswerText: null });
     }
   },
 

@@ -2,7 +2,7 @@ import React from 'react';
 import { StyleSheet, TouchableOpacity, View } from 'react-native';
 import { ProgressBar } from '@/components/ui/ProgressBar';
 import { HeartsDisplay } from '@/components/gamification/HeartsDisplay';
-import { Colors } from '@/constants/Colors';
+import { useThemeStore } from '@/stores/themeStore';
 import { Layout } from '@/constants/Layout';
 import { Ionicons } from '@expo/vector-icons';
 
@@ -13,10 +13,12 @@ interface Props {
 }
 
 export function ExerciseHeader({ progress, hearts, onClose }: Props) {
+  const { theme } = useThemeStore();
+  const c = theme.colors;
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, { borderBottomColor: c.border, borderBottomWidth: StyleSheet.hairlineWidth }]}>
       <TouchableOpacity onPress={onClose} hitSlop={8}>
-        <Ionicons name="close" size={28} color={Colors.textMuted} />
+        <Ionicons name="close" size={28} color={c.textMuted} />
       </TouchableOpacity>
       <ProgressBar progress={progress} style={styles.bar} />
       <HeartsDisplay hearts={hearts} />

@@ -1,9 +1,10 @@
-import React from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import React, { useEffect, useRef } from 'react';
+import { Animated, StyleSheet, Text, View } from 'react-native';
 import { router, useLocalSearchParams } from 'expo-router';
 import { ScreenWrapper } from '@/components/ui/ScreenWrapper';
 import { LessonCompleteCard } from '@/components/gamification/LessonCompleteCard';
 import { Button } from '@/components/ui/Button';
+import { DuoCuistot } from '@/components/mascot/DuoCuistot';
 import { useThemeStore } from '@/stores/themeStore';
 import { Layout } from '@/constants/Layout';
 
@@ -17,20 +18,68 @@ export default function LessonCompleteScreen() {
   const c = theme.colors;
 
   const scoreNum = Number(score);
-  const perfect = scoreNum === 100 && Number(mistakes) === 0;
+  const mistakesNum = Number(mistakes);
+  const perfect = scoreNum === 100 && mistakesNum === 0;
+  const stars = mistakesNum === 0 ? 3 : mistakesNum <= 2 ? 2 : 1;
+
+  const scaleAnim = useRef(new Animated.Value(0)).current;
+  const fadeAnim = useRef(new Animated.Value(0)).current;
+  const star1Anim = useRef(new Animated.Value(0)).current;
+  const star2Anim = useRef(new Animated.Value(0)).current;
+  const star3Anim = useRef(new Animated.Value(0)).current;
+  const starAnims = [star1Anim, star2Anim, star3Anim];
+
+  useEffect(() => {
+    Animated.sequence([
+      Animated.parallel([
+        Animated.spring(scaleAnim, { toValue: 1, useNativeDriver: true, tension: 80, friction: 6 }),
+        Animated.timing(fadeAnim, { toValue: 1, duration: 400, useNativeDriver: true }),
+      ]),
+      Animated.stagger(150, starAnims.slice(0, stars).map((anim) =>
+        Animated.spring(anim, { toValue: 1, useNativeDriver: true, tension: 100, friction: 5 })
+      )),
+    ]).start();
+  }, []);
 
   return (
     <ScreenWrapper>
       <View style={styles.container}>
-        <View style={[styles.celebrationBox, { backgroundColor: c.success + '15' }]}>
-          <Text style={styles.celebrationEmoji}>{perfect ? '🏆' : '🎉'}</Text>
+        <Animated.View
+          style={[
+            styles.celebrationBox,
+            { backgroundColor: perfect ? c.success + '20' : c.primary + '15' },
+            { transform: [{ scale: scaleAnim }], opacity: fadeAnim },
+          ]}
+        >
+          <DuoCuistot size={90} animate />
           <Text style={[styles.title, { color: c.text }]}>
-            {perfect ? 'Parfait !' : 'Félicitations !'}
+            {perfect ? '🎉 Parfait !' : stars === 2 ? '👍 Bien joué !' : 'Continue !'}
           </Text>
+          <View style={styles.starsRow}>
+            {[0, 1, 2].map((i) => (
+              <Animated.Text
+                key={i}
+                style={[
+                  styles.star,
+                  {
+                    opacity: i < stars ? starAnims[i] : 0.2,
+                    transform: [{ scale: i < stars ? starAnims[i].interpolate({ inputRange: [0, 1], outputRange: [0.3, 1] }) : 1 }],
+                  },
+                ]}
+              >
+                ⭐
+              </Animated.Text>
+            ))}
+          </View>
           {perfect && (
             <Text style={[styles.perfectMsg, { color: c.success }]}>Zéro erreur — tu maîtrises !</Text>
           )}
-        </View>
+          {!perfect && mistakesNum > 0 && (
+            <Text style={[styles.mistakesMsg, { color: c.textMuted }]}>
+              {mistakesNum} erreur{mistakesNum > 1 ? 's' : ''} — tu progresses !
+            </Text>
+          )}
+        </Animated.View>
 
         <LessonCompleteCard
           xpEarned={Number(xpEarned)}
@@ -67,8 +116,10 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     gap: Layout.spacing.sm,
   },
-  celebrationEmoji: { fontSize: 64 },
   title: { fontSize: Layout.fontSize.xxl, fontWeight: '900', textAlign: 'center' },
-  perfectMsg: { fontSize: Layout.fontSize.md, fontWeight: '600' },
+  starsRow: { flexDirection: 'row', gap: 8, marginVertical: 4 },
+  star: { fontSize: 40 },
+  perfectMsg: { fontSize: Layout.fontSize.md, fontWeight: '700', textAlign: 'center' },
+  mistakesMsg: { fontSize: Layout.fontSize.sm, textAlign: 'center' },
   buttons: { gap: Layout.spacing.md },
 });

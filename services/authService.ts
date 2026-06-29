@@ -7,6 +7,9 @@ export async function signUp(email: string, password: string, username: string) 
     options: { data: { username } },
   });
   if (error) throw error;
+  if (!data.session) {
+    throw new Error('Vérifie ta boîte mail et confirme ton adresse pour continuer.');
+  }
   return data;
 }
 

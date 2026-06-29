@@ -1,17 +1,20 @@
 import React, { useMemo, useState } from 'react';
-import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { Button } from '@/components/ui/Button';
-import { Colors } from '@/constants/Colors';
+import { useThemeStore } from '@/stores/themeStore';
 import { Layout } from '@/constants/Layout';
 import type { AssociationData } from '@/types/lesson.types';
 
 interface Props {
   question: string;
   data: AssociationData;
-  onSubmit: (correct: boolean) => void;
+  onSubmit: (correct: boolean, correctAnswerText?: string) => void;
 }
 
 export function Association({ question, data, onSubmit }: Props) {
+  const { theme } = useThemeStore();
+  const c = theme.colors;
+
   const shuffledRight = useMemo(
     () => [...data.pairs.map((p) => p.right)].sort(() => Math.random() - 0.5),
     [data]
@@ -34,76 +37,86 @@ export function Association({ question, data, onSubmit }: Props) {
 
   function handleVerify() {
     const correct = data.pairs.every((pair, i) => matched[i] === pair.right);
-    onSubmit(correct);
+    const correctText = data.pairs.map((p) => `${p.left} → ${p.right}`).join('\n');
+    onSubmit(correct, correctText);
   }
 
   const usedRight = new Set(Object.values(matched));
 
   return (
     <View style={styles.container}>
-      <Text style={styles.question}>{question}</Text>
-      <View style={styles.columns}>
-        <View style={styles.col}>
-          {data.pairs.map((pair, i) => {
-            const isSelected = selectedLeft === i;
-            const isMatched = matched[i] !== undefined;
-            return (
-              <TouchableOpacity
-                key={i}
-                style={[styles.cell, isSelected && styles.cellSelected, isMatched && styles.cellMatched]}
-                onPress={() => !isMatched && handleLeft(i)}
-                disabled={isMatched}
-              >
-                <Text style={styles.cellText}>{pair.left}</Text>
-                {isMatched && <Text style={styles.matchedRight}> → {matched[i]}</Text>}
-              </TouchableOpacity>
-            );
-          })}
+      <ScrollView contentContainerStyle={styles.scroll} showsVerticalScrollIndicator={false}>
+        <Text style={[styles.question, { color: c.text }]}>{question}</Text>
+        <View style={styles.columns}>
+          <View style={styles.col}>
+            {data.pairs.map((pair, i) => {
+              const isSelected = selectedLeft === i;
+              const isMatched = matched[i] !== undefined;
+              return (
+                <TouchableOpacity
+                  key={i}
+                  style={[
+                    styles.cell,
+                    { borderColor: c.border, backgroundColor: c.surfaceElevated },
+                    isSelected && { borderColor: c.xpBlue, backgroundColor: c.xpBlue + '12' },
+                    isMatched && { borderColor: c.primary, backgroundColor: c.primary + '12' },
+                  ]}
+                  onPress={() => !isMatched && handleLeft(i)}
+                  disabled={isMatched}
+                >
+                  <Text style={[styles.cellText, { color: isMatched ? c.primary : c.text }]}>{pair.left}</Text>
+                  {isMatched && <Text style={[styles.matchedRight, { color: c.primary }]}>✓ {matched[i]}</Text>}
+                </TouchableOpacity>
+              );
+            })}
+          </View>
+          <View style={styles.col}>
+            {shuffledRight.map((right, i) => {
+              const isUsed = usedRight.has(right);
+              return (
+                <TouchableOpacity
+                  key={i}
+                  style={[
+                    styles.cell,
+                    { borderColor: c.border, backgroundColor: c.surfaceElevated },
+                    isUsed && { borderColor: c.primary, backgroundColor: c.primary + '12', opacity: 0.5 },
+                    !isUsed && selectedLeft !== null && { borderColor: c.secondary, backgroundColor: c.secondary + '12' },
+                  ]}
+                  onPress={() => !isUsed && handleRight(right)}
+                  disabled={isUsed || selectedLeft === null}
+                >
+                  <Text style={[styles.cellText, { color: isUsed ? c.primary : c.text }]}>{right}</Text>
+                </TouchableOpacity>
+              );
+            })}
+          </View>
         </View>
-        <View style={styles.col}>
-          {shuffledRight.map((right, i) => {
-            const isUsed = usedRight.has(right);
-            return (
-              <TouchableOpacity
-                key={i}
-                style={[styles.cell, isUsed && styles.cellMatched, selectedLeft !== null && !isUsed && styles.cellHighlight]}
-                onPress={() => !isUsed && handleRight(right)}
-                disabled={isUsed || selectedLeft === null}
-              >
-                <Text style={styles.cellText}>{right}</Text>
-              </TouchableOpacity>
-            );
-          })}
-        </View>
+        {selectedLeft !== null && (
+          <Text style={[styles.hint, { color: c.xpBlue }]}>Maintenant sélectionne la réponse à droite →</Text>
+        )}
+      </ScrollView>
+      <View style={[styles.footer, { borderTopColor: c.border }]}>
+        <Button label="Vérifier" onPress={handleVerify} disabled={!allMatched} />
       </View>
-      <Button
-        label="Vérifier"
-        onPress={handleVerify}
-        disabled={!allMatched}
-        style={styles.button}
-      />
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, padding: Layout.spacing.lg, gap: Layout.spacing.lg },
-  question: { fontSize: Layout.fontSize.lg, fontWeight: '700', color: Colors.text, textAlign: 'center' },
+  container: { flex: 1 },
+  scroll: { padding: Layout.spacing.lg, gap: Layout.spacing.md },
+  question: { fontSize: Layout.fontSize.lg, fontWeight: '700', textAlign: 'center', lineHeight: 28 },
   columns: { flexDirection: 'row', gap: Layout.spacing.sm },
   col: { flex: 1, gap: Layout.spacing.sm },
   cell: {
     borderWidth: 2,
-    borderColor: Colors.border,
     borderRadius: Layout.radius.md,
     padding: Layout.spacing.sm,
-    backgroundColor: Colors.surface,
     minHeight: 52,
     justifyContent: 'center',
   },
-  cellSelected: { borderColor: Colors.xpBlue },
-  cellMatched: { borderColor: Colors.primary, backgroundColor: Colors.primary + '10' },
-  cellHighlight: { borderColor: Colors.secondary },
-  cellText: { fontSize: Layout.fontSize.sm, fontWeight: '600', color: Colors.text, textAlign: 'center' },
-  matchedRight: { fontSize: Layout.fontSize.xs, color: Colors.primary, textAlign: 'center' },
-  button: { marginTop: 'auto' },
+  cellText: { fontSize: Layout.fontSize.sm, fontWeight: '600', textAlign: 'center' },
+  matchedRight: { fontSize: Layout.fontSize.xs, textAlign: 'center', marginTop: 2 },
+  hint: { fontSize: Layout.fontSize.xs, fontWeight: '600', textAlign: 'center' },
+  footer: { padding: Layout.spacing.lg, paddingTop: Layout.spacing.md, borderTopWidth: 1 },
 });
