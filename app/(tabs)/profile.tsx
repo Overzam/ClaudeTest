@@ -90,6 +90,9 @@ export default function ProfileScreen() {
           <Text style={[styles.xpLabel, { color: c.textSecondary }]}>accumulés depuis le début</Text>
         </View>
 
+        {/* Weekly activity calendar */}
+        <WeeklyCalendar streakDays={streakDays} c={c} />
+
         {/* Actions */}
         <View style={styles.actionGrid}>
           {[
@@ -149,6 +152,50 @@ export default function ProfileScreen() {
     </ScreenWrapper>
   );
 }
+
+const DAY_LABELS = ['L', 'M', 'M', 'J', 'V', 'S', 'D'];
+
+function WeeklyCalendar({ streakDays, c }: { streakDays: number; c: any }) {
+  const today = new Date().getDay(); // 0=Sun..6=Sat → remap to Mon=0
+  const todayIdx = today === 0 ? 6 : today - 1;
+  return (
+    <View style={calStyles.container}>
+      <Text style={[calStyles.title, { color: c.text }]}>🔥 Activité de la semaine</Text>
+      <View style={calStyles.row}>
+        {DAY_LABELS.map((label, i) => {
+          const isPast = i <= todayIdx;
+          const isToday = i === todayIdx;
+          const isActive = isPast && streakDays > todayIdx - i;
+          return (
+            <View key={i} style={calStyles.dayCol}>
+              <View style={[
+                calStyles.dot,
+                { backgroundColor: isActive ? c.streakOrange : isToday ? c.border : 'transparent', borderColor: isToday ? c.streakOrange : c.border, borderWidth: 1 },
+              ]}>
+                {isActive && <Text style={calStyles.flame}>🔥</Text>}
+              </View>
+              <Text style={[calStyles.label, { color: isToday ? c.streakOrange : c.textMuted }]}>{label}</Text>
+            </View>
+          );
+        })}
+      </View>
+      <Text style={[calStyles.streak, { color: c.streakOrange }]}>
+        {streakDays} jour{streakDays > 1 ? 's' : ''} de série !
+      </Text>
+    </View>
+  );
+}
+
+const calStyles = StyleSheet.create({
+  container: { borderRadius: Layout.radius.xl, padding: Layout.spacing.md, gap: Layout.spacing.sm, backgroundColor: 'transparent', borderWidth: 1, borderColor: 'rgba(255,150,0,0.25)' },
+  title: { fontSize: Layout.fontSize.sm, fontWeight: '700', textAlign: 'center' },
+  row: { flexDirection: 'row', justifyContent: 'space-around' },
+  dayCol: { alignItems: 'center', gap: 4 },
+  dot: { width: 36, height: 36, borderRadius: 18, alignItems: 'center', justifyContent: 'center' },
+  flame: { fontSize: 18 },
+  label: { fontSize: 11, fontWeight: '600' },
+  streak: { fontSize: Layout.fontSize.sm, fontWeight: '800', textAlign: 'center' },
+});
 
 const styles = StyleSheet.create({
   content: { padding: Layout.spacing.lg, gap: Layout.spacing.md, paddingBottom: 40 },
