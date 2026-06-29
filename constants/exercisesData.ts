@@ -702,6 +702,188 @@ export const STATIC_EXERCISES: Record<string, Exercise[]> = {
     },
   ],
 
+  // ── GREEK ──────────────────────────────────────────────────────────────────
+
+  'Le Tzatziki': [
+    {
+      id: 'local-gr-tzat-1', lessonId: 'gr-2', orderIndex: 0, xpReward: 10,
+      type: 'multiple_choice',
+      question: 'Quel est le secret pour un tzatziki qui ne rend pas d\'eau ?',
+      data: {
+        options: [
+          'Utiliser du yaourt maigre',
+          'Râper et saler le concombre puis le presser dans un linge',
+          'Ajouter de la fécule de maïs',
+          'Congeler le concombre avant utilisation',
+        ],
+        correctIndex: 1,
+        anecdote: 'Le concombre contient 95% d\'eau. Sans cette étape, votre tzatziki sera liquide en 30 minutes.',
+      },
+    },
+    {
+      id: 'local-gr-tzat-2', lessonId: 'gr-2', orderIndex: 1, xpReward: 10,
+      type: 'fill_in_blank',
+      question: 'Le tzatziki se prépare avec du yaourt grec, du concombre, de l\'ail et de l\'___ fraîche.',
+      data: { answer: 'aneth', hint: 'Herbe verte avec un goût anisé doux' },
+    },
+    {
+      id: 'local-gr-tzat-3', lessonId: 'gr-2', orderIndex: 2, xpReward: 10,
+      type: 'multiple_choice',
+      question: 'Combien de temps minimum le tzatziki doit-il reposer avant d\'être servi ?',
+      data: {
+        options: ['Aucun temps de repos', '30 minutes au frigo', '1 heure minimum', '3 heures'],
+        correctIndex: 2,
+      },
+    },
+  ],
+
+  'La Moussaka': [
+    {
+      id: 'local-gr-mous-1', lessonId: 'gr-4', orderIndex: 0, xpReward: 10,
+      type: 'multiple_choice',
+      question: 'Quel légume est la base de la moussaka grecque ?',
+      data: {
+        options: ['Courgettes', 'Aubergines', 'Pommes de terre', 'Poivrons'],
+        correctIndex: 1,
+        anecdote: 'La moussaka se retrouve dans toute la Méditerranée orientale avec des variantes. En Grèce, la version de Nikolaos Tselementes (années 1910) avec béchamel est devenue la norme.',
+      },
+    },
+    {
+      id: 'local-gr-mous-2', lessonId: 'gr-4', orderIndex: 1, xpReward: 10,
+      type: 'step_ordering',
+      question: 'Remets les couches de la moussaka dans l\'ordre (de bas en haut) :',
+      data: {
+        steps: ['Béchamel', 'Viande hachée épicée', 'Aubergines grillées (1ère couche)', 'Aubergines grillées (2ème couche)'],
+        correctOrder: [2, 1, 3, 0],
+      },
+    },
+    {
+      id: 'local-gr-mous-3', lessonId: 'gr-4', orderIndex: 2, xpReward: 10,
+      type: 'fill_in_blank',
+      question: 'La viande de la moussaka est parfumée à la cannelle, aux clous de girofle et au ___ de la Terre.',
+      data: { answer: 'muscade', hint: 'Épice utilisée aussi dans la béchamel' },
+    },
+  ],
+
+  // ── INDIAN ─────────────────────────────────────────────────────────────────
+
+  'Le Dal Makhani': [
+    {
+      id: 'local-in-dal-1', lessonId: 'in-2', orderIndex: 0, xpReward: 10,
+      type: 'multiple_choice',
+      question: 'Que signifie "makhani" en hindi ?',
+      data: {
+        options: ['Épicé', 'Au beurre', 'Fumé', 'Lentilles noires'],
+        correctIndex: 1,
+        anecdote: 'Le Dal Makhani a été créé au Moti Mahal de Delhi dans les années 1940. La recette originale cuit dans le tandoor pendant 24 heures. Dans les grands restaurants indiens, il mijote parfois 72 heures !',
+      },
+    },
+    {
+      id: 'local-in-dal-2', lessonId: 'in-2', orderIndex: 1, xpReward: 10,
+      type: 'fill_in_blank',
+      question: 'Le type de lentilles utilisé dans le dal makhani s\'appelle urad dal ou lentilles ___.',
+      data: { answer: 'noires', hint: 'Couleur du légume sec avant cuisson' },
+    },
+    {
+      id: 'local-in-dal-3', lessonId: 'in-2', orderIndex: 2, xpReward: 10,
+      type: 'multiple_choice',
+      question: 'Combien d\'heures minimum doit cuire un bon dal makhani ?',
+      data: {
+        options: ['30 minutes', '1 heure', '4 heures', '12 heures'],
+        correctIndex: 2,
+      },
+    },
+  ],
+
+  'Le Pain Naan': [
+    {
+      id: 'local-in-naan-1', lessonId: 'in-4', orderIndex: 0, xpReward: 10,
+      type: 'multiple_choice',
+      question: 'Dans quel four traditionnel cuit le naan authentique ?',
+      data: {
+        options: ['Four à bois', 'Four tandoor (terre cuite)', 'Plancha', 'Poêle à frire'],
+        correctIndex: 1,
+        anecdote: 'Le tandoor atteint 480°C. Le naan colle aux parois et cuit en 90 secondes. La chaleur extrême crée les bulles caractéristiques. Au four domestique, la lèchefrite préchaussée au maximum donne le meilleur résultat.',
+      },
+    },
+    {
+      id: 'local-in-naan-2', lessonId: 'in-4', orderIndex: 1, xpReward: 10,
+      type: 'fill_in_blank',
+      question: 'Le naan est un pain ___ fait de farine de blé, yaourt et levure.',
+      data: { answer: 'levé', hint: 'Il gonfle grâce à la fermentation' },
+    },
+    {
+      id: 'local-in-naan-3', lessonId: 'in-4', orderIndex: 2, xpReward: 10,
+      type: 'association',
+      question: 'Associe chaque variante de naan à sa garniture :',
+      data: {
+        left: ['Naan nature', 'Peshwari naan', 'Keema naan', 'Garlic naan'],
+        right: ['Ail et coriandre', 'Noix de coco et raisins secs', 'Viande hachée épicée', 'Beurre (ghee) seul'],
+        correctPairs: [3, 1, 2, 0],
+      },
+    },
+  ],
+
+  // ── THAI ──────────────────────────────────────────────────────────────────
+
+  'Le Pad Thaï': [
+    {
+      id: 'local-th-padthai-1', lessonId: 'th-2', orderIndex: 0, xpReward: 10,
+      type: 'multiple_choice',
+      question: 'Quel ingrédient donne au pad thaï son goût acidulé caractéristique ?',
+      data: {
+        options: ['Citron vert', 'Vinaigre de riz', 'Jus de tamarin', 'Lime kaffir'],
+        correctIndex: 2,
+        anecdote: 'Le pad thaï a été inventé dans les années 1940 par le gouvernement thaïlandais pour promouvoir la cuisine nationale et réduire la consommation de riz pendant une pénurie. C\'est un plat politique autant que gastronomique !',
+      },
+    },
+    {
+      id: 'local-th-padthai-2', lessonId: 'th-2', orderIndex: 1, xpReward: 10,
+      type: 'fill_in_blank',
+      question: 'Pour ne pas avoir des nouilles pâteuses dans le pad thaï, il faut les tremper dans l\'eau ___ pendant 30 min.',
+      data: { answer: 'froide', hint: 'Pas chaude, pas bouillante — juste froide' },
+    },
+    {
+      id: 'local-th-padthai-3', lessonId: 'th-2', orderIndex: 2, xpReward: 10,
+      type: 'multiple_choice',
+      question: 'Quelle est la clé d\'un pad thaï authentique au wok ?',
+      data: {
+        options: ['Feu doux pour ne pas brûler', 'Feu maximum et wok fumant', 'Cuisson à l\'eau d\'abord', 'Pas d\'huile'],
+        correctIndex: 1,
+      },
+    },
+  ],
+
+  // ── CHINESE ────────────────────────────────────────────────────────────────
+
+  'Le Mapo Tofu': [
+    {
+      id: 'local-cn-mapo-1', lessonId: 'cn-3', orderIndex: 0, xpReward: 10,
+      type: 'multiple_choice',
+      question: 'Le mapo tofu vient de quelle province chinoise réputée pour le piquant ?',
+      data: {
+        options: ['Pékin', 'Hunan', 'Sichuan', 'Canton'],
+        correctIndex: 2,
+        anecdote: 'Le mapo tofu aurait été créé par une femme âgée (mapo = "femme grêlée") à Chengdu au XIXe siècle. Le piment du Sichuan ne brûle pas — il engourdit la bouche (phénomène ma, l\'engourdissement) avant d\'apporter la chaleur (la, le piquant).',
+      },
+    },
+    {
+      id: 'local-cn-mapo-2', lessonId: 'cn-3', orderIndex: 1, xpReward: 10,
+      type: 'fill_in_blank',
+      question: 'La sensation unique du piment du Sichuan qui engourdit la bouche s\'appelle la sensation "___ la".',
+      data: { answer: 'ma', hint: 'Premier caractère du mot "mápó" — l\'engourdissement' },
+    },
+    {
+      id: 'local-cn-mapo-3', lessonId: 'cn-3', orderIndex: 2, xpReward: 10,
+      type: 'multiple_choice',
+      question: 'Quel type de tofu utilise-t-on dans le mapo tofu authentique ?',
+      data: {
+        options: ['Tofu ferme frit', 'Tofu soyeux (silken)', 'Tofu fumé', 'Tofu lyophilisé'],
+        correctIndex: 1,
+      },
+    },
+  ],
+
 };
 
 // Fuzzy match: find exercises for a lesson by checking if the title matches a key
