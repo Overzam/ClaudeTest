@@ -30,12 +30,13 @@ export default function RecipeBookScreen() {
       if (!session?.user.id) return;
       async function load() {
         await loadProgress(session!.user.id);
+        const freshProgress = useProgressStore.getState().lessonProgress;
         const paths = await fetchPaths();
         const entries: RecipeEntry[] = [];
         for (const path of paths) {
           const lessons = await fetchLessons(path.id);
           for (const lesson of lessons) {
-            if (lessonProgress[lesson.id] === 'completed' && (LESSON_DETAILS[lesson.id] ?? LESSON_DETAILS[lesson.title])) {
+            if (freshProgress[lesson.id] === 'completed' && (LESSON_DETAILS[lesson.id] ?? LESSON_DETAILS[lesson.title])) {
               entries.push({ lesson, path });
             }
           }
