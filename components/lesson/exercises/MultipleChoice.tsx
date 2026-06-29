@@ -24,7 +24,7 @@ export function MultipleChoice({ question, data, onSubmit }: Props) {
 
   return (
     <View style={styles.container}>
-      <ScrollView contentContainerStyle={styles.scroll} showsVerticalScrollIndicator={false}>
+      <ScrollView style={styles.scrollView} contentContainerStyle={styles.scroll} showsVerticalScrollIndicator={false}>
         <Text style={[styles.question, { color: c.text }]}>{question}</Text>
         <View style={styles.options}>
           {data.options.map((option, i) => (
@@ -61,6 +61,7 @@ export function MultipleChoice({ question, data, onSubmit }: Props) {
 
 const styles = StyleSheet.create({
   container: { flex: 1 },
+  scrollView: { flex: 1 },
   scroll: { padding: Layout.spacing.lg, gap: Layout.spacing.lg, paddingBottom: Layout.spacing.sm },
   question: { fontSize: Layout.fontSize.lg, fontWeight: '700', textAlign: 'center', lineHeight: 28 },
   options: { gap: Layout.spacing.sm },

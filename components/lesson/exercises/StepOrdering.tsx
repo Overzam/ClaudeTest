@@ -61,11 +61,12 @@ export function StepOrdering({ question, data, onSubmit }: Props) {
       <Text style={[styles.question, { color: c.text }]}>{question}</Text>
       <Text style={[styles.hint, { color: c.textMuted }]}>Maintenez et glissez pour réordonner</Text>
       <DraggableFlatList
+        style={styles.list}
         data={items}
         keyExtractor={(item) => item.key}
         renderItem={renderItem}
         onDragEnd={({ data: newData }) => setItems(newData)}
-        contentContainerStyle={styles.list}
+        contentContainerStyle={styles.listContent}
       />
       <View style={[styles.footer, { borderTopColor: c.border }]}>
         <Button label="Vérifier" onPress={handleVerify} />
@@ -78,7 +79,8 @@ const styles = StyleSheet.create({
   container: { flex: 1 },
   question: { fontSize: Layout.fontSize.lg, fontWeight: '700', textAlign: 'center', padding: Layout.spacing.lg, paddingBottom: Layout.spacing.sm },
   hint: { fontSize: Layout.fontSize.sm, textAlign: 'center', paddingBottom: Layout.spacing.md },
-  list: { gap: Layout.spacing.sm, paddingHorizontal: Layout.spacing.lg },
+  list: { flex: 1 },
+  listContent: { gap: Layout.spacing.sm, paddingHorizontal: Layout.spacing.lg },
   item: {
     flexDirection: 'row',
     alignItems: 'center',

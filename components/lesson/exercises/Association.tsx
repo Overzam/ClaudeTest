@@ -45,7 +45,7 @@ export function Association({ question, data, onSubmit }: Props) {
 
   return (
     <View style={styles.container}>
-      <ScrollView contentContainerStyle={styles.scroll} showsVerticalScrollIndicator={false}>
+      <ScrollView style={styles.scrollView} contentContainerStyle={styles.scroll} showsVerticalScrollIndicator={false}>
         <Text style={[styles.question, { color: c.text }]}>{question}</Text>
         <View style={styles.columns}>
           <View style={styles.col}>
@@ -104,6 +104,7 @@ export function Association({ question, data, onSubmit }: Props) {
 
 const styles = StyleSheet.create({
   container: { flex: 1 },
+  scrollView: { flex: 1 },
   scroll: { padding: Layout.spacing.lg, gap: Layout.spacing.md },
   question: { fontSize: Layout.fontSize.lg, fontWeight: '700', textAlign: 'center', lineHeight: 28 },
   columns: { flexDirection: 'row', gap: Layout.spacing.sm },

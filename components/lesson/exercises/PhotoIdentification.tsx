@@ -25,6 +25,7 @@ export function PhotoIdentification({ question, data, onSubmit }: Props) {
   return (
     <View style={styles.container}>
       <FlatList
+        style={styles.list}
         data={data.options}
         keyExtractor={(_, i) => String(i)}
         numColumns={2}
@@ -62,6 +63,7 @@ export function PhotoIdentification({ question, data, onSubmit }: Props) {
 
 const styles = StyleSheet.create({
   container: { flex: 1 },
+  list: { flex: 1 },
   question: { fontSize: Layout.fontSize.lg, fontWeight: '700', textAlign: 'center', marginBottom: Layout.spacing.md, lineHeight: 28 },
   grid: { gap: Layout.spacing.sm, paddingBottom: Layout.spacing.sm },
   row: { gap: Layout.spacing.sm },
