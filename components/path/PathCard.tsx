@@ -1,5 +1,6 @@
 import React from 'react';
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { LinearGradient } from 'expo-linear-gradient';
 import { ProgressBar } from '@/components/ui/ProgressBar';
 import { useThemeStore } from '@/stores/themeStore';
 import { Layout } from '@/constants/Layout';
@@ -25,9 +26,14 @@ export function PathCard({ path, completedLessons, totalLessons, onPress, locked
       disabled={locked}
       activeOpacity={0.85}
     >
-      <View style={[styles.emojiBox, { backgroundColor: path.color + '20' }]}>
+      <LinearGradient
+        colors={[path.color + '40', path.color + '15']}
+        style={styles.emojiBox}
+        start={{ x: 0, y: 0 }}
+        end={{ x: 1, y: 1 }}
+      >
         <Text style={styles.emoji}>{path.emoji}</Text>
-      </View>
+      </LinearGradient>
       <View style={styles.content}>
         <Text style={[styles.title, { color: c.text }]}>{path.title}</Text>
         {path.description && <Text style={[styles.desc, { color: c.textMuted }]} numberOfLines={1}>{path.description}</Text>}
