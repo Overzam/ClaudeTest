@@ -64,6 +64,7 @@ export default function LessonScreen() {
       pathname: '/lesson/recipe',
       params: {
         lessonId,
+        lessonTitle: lessonTitle ?? '',
         xpEarned: String(lessonStore.xpEarned),
         score: String(lessonStore.score),
         mistakes: String(lessonStore.mistakesCount),
