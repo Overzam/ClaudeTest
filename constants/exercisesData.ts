@@ -470,6 +470,238 @@ export const STATIC_EXERCISES: Record<string, Exercise[]> = {
       },
     },
   ],
+  // ── FRENCH (new lessons) ─────────────────────────────────────────────────────
+
+  'La Ratatouille': [
+    {
+      id: 'local-fr7-1', lessonId: 'fr-7', orderIndex: 0, xpReward: 10,
+      type: 'multiple_choice',
+      question: 'Quelle est l\'origine de la ratatouille ?',
+      data: {
+        options: ['La Bretagne', 'La Provence (Nice)', 'L\'Alsace', 'Le Périgord'],
+        correctIndex: 1,
+        anecdote: 'La ratatouille est un plat d\'été niçois. Son nom vient du verbe "touiller" (remuer). Elle a été popularisée dans le monde entier grâce au film Pixar de 2007 !',
+      },
+    },
+    {
+      id: 'local-fr7-2', lessonId: 'fr-7', orderIndex: 1, xpReward: 10,
+      type: 'fill_in_blank',
+      question: 'La ratatouille contient des courgettes, des aubergines, des poivrons, des tomates et des ___.',
+      data: { answer: 'oignons', hint: 'Légume à l\'odeur forte qui fait pleurer' },
+    },
+    {
+      id: 'local-fr7-3', lessonId: 'fr-7', orderIndex: 2, xpReward: 10,
+      type: 'step_ordering',
+      question: 'Remets les étapes de la ratatouille dans l\'ordre :',
+      data: {
+        steps: ['Ajouter les tomates et mijoter 20 min', 'Faire revenir l\'oignon et l\'ail', 'Faire sauter les courgettes et aubergines séparément', 'Assaisonner avec thym, basilic et huile d\'olive'],
+        correctOrder: [1, 2, 0, 3],
+      },
+    },
+  ],
+
+  'Le Coq au Vin': [
+    {
+      id: 'local-fr13-1', lessonId: 'fr-13', orderIndex: 0, xpReward: 10,
+      type: 'multiple_choice',
+      question: 'Dans le coq au vin classique, quel vin utilise-t-on ?',
+      data: {
+        options: ['Vin blanc de Bourgogne', 'Vin rouge de Bourgogne (Pinot Noir)', 'Champagne', 'Bordeaux'],
+        correctIndex: 1,
+        anecdote: 'Autrefois, on cuisinait les vieux coqs trop coriaces pour être rôtis. La cuisson longue dans le vin les attendrissait. Julia Child a popularisé la recette aux États-Unis dans les années 1960.',
+      },
+    },
+    {
+      id: 'local-fr13-2', lessonId: 'fr-13', orderIndex: 1, xpReward: 10,
+      type: 'multiple_choice',
+      question: 'Quelle est la durée de marinade recommandée pour le coq au vin ?',
+      data: {
+        options: ['15 minutes', '1 heure', '12 à 24 heures', '3 jours'],
+        correctIndex: 2,
+      },
+    },
+    {
+      id: 'local-fr13-3', lessonId: 'fr-13', orderIndex: 2, xpReward: 10,
+      type: 'fill_in_blank',
+      question: 'Les petits champignons utilisés dans le coq au vin s\'appellent des champignons de ___.',
+      data: { answer: 'Paris', hint: 'La capitale de la France' },
+    },
+  ],
+
+  'La Bouillabaisse': [
+    {
+      id: 'local-fr19-1', lessonId: 'fr-19', orderIndex: 0, xpReward: 10,
+      type: 'multiple_choice',
+      question: 'De quelle ville provient la bouillabaisse ?',
+      data: {
+        options: ['Nice', 'Marseille', 'Toulon', 'Montpellier'],
+        correctIndex: 1,
+        anecdote: 'La bouillabaisse est née à Marseille comme soupe de pêcheurs utilisant les poissons invendables. Elle doit son nom au provençal "bolh abaisso" — "ça bout, on baisse le feu".',
+      },
+    },
+    {
+      id: 'local-fr19-2', lessonId: 'fr-19', orderIndex: 1, xpReward: 10,
+      type: 'multiple_choice',
+      question: 'Quelle sauce accompagne obligatoirement la bouillabaisse ?',
+      data: {
+        options: ['Aïoli', 'Rouille', 'Tapenade', 'Pistou'],
+        correctIndex: 1,
+      },
+    },
+    {
+      id: 'local-fr19-3', lessonId: 'fr-19', orderIndex: 2, xpReward: 10,
+      type: 'fill_in_blank',
+      question: 'La rouille est une sauce à base d\'ail, safran, huile d\'olive et de ___ pour lier.',
+      data: { answer: 'mie de pain', hint: 'La partie molle du pain' },
+    },
+  ],
+
+  // ── JAPANESE (new lessons) ─────────────────────────────────────────────────
+
+  'La Soupe Miso': [
+    {
+      id: 'local-jp7-1', lessonId: 'jp-7', orderIndex: 0, xpReward: 10,
+      type: 'multiple_choice',
+      question: 'Qu\'est-ce que le miso ?',
+      data: {
+        options: ['Une algue séchée', 'Une pâte de soja fermentée', 'Un bouillon de poisson', 'Un condiment sucré'],
+        correctIndex: 1,
+        anecdote: 'Le miso existe depuis plus de 1300 ans au Japon. Il existe des centaines de variétés selon la région et la durée de fermentation. Le miso blanc (shiro) est doux, le miso rouge (aka) est plus intense.',
+      },
+    },
+    {
+      id: 'local-jp7-2', lessonId: 'jp-7', orderIndex: 1, xpReward: 10,
+      type: 'fill_in_blank',
+      question: 'On ne doit jamais faire ___ le miso pour conserver ses bienfaits et son arôme.',
+      data: { answer: 'bouillir', hint: 'La chaleur extrême détruit les probiotiques' },
+    },
+    {
+      id: 'local-jp7-3', lessonId: 'jp-7', orderIndex: 2, xpReward: 10,
+      type: 'association',
+      question: 'Associe chaque ingrédient à son rôle dans la soupe miso :',
+      data: {
+        left: ['Dashi', 'Miso', 'Tofu soyeux', 'Wakamé'],
+        right: ['Algue marine', 'Base de bouillon', 'Pâte fermentée', 'Protéines douces'],
+        correctPairs: [1, 3, 2, 0],
+      },
+    },
+  ],
+
+  'Les Gyoza': [
+    {
+      id: 'local-jp8-1', lessonId: 'jp-8', orderIndex: 0, xpReward: 10,
+      type: 'multiple_choice',
+      question: 'Quelle est l\'origine des gyoza japonais ?',
+      data: {
+        options: ['Corée du Sud', 'Chine (jiaozi)', 'Thaïlande', 'Vietnam'],
+        correctIndex: 1,
+        anecdote: 'Les gyoza sont inspirés des jiaozi chinois, ramenés au Japon après la Seconde Guerre mondiale. Les Japonais les ont adaptés : plus fins, plus aillés, et toujours poêlés-vapeur.',
+      },
+    },
+    {
+      id: 'local-jp8-2', lessonId: 'jp-8', orderIndex: 1, xpReward: 10,
+      type: 'step_ordering',
+      question: 'Remets les étapes de cuisson des gyoza dans l\'ordre :',
+      data: {
+        steps: ['Couvrir et cuire à la vapeur 3 min', 'Disposer les gyoza dans la poêle huilée chaude', 'Saisir 2 min jusqu\'à coloration dorée', 'Verser 50ml d\'eau et couvrir rapidement'],
+        correctOrder: [1, 2, 3, 0],
+      },
+    },
+    {
+      id: 'local-jp8-3', lessonId: 'jp-8', orderIndex: 2, xpReward: 10,
+      type: 'fill_in_blank',
+      question: 'La sauce d\'accompagnement classique des gyoza mélange sauce soja, vinaigre de riz et ___ chili.',
+      data: { answer: 'huile de', hint: 'Un condiment huileux pimenté' },
+    },
+  ],
+
+  'Le Karaage': [
+    {
+      id: 'local-jp18-1', lessonId: 'jp-18', orderIndex: 0, xpReward: 10,
+      type: 'multiple_choice',
+      question: 'Quelle farine donne au karaage son enrobage croustillant unique ?',
+      data: {
+        options: ['Farine de blé T55', 'Fécule de pomme de terre (katakuriko)', 'Chapelure panko', 'Farine de riz'],
+        correctIndex: 1,
+        anecdote: 'La fécule de pomme de terre (katakuriko) crée une croûte plus légère et transparente que la farine de blé. Le karaage est souvent servi avec une rondelle de citron pour équilibrer le gras.',
+      },
+    },
+    {
+      id: 'local-jp18-2', lessonId: 'jp-18', orderIndex: 1, xpReward: 10,
+      type: 'fill_in_blank',
+      question: 'La marinade du karaage contient sauce soja, mirin, saké et ___ râpé.',
+      data: { answer: 'gingembre', hint: 'Racine aromatique au goût piquant' },
+    },
+    {
+      id: 'local-jp18-3', lessonId: 'jp-18', orderIndex: 2, xpReward: 10,
+      type: 'multiple_choice',
+      question: 'À quelle température doit-on frire le karaage pour une cuisson parfaite ?',
+      data: {
+        options: ['140°C', '160°C', '175°C', '200°C'],
+        correctIndex: 2,
+      },
+    },
+  ],
+
+  // ── ITALIAN (new lessons) ─────────────────────────────────────────────────
+
+  'Le Pesto Genovese': [
+    {
+      id: 'local-it7-1', lessonId: 'it-7', orderIndex: 0, xpReward: 10,
+      type: 'multiple_choice',
+      question: 'Quel ustensile traditionnel utilise-t-on pour faire le pesto ?',
+      data: {
+        options: ['Mixeur électrique', 'Mortier et pilon en marbre', 'Robot culinaire', 'Moulin à légumes'],
+        correctIndex: 1,
+        anecdote: 'Le pesto au mortier libère les huiles essentielles différemment du mixeur. Les lames chauffent les feuilles et les oxydent, donnant un goût amer. Le mortier de marbre reste donc la méthode traditionnelle et préférée des puristes.',
+      },
+    },
+    {
+      id: 'local-it7-2', lessonId: 'it-7', orderIndex: 1, xpReward: 10,
+      type: 'association',
+      question: 'Associe chaque ingrédient du pesto à sa quantité pour 4 personnes :',
+      data: {
+        left: ['Basilic frais', 'Pignons de pin', 'Pecorino + Parmesan', 'Huile d\'olive'],
+        right: ['60-80 ml', '100g feuilles', '30g mélange', '2 cuillères à soupe'],
+        correctPairs: [1, 3, 2, 0],
+      },
+    },
+    {
+      id: 'local-it7-3', lessonId: 'it-7', orderIndex: 2, xpReward: 10,
+      type: 'fill_in_blank',
+      question: 'Pour conserver le pesto sans qu\'il noircisse, on verse une couche d\'___ en surface.',
+      data: { answer: 'huile d\'olive', hint: 'Protège de l\'oxydation à l\'air' },
+    },
+  ],
+
+  'La Panna Cotta': [
+    {
+      id: 'local-it11-1', lessonId: 'it-11', orderIndex: 0, xpReward: 10,
+      type: 'multiple_choice',
+      question: 'Que signifie "panna cotta" en italien ?',
+      data: {
+        options: ['Crème brûlée', 'Crème cuite', 'Lait doux', 'Crème fouettée'],
+        correctIndex: 1,
+        anecdote: 'La panna cotta vient du Piémont et daterait du début du XXe siècle. Contrairement aux idées reçues, c\'est un dessert moderne — les premières recettes écrites apparaissent seulement dans les années 1960.',
+      },
+    },
+    {
+      id: 'local-it11-2', lessonId: 'it-11', orderIndex: 1, xpReward: 10,
+      type: 'fill_in_blank',
+      question: 'L\'ingrédient gélifiant de la panna cotta est la ___ alimentaire.',
+      data: { answer: 'gélatine', hint: 'Protéine animale qui fige les préparations au froid' },
+    },
+    {
+      id: 'local-it11-3', lessonId: 'it-11', orderIndex: 2, xpReward: 10,
+      type: 'multiple_choice',
+      question: 'Combien de temps doit reposer la panna cotta au réfrigérateur minimum ?',
+      data: {
+        options: ['30 minutes', '1 heure', '4 heures', '24 heures'],
+        correctIndex: 2,
+      },
+    },
+  ],
+
 };
 
 // Fuzzy match: find exercises for a lesson by checking if the title matches a key
