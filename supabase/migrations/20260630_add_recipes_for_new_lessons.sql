@@ -305,4 +305,5 @@ FROM (VALUES
 
 ) AS v(lesson_title, title, description, emoji, prep_time_min, cook_time_min, servings, difficulty, avg_price_eur, ingredients, instructions, chef_tip, cultural_note)
 JOIN public.lessons l ON l.title = v.lesson_title
+ON CONFLICT (lesson_id) DO NOTHING
 ;
