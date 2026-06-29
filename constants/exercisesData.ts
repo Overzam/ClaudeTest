@@ -884,6 +884,851 @@ export const STATIC_EXERCISES: Record<string, Exercise[]> = {
     },
   ],
 
+  // ── FRENCH (additional) ────────────────────────────────────────────────────
+
+  'Les Bases du Couteau': [
+    {
+      id: 'local-fr-knife-1', lessonId: 'local', orderIndex: 0, xpReward: 10,
+      type: 'multiple_choice',
+      question: 'Quelle est la prise correcte d\'un couteau de chef professionnel ?',
+      data: {
+        options: [
+          'Pincer la lame entre le pouce et l\'index, les autres doigts sur le manche',
+          'Tenir uniquement le manche à pleine main',
+          'Pincer le manche entre pouce et majeur',
+          'Pointer l\'index le long de la lame',
+        ],
+        correctIndex: 0,
+      },
+    },
+    {
+      id: 'local-fr-knife-2', lessonId: 'local', orderIndex: 1, xpReward: 10,
+      type: 'fill_in_blank',
+      question: 'La technique qui consiste à recourber les doigts en protection s\'appelle la main en ___.',
+      data: { answer: 'griffe', hint: 'Protège vos phalanges lors de la découpe' },
+    },
+    {
+      id: 'local-fr-knife-3', lessonId: 'local', orderIndex: 2, xpReward: 10,
+      type: 'multiple_choice',
+      question: 'Qu\'est-ce que la brunoise ?',
+      data: {
+        options: [
+          'Des dés de légumes de 1-2mm de côté',
+          'Des lamelles très fines',
+          'Des bâtonnets de 5mm',
+          'Des rondelles régulières',
+        ],
+        correctIndex: 0,
+      },
+    },
+    {
+      id: 'local-fr-knife-4', lessonId: 'local', orderIndex: 3, xpReward: 10,
+      type: 'association',
+      question: 'Associe chaque coupe à sa description :',
+      data: {
+        pairs: [
+          { left: 'Julienne', right: 'Bâtonnets fins 2×2mm' },
+          { left: 'Brunoise', right: 'Dés 2mm × 2mm' },
+          { left: 'Chiffonnade', right: 'Feuilles roulées en lanières' },
+          { left: 'Paysanne', right: 'Carrés plats 5mm' },
+        ],
+      },
+    },
+    {
+      id: 'local-fr-knife-5', lessonId: 'local', orderIndex: 4, xpReward: 10,
+      type: 'multiple_choice',
+      question: 'Pourquoi un couteau bien aiguisé est-il plus sûr qu\'un couteau émoussé ?',
+      data: {
+        options: [
+          'Il nécessite moins de pression et glisse moins sur les aliments',
+          'Il est plus lourd et plus stable',
+          'Il coupe plus lentement, donnant plus de contrôle',
+          'Il ne rouille pas',
+        ],
+        correctIndex: 0,
+      },
+    },
+  ],
+
+  'Les Crêpes': [
+    {
+      id: 'local-fr-crepe-1', lessonId: 'local', orderIndex: 0, xpReward: 10,
+      type: 'multiple_choice',
+      question: 'Pourquoi doit-on laisser reposer la pâte à crêpes 1 heure ?',
+      data: {
+        options: [
+          'Pour que le gluten se détende et que la pâte soit plus fluide',
+          'Pour que les œufs cuisent légèrement',
+          'Pour que le beurre durcisse',
+          'Pour que la farine fermente',
+        ],
+        correctIndex: 0,
+      },
+    },
+    {
+      id: 'local-fr-crepe-2', lessonId: 'local', orderIndex: 1, xpReward: 10,
+      type: 'fill_in_blank',
+      question: 'La crêpe salée faite avec de la farine de sarrasin s\'appelle une ___.',
+      data: { answer: 'galette', hint: 'Spécialité bretonne sans gluten' },
+    },
+    {
+      id: 'local-fr-crepe-3', lessonId: 'local', orderIndex: 2, xpReward: 10,
+      type: 'step_ordering',
+      question: 'Remets les étapes de la pâte à crêpes dans le bon ordre :',
+      data: {
+        steps: ['Laisser reposer 1h au réfrigérateur', 'Mélanger farine et sel, creuser un puits', 'Ajouter le beurre fondu et le lait', 'Incorporer les œufs un à un'],
+        correctOrder: [1, 3, 2, 0],
+      },
+    },
+    {
+      id: 'local-fr-crepe-4', lessonId: 'local', orderIndex: 3, xpReward: 10,
+      type: 'multiple_choice',
+      question: 'La Crêpe Suzette est flambée à quel alcool ?',
+      data: {
+        options: ['Grand Marnier ou Cointreau', 'Cognac', 'Rhum ambré', 'Calvados'],
+        correctIndex: 0,
+      },
+    },
+  ],
+
+  'Le Soufflé au Fromage': [
+    {
+      id: 'local-fr-souffle-1', lessonId: 'local', orderIndex: 0, xpReward: 10,
+      type: 'multiple_choice',
+      question: 'Pourquoi ne doit-on JAMAIS ouvrir le four pendant la cuisson d\'un soufflé ?',
+      data: {
+        options: [
+          'Le choc thermique fait retomber les blancs en neige',
+          'Cela réduirait la température trop longtemps',
+          'La vapeur s\'échapperait trop rapidement',
+          'La croûte se formerait trop tôt',
+        ],
+        correctIndex: 0,
+      },
+    },
+    {
+      id: 'local-fr-souffle-2', lessonId: 'local', orderIndex: 1, xpReward: 10,
+      type: 'fill_in_blank',
+      question: 'Les blancs montés en neige doivent être incorporés à la béchamel par mouvements ___, pas en remuant.',
+      data: { answer: 'délicats', hint: 'Pour conserver l\'air dans les blancs' },
+    },
+    {
+      id: 'local-fr-souffle-3', lessonId: 'local', orderIndex: 2, xpReward: 10,
+      type: 'multiple_choice',
+      question: 'Pour qu\'un soufflé monte bien droit, on beurre le moule puis…',
+      data: {
+        options: [
+          'On le chemise de parmesan râpé ou de chapelure',
+          'On le pose sur une grille froide',
+          'On le rince à l\'eau froide',
+          'On le saupoudre de farine',
+        ],
+        correctIndex: 0,
+      },
+    },
+    {
+      id: 'local-fr-souffle-4', lessonId: 'local', orderIndex: 3, xpReward: 10,
+      type: 'association',
+      question: 'Associe chaque soufflé à son fromage traditionnel :',
+      data: {
+        pairs: [
+          { left: 'Soufflé classique', right: 'Gruyère ou comté' },
+          { left: 'Soufflé Roquefort', right: 'Bleu d\'Auvergne' },
+          { left: 'Soufflé Parmesan', right: 'Parmigiano Reggiano' },
+          { left: 'Soufflé Chèvre', right: 'Fromage de chèvre frais' },
+        ],
+      },
+    },
+  ],
+
+  'La Tarte Tatin': [
+    {
+      id: 'local-fr-tatin-1', lessonId: 'local', orderIndex: 0, xpReward: 10,
+      type: 'multiple_choice',
+      question: 'La Tarte Tatin a été inventée par accident par les sœurs Tatin. Dans quelle région ?',
+      data: {
+        options: ['Sologne (Loir-et-Cher)', 'Normandie', 'Bretagne', 'Alsace'],
+        correctIndex: 0,
+      },
+    },
+    {
+      id: 'local-fr-tatin-2', lessonId: 'local', orderIndex: 1, xpReward: 10,
+      type: 'fill_in_blank',
+      question: 'La tarte Tatin est une tarte ___ (le fond de pâte est au-dessus pendant la cuisson).',
+      data: { answer: 'renversée', hint: 'On la retourne au moment de servir' },
+    },
+    {
+      id: 'local-fr-tatin-3', lessonId: 'local', orderIndex: 2, xpReward: 10,
+      type: 'step_ordering',
+      question: 'Remets les étapes dans le bon ordre :',
+      data: {
+        steps: ['Retourner sur un plat au sortir du four', 'Caraméliser pommes et beurre dans la poêle', 'Enfourner 25 min à 200°C', 'Déposer la pâte sur les pommes'],
+        correctOrder: [1, 3, 2, 0],
+      },
+    },
+    {
+      id: 'local-fr-tatin-4', lessonId: 'local', orderIndex: 3, xpReward: 10,
+      type: 'multiple_choice',
+      question: 'Quelle pomme est idéale pour une Tarte Tatin ?',
+      data: {
+        options: ['Golden ou Reine des Reinettes (tient à la cuisson)', 'Granny Smith (trop acide)', 'Fuji (trop juteuse)', 'Pink Lady (trop croquante)'],
+        correctIndex: 0,
+      },
+    },
+  ],
+
+  'Le Coq au Vin': [
+    {
+      id: 'local-fr-coq-1', lessonId: 'local', orderIndex: 0, xpReward: 10,
+      type: 'multiple_choice',
+      question: 'Dans le coq au vin traditionnel, avec quel vin cuit-on le poulet ?',
+      data: {
+        options: ['Vin rouge de Bourgogne (Pinot Noir)', 'Vin blanc de Loire', 'Champagne', 'Vin rosé de Provence'],
+        correctIndex: 0,
+      },
+    },
+    {
+      id: 'local-fr-coq-2', lessonId: 'local', orderIndex: 1, xpReward: 10,
+      type: 'fill_in_blank',
+      question: 'L\'action de faire revenir les lardons, oignons et champignons séparément avant de les ajouter au braisé s\'appelle une ___ garniture.',
+      data: { answer: 'bourguignonne', hint: 'Lardons, champignons, oignons grelots' },
+    },
+    {
+      id: 'local-fr-coq-3', lessonId: 'local', orderIndex: 2, xpReward: 10,
+      type: 'step_ordering',
+      question: 'Remets les étapes du coq au vin dans l\'ordre :',
+      data: {
+        steps: ['Lier la sauce avec du beurre manié', 'Faire mariner le poulet au vin 12h', 'Faire saisir les morceaux de poulet', 'Mijoter 45 min à couvert'],
+        correctOrder: [1, 2, 3, 0],
+      },
+    },
+    {
+      id: 'local-fr-coq-4', lessonId: 'local', orderIndex: 3, xpReward: 10,
+      type: 'multiple_choice',
+      question: 'Qu\'est-ce que le "beurre manié" utilisé pour lier une sauce ?',
+      data: {
+        options: [
+          'Beurre et farine malaxés à froid en proportions égales',
+          'Beurre fondu mélangé à de la fécule',
+          'Beurre clarifié avec du jaune d\'œuf',
+          'Beurre noisette réduit',
+        ],
+        correctIndex: 0,
+      },
+    },
+  ],
+
+  'La Bouillabaisse': [
+    {
+      id: 'local-fr-bouillabaise-1', lessonId: 'local', orderIndex: 0, xpReward: 10,
+      type: 'multiple_choice',
+      question: 'De quelle ville provient la bouillabaisse ?',
+      data: {
+        options: ['Marseille', 'Nice', 'Toulon', 'Montpellier'],
+        correctIndex: 0,
+      },
+    },
+    {
+      id: 'local-fr-bouillabaise-2', lessonId: 'local', orderIndex: 1, xpReward: 10,
+      type: 'fill_in_blank',
+      question: 'La sauce à l\'ail et au safran servie avec la bouillabaisse s\'appelle la ___.',
+      data: { answer: 'rouille', hint: 'Sauce orange-rouge de Provence' },
+    },
+    {
+      id: 'local-fr-bouillabaise-3', lessonId: 'local', orderIndex: 2, xpReward: 10,
+      type: 'multiple_choice',
+      question: 'Quel poisson est indispensable dans une vraie bouillabaisse marseillaise ?',
+      data: {
+        options: ['Rascasse', 'Saumon', 'Thon', 'Daurade'],
+        correctIndex: 0,
+      },
+    },
+    {
+      id: 'local-fr-bouillabaise-4', lessonId: 'local', orderIndex: 3, xpReward: 10,
+      type: 'association',
+      question: 'Associe chaque élément à son rôle dans la bouillabaisse :',
+      data: {
+        pairs: [
+          { left: 'Safran', right: 'Couleur dorée et saveur florale' },
+          { left: 'Fenouil', right: 'Arôme anisé caractéristique' },
+          { left: 'Rouille', right: 'Sauce aillée pour les croûtons' },
+          { left: 'Rascasse', right: 'Poisson de roche obligatoire' },
+        ],
+      },
+    },
+  ],
+
+  // ── ITALIAN (additional) ────────────────────────────────────────────────────
+
+  "L'Huile d'Olive": [
+    {
+      id: 'local-it-olive-1', lessonId: 'local', orderIndex: 0, xpReward: 10,
+      type: 'multiple_choice',
+      question: 'Qu\'est-ce que l\'huile d\'olive "extra vierge" ?',
+      data: {
+        options: [
+          'Première pression à froid, acidité < 0,8%, aucun défaut',
+          'Deuxième pression, acidité < 2%',
+          'Mélange d\'huiles raffinées et vierge',
+          'Huile chauffée à haute température',
+        ],
+        correctIndex: 0,
+      },
+    },
+    {
+      id: 'local-it-olive-2', lessonId: 'local', orderIndex: 1, xpReward: 10,
+      type: 'fill_in_blank',
+      question: 'Le terme "DOP" (Denominazione di Origine Protetta) garantit que l\'huile provient d\'une ___ géographique précise.',
+      data: { answer: 'zone', hint: 'Comme pour les vins et fromages' },
+    },
+    {
+      id: 'local-it-olive-3', lessonId: 'local', orderIndex: 2, xpReward: 10,
+      type: 'multiple_choice',
+      question: 'Pour préserver une huile d\'olive de qualité, elle doit être conservée…',
+      data: {
+        options: [
+          'À l\'abri de la lumière, de la chaleur et de l\'air',
+          'Au réfrigérateur pour la solidifier',
+          'En plein soleil pour accentuer les arômes',
+          'Dans un récipient métallique ouvert',
+        ],
+        correctIndex: 0,
+      },
+    },
+    {
+      id: 'local-it-olive-4', lessonId: 'local', orderIndex: 3, xpReward: 10,
+      type: 'association',
+      question: 'Associe chaque région à son huile d\'olive :',
+      data: {
+        pairs: [
+          { left: 'Toscane', right: 'Intense, poivrée, herbe fraîche' },
+          { left: 'Sicile', right: 'Fruitée, dorée, artichaut' },
+          { left: 'Ligurie', right: 'Douce, délicate, pour le pesto' },
+          { left: 'Pouilles', right: 'Robuste, grande production italienne' },
+        ],
+      },
+    },
+  ],
+
+  'Le Risotto': [
+    {
+      id: 'local-it-risotto-1', lessonId: 'local', orderIndex: 0, xpReward: 10,
+      type: 'multiple_choice',
+      question: 'Quel riz est indispensable pour un risotto crémeux ?',
+      data: {
+        options: ['Arborio, Carnaroli ou Vialone Nano', 'Riz basmati', 'Riz long grain', 'Riz à sushi'],
+        correctIndex: 0,
+      },
+    },
+    {
+      id: 'local-it-risotto-2', lessonId: 'local', orderIndex: 1, xpReward: 10,
+      type: 'fill_in_blank',
+      question: 'La technique finale du risotto où on incorpore beurre froid et parmesan hors du feu s\'appelle la ___.',
+      data: { answer: 'mantecatura', hint: 'Mot italien qui signifie crémer' },
+    },
+    {
+      id: 'local-it-risotto-3', lessonId: 'local', orderIndex: 2, xpReward: 10,
+      type: 'step_ordering',
+      question: 'Remets les étapes du risotto dans l\'ordre :',
+      data: {
+        steps: ['Mantecatura : beurre + parmesan hors feu', 'Toaster le riz dans le soffritto 2 min', 'Déglacer au vin blanc', 'Ajouter le bouillon chaud louche par louche'],
+        correctOrder: [1, 2, 3, 0],
+      },
+    },
+    {
+      id: 'local-it-risotto-4', lessonId: 'local', orderIndex: 3, xpReward: 10,
+      type: 'multiple_choice',
+      question: 'Le risotto alla Milanese est coloré et parfumé au…',
+      data: {
+        options: ['Safran', 'Curcuma', 'Curry', 'Paprika'],
+        correctIndex: 0,
+      },
+    },
+    {
+      id: 'local-it-risotto-5', lessonId: 'local', orderIndex: 4, xpReward: 10,
+      type: 'multiple_choice',
+      question: 'La consistance idéale d\'un risotto servi dans l\'assiette s\'appelle "all\'onda" — qu\'est-ce que cela signifie ?',
+      data: {
+        options: ['Il doit couler légèrement comme une vague', 'Il doit être ferme et tenir en boule', 'Il doit être très sec', 'Il doit être collant'],
+        correctIndex: 0,
+      },
+    },
+  ],
+
+  'La Carbonara Authentique': [
+    {
+      id: 'local-it-carbonara-1', lessonId: 'local', orderIndex: 0, xpReward: 10,
+      type: 'multiple_choice',
+      question: 'La carbonara authentique romaine ne contient pas de crème. Qu\'est-ce qui crée sa texture crémeuse ?',
+      data: {
+        options: [
+          'Jaunes d\'œufs + eau de cuisson amidonnée + Pecorino',
+          'Mascarpone et parmesan',
+          'Ricotta et beurre',
+          'Lait entier et fécule',
+        ],
+        correctIndex: 0,
+      },
+    },
+    {
+      id: 'local-it-carbonara-2', lessonId: 'local', orderIndex: 1, xpReward: 10,
+      type: 'fill_in_blank',
+      question: 'La viande utilisée dans la vraie carbonara est le ___, joue de porc séchée et non fumée.',
+      data: { answer: 'guanciale', hint: 'Pas de pancetta, encore moins de lardons !' },
+    },
+    {
+      id: 'local-it-carbonara-3', lessonId: 'local', orderIndex: 2, xpReward: 10,
+      type: 'multiple_choice',
+      question: 'Pourquoi retire-t-on la poêle du feu avant d\'ajouter les œufs dans la carbonara ?',
+      data: {
+        options: [
+          'Pour éviter que les œufs brouillent — ils doivent émulsionner, pas cuire',
+          'Pour que la graisse du guanciale ne brûle pas',
+          'Pour que les pâtes refroidissent légèrement',
+          'Pour que le pecorino fonde mieux',
+        ],
+        correctIndex: 0,
+      },
+    },
+    {
+      id: 'local-it-carbonara-4', lessonId: 'local', orderIndex: 3, xpReward: 10,
+      type: 'association',
+      question: 'Carbonara : vrai ou faux (associe) :',
+      data: {
+        pairs: [
+          { left: 'Guanciale', right: '✅ Ingrédient authentique' },
+          { left: 'Crème fraîche', right: '❌ Hérésie culinaire' },
+          { left: 'Pecorino Romano', right: '✅ Fromage traditionnel' },
+          { left: 'Pancetta fumée', right: '⚠️ Substitut acceptable' },
+        ],
+      },
+    },
+  ],
+
+  'Le Tiramisu': [
+    {
+      id: 'local-it-tiramisu-1', lessonId: 'local', orderIndex: 0, xpReward: 10,
+      type: 'multiple_choice',
+      question: 'Que signifie "tiramisù" en italien ?',
+      data: {
+        options: ['Tire-moi vers le haut (remonte-moi le moral)', 'Dessert du soir', 'Crème de mascarpone', 'Gâteau au café'],
+        correctIndex: 0,
+      },
+    },
+    {
+      id: 'local-it-tiramisu-2', lessonId: 'local', orderIndex: 1, xpReward: 10,
+      type: 'fill_in_blank',
+      question: 'Les biscuits à tremper dans le café pour le tiramisu s\'appellent des ___.',
+      data: { answer: 'savoiardi', hint: 'Aussi appelés "boudoirs" en France' },
+    },
+    {
+      id: 'local-it-tiramisu-3', lessonId: 'local', orderIndex: 2, xpReward: 10,
+      type: 'multiple_choice',
+      question: 'Pour la crème de tiramisu sans œufs crus, on peut la pasteuriser en…',
+      data: {
+        options: [
+          'Fouettant les jaunes au bain-marie avec le sucre jusqu\'à 60°C (pâte à bombe)',
+          'Ajoutant de la fécule de maïs',
+          'Utilisant de la crème fouettée à la place',
+          'Cuisant les œufs entiers 5 min',
+        ],
+        correctIndex: 0,
+      },
+    },
+    {
+      id: 'local-it-tiramisu-4', lessonId: 'local', orderIndex: 3, xpReward: 10,
+      type: 'step_ordering',
+      question: 'Remets les étapes du tiramisu dans l\'ordre :',
+      data: {
+        steps: ['Laisser reposer 4h au réfrigérateur', 'Tremper les savoiardi dans l\'espresso', 'Monter jaunes + sucre en pâte à bombe', 'Alterner couches de biscuits et crème'],
+        correctOrder: [2, 1, 3, 0],
+      },
+    },
+  ],
+
+  'Cacio e Pepe Romaine': [
+    {
+      id: 'local-it-cacio-1', lessonId: 'local', orderIndex: 0, xpReward: 10,
+      type: 'multiple_choice',
+      question: 'Cacio e Pepe ne contient que 3 ingrédients. Lesquels ?',
+      data: {
+        options: [
+          'Spaghetti + Pecorino Romano + poivre noir',
+          'Spaghetti + Parmesan + poivre noir + beurre',
+          'Rigatoni + Ricotta + piment',
+          'Spaghetti + Pecorino + pancetta',
+        ],
+        correctIndex: 0,
+      },
+    },
+    {
+      id: 'local-it-cacio-2', lessonId: 'local', orderIndex: 1, xpReward: 10,
+      type: 'fill_in_blank',
+      question: 'Dans Cacio e Pepe, l\'eau de cuisson amidonnée est cruciale car elle permet au Pecorino de ___ sans former de grumeaux.',
+      data: { answer: 'fondre', hint: 'L\'amidon est l\'émulsifiant naturel' },
+    },
+    {
+      id: 'local-it-cacio-3', lessonId: 'local', orderIndex: 2, xpReward: 10,
+      type: 'multiple_choice',
+      question: 'Quelle est la technique pour éviter les grumeaux de fromage dans la Cacio e Pepe ?',
+      data: {
+        options: [
+          'Mélanger le Pecorino avec l\'eau de cuisson FROIDE avant d\'incorporer',
+          'Ajouter le fromage directement dans la poêle très chaude',
+          'Faire fondre le fromage dans du beurre d\'abord',
+          'Utiliser du fromage râpé extra-fin et ajouter tout d\'un coup',
+        ],
+        correctIndex: 0,
+      },
+    },
+  ],
+
+  // ── JAPANESE (additional) ───────────────────────────────────────────────────
+
+  'Les 5 Saveurs Japonaises': [
+    {
+      id: 'local-jp-saveurs-1', lessonId: 'local', orderIndex: 0, xpReward: 10,
+      type: 'multiple_choice',
+      question: 'Quelle saveur a été officiellement identifiée par le chercheur japonais Kikunae Ikeda en 1908 ?',
+      data: {
+        options: ['Umami (saveur du glutamate)', 'Amer', 'Acide', 'Astringent'],
+        correctIndex: 0,
+      },
+    },
+    {
+      id: 'local-jp-saveurs-2', lessonId: 'local', orderIndex: 1, xpReward: 10,
+      type: 'association',
+      question: 'Associe chaque saveur à un aliment japonais typique :',
+      data: {
+        pairs: [
+          { left: 'Umami', right: 'Kombu, bonite, miso' },
+          { left: 'Sucré', right: 'Mirin, mochis' },
+          { left: 'Acide', right: 'Ponzu, yuzu' },
+          { left: 'Amer', right: 'Matcha, melon amer' },
+        ],
+      },
+    },
+    {
+      id: 'local-jp-saveurs-3', lessonId: 'local', orderIndex: 2, xpReward: 10,
+      type: 'fill_in_blank',
+      question: 'Le concept japonais de cuisine saine basée sur l\'équilibre des saveurs et la saisonnalité s\'appelle la ___ cuisine.',
+      data: { answer: 'washoku', hint: 'Inscrite au patrimoine mondial de l\'UNESCO' },
+    },
+    {
+      id: 'local-jp-saveurs-4', lessonId: 'local', orderIndex: 3, xpReward: 10,
+      type: 'multiple_choice',
+      question: 'L\'umami est lié à quel acide aminé naturel ?',
+      data: {
+        options: ['Acide glutamique (glutamate)', 'Acide citrique', 'Acide acétique', 'Acide lactique'],
+        correctIndex: 0,
+      },
+    },
+  ],
+
+  'Les Sushis': [
+    {
+      id: 'local-jp-sushi-1', lessonId: 'local', orderIndex: 0, xpReward: 10,
+      type: 'multiple_choice',
+      question: 'Qu\'est-ce qui différencie le nigiri du maki ?',
+      data: {
+        options: [
+          'Nigiri = riz à la main + poisson dessus. Maki = rouleau de riz enroulé dans le nori',
+          'Nigiri = toujours cuit. Maki = toujours cru',
+          'Nigiri = avec avocat. Maki = sans avocat',
+          'Ce sont les mêmes',
+        ],
+        correctIndex: 0,
+      },
+    },
+    {
+      id: 'local-jp-sushi-2', lessonId: 'local', orderIndex: 1, xpReward: 10,
+      type: 'fill_in_blank',
+      question: 'Le riz à sushi est assaisonné d\'un mélange de vinaigre de riz, sucre et ___, ajouté au riz chaud.',
+      data: { answer: 'sel', hint: 'Trois ingrédients simples, un résultat précis' },
+    },
+    {
+      id: 'local-jp-sushi-3', lessonId: 'local', orderIndex: 2, xpReward: 10,
+      type: 'step_ordering',
+      question: 'Remets la préparation du riz à sushi dans l\'ordre :',
+      data: {
+        steps: ['Éventailler pour refroidir à température ambiante', 'Rincer le riz 5-6 fois à l\'eau froide', 'Cuisiner à la vapeur ou absorption', 'Incorporer le mélange vinaigré'],
+        correctOrder: [1, 2, 3, 0],
+      },
+    },
+    {
+      id: 'local-jp-sushi-4', lessonId: 'local', orderIndex: 3, xpReward: 10,
+      type: 'association',
+      question: 'Associe chaque type à sa description :',
+      data: {
+        pairs: [
+          { left: 'Nigiri', right: 'Riz moulé à la main, poisson sur le dessus' },
+          { left: 'Temaki', right: 'Cône de nori garni à la main' },
+          { left: 'Uramaki', right: 'Riz à l\'extérieur, nori à l\'intérieur' },
+          { left: 'Chirashi', right: 'Bol de riz avec garnitures dispersées' },
+        ],
+      },
+    },
+  ],
+
+  'Le Ramen': [
+    {
+      id: 'local-jp-ramen-1', lessonId: 'local', orderIndex: 0, xpReward: 10,
+      type: 'multiple_choice',
+      question: 'Quelles sont les 4 grandes catégories de ramen japonais ?',
+      data: {
+        options: [
+          'Shoyu (soja), Shio (sel), Miso, Tonkotsu (porc)',
+          'Porc, poulet, légumes, fruits de mer',
+          'Tokyo, Osaka, Hokkaido, Kyushu',
+          'Froid, chaud, épicé, doux',
+        ],
+        correctIndex: 0,
+      },
+    },
+    {
+      id: 'local-jp-ramen-2', lessonId: 'local', orderIndex: 1, xpReward: 10,
+      type: 'fill_in_blank',
+      question: 'Le bouillon de ramen Tonkotsu (de Fukuoka) est réalisé à partir d\'os de ___ cuits plusieurs heures.',
+      data: { answer: 'porc', hint: 'Un bouillon crémeux et très riche' },
+    },
+    {
+      id: 'local-jp-ramen-3', lessonId: 'local', orderIndex: 2, xpReward: 10,
+      type: 'association',
+      question: 'Associe chaque garniture à son nom japonais :',
+      data: {
+        pairs: [
+          { left: 'Chashu', right: 'Porc braisé laqué' },
+          { left: 'Ajitsuke tamago', right: 'Œuf mariné mollet' },
+          { left: 'Menma', right: 'Pousses de bambou marinées' },
+          { left: 'Nori', right: 'Algue séchée' },
+        ],
+      },
+    },
+    {
+      id: 'local-jp-ramen-4', lessonId: 'local', orderIndex: 3, xpReward: 10,
+      type: 'multiple_choice',
+      question: 'Le "tare" dans un ramen, c\'est quoi ?',
+      data: {
+        options: [
+          'La sauce concentrée (sel, soja ou miso) qui assaisonne le bouillon dans le bol',
+          'Le type de nouilles utilisé',
+          'La couche de gras flottant',
+          'La garniture de légumes',
+        ],
+        correctIndex: 0,
+      },
+    },
+  ],
+
+  'Le Teriyaki': [
+    {
+      id: 'local-jp-teriyaki-1', lessonId: 'local', orderIndex: 0, xpReward: 10,
+      type: 'multiple_choice',
+      question: 'La sauce teriyaki est composée de :',
+      data: {
+        options: [
+          'Sauce soja + mirin + saké + sucre (proportions égales)',
+          'Sauce soja + vinaigre + sésame',
+          'Miso + mirin + gingembre',
+          'Sauce soja + sriracha + ail',
+        ],
+        correctIndex: 0,
+      },
+    },
+    {
+      id: 'local-jp-teriyaki-2', lessonId: 'local', orderIndex: 1, xpReward: 10,
+      type: 'fill_in_blank',
+      question: '"Teri" signifie brillant et "yaki" signifie ___ en japonais.',
+      data: { answer: 'grillé', hint: 'C\'est une technique de cuisson' },
+    },
+    {
+      id: 'local-jp-teriyaki-3', lessonId: 'local', orderIndex: 2, xpReward: 10,
+      type: 'multiple_choice',
+      question: 'Pour un teriyaki brillant, on badigeonne la viande de sauce…',
+      data: {
+        options: [
+          'En fin de cuisson, plusieurs fois, pour caraméliser',
+          'Avant la cuisson seulement pour mariner',
+          'Après la cuisson, froide, pour le goût',
+          'Pendant toute la cuisson dès le début',
+        ],
+        correctIndex: 0,
+      },
+    },
+    {
+      id: 'local-jp-teriyaki-4', lessonId: 'local', orderIndex: 3, xpReward: 10,
+      type: 'association',
+      question: 'Associe chaque ingrédient à son rôle dans la sauce teriyaki :',
+      data: {
+        pairs: [
+          { left: 'Sauce soja', right: 'Umami et sel' },
+          { left: 'Mirin', right: 'Douceur et brillance' },
+          { left: 'Saké', right: 'Arôme et attendrissement' },
+          { left: 'Sucre', right: 'Caramélisation et laque' },
+        ],
+      },
+    },
+  ],
+
+  "L'Onigiri": [
+    {
+      id: 'local-jp-onigiri-1', lessonId: 'local', orderIndex: 0, xpReward: 10,
+      type: 'multiple_choice',
+      question: 'Quel riz utilise-t-on pour faire des onigiri ?',
+      data: {
+        options: [
+          'Riz japonais à grains courts (uruchimai), légèrement collant',
+          'Riz basmati long grain',
+          'Riz gluant (mochigome)',
+          'Riz sauvage',
+        ],
+        correctIndex: 0,
+      },
+    },
+    {
+      id: 'local-jp-onigiri-2', lessonId: 'local', orderIndex: 1, xpReward: 10,
+      type: 'association',
+      question: 'Associe chaque garniture à son nom japonais :',
+      data: {
+        pairs: [
+          { left: 'Umeboshi', right: 'Prune fermentée acide' },
+          { left: 'Okaka', right: 'Flocons de bonite et sauce soja' },
+          { left: 'Sake', right: 'Saumon grillé émietté' },
+          { left: 'Kombu', right: 'Algue confite sucrée-salée' },
+        ],
+      },
+    },
+    {
+      id: 'local-jp-onigiri-3', lessonId: 'local', orderIndex: 2, xpReward: 10,
+      type: 'fill_in_blank',
+      question: 'Les onigiri se moulent avec les mains légèrement ___ pour que le riz ne colle pas.',
+      data: { answer: 'humides', hint: 'Et un peu de sel sur les paumes' },
+    },
+    {
+      id: 'local-jp-onigiri-4', lessonId: 'local', orderIndex: 3, xpReward: 10,
+      type: 'multiple_choice',
+      question: 'Pour que le nori reste croustillant, on l\'enroule autour de l\'onigiri…',
+      data: {
+        options: [
+          'Juste avant de manger, pas avant',
+          'Le matin pour qu\'il ramollisse et colle',
+          'On le trempe d\'abord dans l\'eau',
+          'On le cuit avec le riz',
+        ],
+        correctIndex: 0,
+      },
+    },
+  ],
+
+  // ── PASTRY ────────────────────────────────────────────────────────────────
+
+  'Macarons Parisiens': [
+    {
+      id: 'local-pastry-mac-1', lessonId: 'local', orderIndex: 0, xpReward: 10,
+      type: 'multiple_choice',
+      question: 'Qu\'est-ce que le "macaronnage" dans la recette des macarons ?',
+      data: {
+        options: [
+          'L\'action de travailler la meringue avec les poudres pour obtenir un appareil brillant qui forme un ruban',
+          'La cuisson des coques au four',
+          'Le remplissage avec la ganache',
+          'Le repos des coques avant garniture',
+        ],
+        correctIndex: 0,
+      },
+    },
+    {
+      id: 'local-pastry-mac-2', lessonId: 'local', orderIndex: 1, xpReward: 10,
+      type: 'fill_in_blank',
+      question: 'Avant de cuire, les coques de macarons doivent "croûter" — c\'est-à-dire sécher à l\'air libre pendant ___ minutes.',
+      data: { answer: '30', hint: 'La surface doit ne plus coller au doigt' },
+    },
+    {
+      id: 'local-pastry-mac-3', lessonId: 'local', orderIndex: 2, xpReward: 10,
+      type: 'multiple_choice',
+      question: 'Quel est l\'avantage de la meringue italienne sur la meringue française pour les macarons ?',
+      data: {
+        options: [
+          'Plus stable, plus brillante, meilleure conservation',
+          'Plus rapide à réaliser',
+          'Moins de sucre nécessaire',
+          'Se tient moins mais est plus légère',
+        ],
+        correctIndex: 0,
+      },
+    },
+    {
+      id: 'local-pastry-mac-4', lessonId: 'local', orderIndex: 3, xpReward: 10,
+      type: 'step_ordering',
+      question: 'Remets les étapes des macarons dans l\'ordre :',
+      data: {
+        steps: ['Croûtage 30-45 min à température ambiante', 'Mixer et tamiser amandes + sucre glace', 'Macaronnage : incorporer la poudre à la meringue', 'Cuire 12-14 min à 150°C four ventilé'],
+        correctOrder: [1, 2, 0, 3],
+      },
+    },
+    {
+      id: 'local-pastry-mac-5', lessonId: 'local', orderIndex: 4, xpReward: 10,
+      type: 'multiple_choice',
+      question: 'Pourquoi faut-il utiliser des blancs d\'œufs vieillis (3-4 jours au réfrigérateur) pour les macarons ?',
+      data: {
+        options: [
+          'Ils contiennent moins d\'eau, montent mieux et forment une meringue plus stable',
+          'Ils sont plus colorés',
+          'Ils ont un goût plus prononcé',
+          'Ils cuisent plus vite',
+        ],
+        correctIndex: 0,
+      },
+    },
+  ],
+
+  // ── MEXICAN (additional) ────────────────────────────────────────────────────
+
+  'Le Guacamole': [
+    {
+      id: 'local-mx-guac-1', lessonId: 'local', orderIndex: 0, xpReward: 10,
+      type: 'multiple_choice',
+      question: 'Comment choisir un avocat mûr pour le guacamole ?',
+      data: {
+        options: [
+          'Il cède légèrement sous une pression douce — ni dur, ni trop mou',
+          'Il est vert vif et très dur',
+          'Il est entièrement noir',
+          'Il flotte dans l\'eau',
+        ],
+        correctIndex: 0,
+      },
+    },
+    {
+      id: 'local-mx-guac-2', lessonId: 'local', orderIndex: 1, xpReward: 10,
+      type: 'fill_in_blank',
+      question: 'Pour éviter que le guacamole noircisse, on peut mettre ___ en contact direct avec la surface.',
+      data: { answer: 'film alimentaire', hint: 'Ou un noyau d\'avocat selon la légende' },
+    },
+    {
+      id: 'local-mx-guac-3', lessonId: 'local', orderIndex: 2, xpReward: 10,
+      type: 'multiple_choice',
+      question: 'Le guacamole traditionnel mexicain se prépare dans quel ustensile ?',
+      data: {
+        options: ['Molcajete (mortier en basalte)', 'Mixeur électrique', 'Fouet', 'Robot coupe'],
+        correctIndex: 0,
+      },
+    },
+    {
+      id: 'local-mx-guac-4', lessonId: 'local', orderIndex: 3, xpReward: 10,
+      type: 'association',
+      question: 'Associe chaque ingrédient à son rôle dans le guacamole :',
+      data: {
+        pairs: [
+          { left: 'Citron vert', right: 'Acidité et antioxydation' },
+          { left: 'Coriandre', right: 'Fraîcheur herbacée' },
+          { left: 'Piment jalapeño', right: 'Chaleur et piquant' },
+          { left: 'Oignon blanc', right: 'Croquant et piquant doux' },
+        ],
+      },
+    },
+  ],
+
 };
 
 // Fuzzy match: find exercises for a lesson by checking if the title matches a key
