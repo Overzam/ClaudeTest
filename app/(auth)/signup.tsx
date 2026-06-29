@@ -7,6 +7,8 @@ import { useThemeStore } from '@/stores/themeStore';
 import { Layout } from '@/constants/Layout';
 import { signUp } from '@/services/authService';
 import { requestNotificationPermissions, scheduleStreakReminder } from '@/services/notificationService';
+import { useAuthStore, GUEST_USER_ID } from '@/stores/authStore';
+import { useProgressStore } from '@/stores/progressStore';
 
 export default function SignupScreen() {
   const [email, setEmail] = useState('');
@@ -15,6 +17,8 @@ export default function SignupScreen() {
   const [loading, setLoading] = useState(false);
   const { theme } = useThemeStore();
   const c = theme.colors;
+  const { loginAsGuest } = useAuthStore();
+  const { loadProgress } = useProgressStore();
 
   async function handleSignup() {
     if (!email.trim() || !username.trim() || password.length < 8) {
@@ -77,6 +81,20 @@ export default function SignupScreen() {
             variant="ghost"
             style={styles.loginBtn}
           />
+          <View style={styles.divider}>
+            <View style={[styles.dividerLine, { backgroundColor: c.border }]} />
+            <Text style={[styles.dividerText, { color: c.textMuted }]}>ou</Text>
+            <View style={[styles.dividerLine, { backgroundColor: c.border }]} />
+          </View>
+          <Button
+            label="Continuer sans compte"
+            onPress={async () => {
+              await loginAsGuest();
+              await loadProgress(GUEST_USER_ID);
+              router.replace('/(tabs)');
+            }}
+            variant="secondary"
+          />
         </ScrollView>
       </KeyboardAvoidingView>
     </ScreenWrapper>
@@ -102,4 +120,7 @@ const styles = StyleSheet.create({
     fontSize: Layout.fontSize.md,
   },
   loginBtn: { marginTop: Layout.spacing.sm },
+  divider: { flexDirection: 'row', alignItems: 'center', gap: Layout.spacing.sm, marginVertical: Layout.spacing.sm },
+  dividerLine: { flex: 1, height: 1 },
+  dividerText: { fontSize: Layout.fontSize.sm },
 });

@@ -82,7 +82,9 @@ export default function ExploreScreen() {
         {/* Lessons */}
         <ScrollView contentContainerStyle={styles.lessonList}>
           {lessons.map((lesson, idx) => {
-            const status = lessonProgress[lesson.id] ?? 'locked';
+            const rawStatus = lessonProgress[lesson.id];
+            // Auto-unlock the first lesson of any path for new users
+            const status = rawStatus ?? (lesson.order_index === 0 ? 'available' : 'locked');
             const isLocked = status === 'locked';
             const isDone = status === 'completed';
             const hasIngredients = !!(LESSON_DETAILS[lesson.id] ?? LESSON_DETAILS[lesson.title]);

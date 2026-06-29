@@ -84,7 +84,8 @@ export default function HomeScreen() {
   let nextLesson: { lesson: Lesson; path: Path } | null = null;
   outer: for (const path of paths) {
     for (const lesson of lessonsMap[path.id] ?? []) {
-      if (lessonProgress[lesson.id] === 'available') {
+      const effectiveStatus = lessonProgress[lesson.id] ?? (lesson.order_index === 0 ? 'available' : 'locked');
+      if (effectiveStatus === 'available') {
         nextLesson = { lesson, path };
         break outer;
       }
