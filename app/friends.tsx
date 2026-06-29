@@ -3,7 +3,7 @@ import { ActivityIndicator, ScrollView, StyleSheet, Text, TextInput, TouchableOp
 import { router, useFocusEffect } from 'expo-router';
 import { ScreenWrapper } from '@/components/ui/ScreenWrapper';
 import { FriendRow } from '@/components/social/FriendRow';
-import { Colors } from '@/constants/Colors';
+import { useThemeStore } from '@/stores/themeStore';
 import { Layout } from '@/constants/Layout';
 import { useAuthStore } from '@/stores/authStore';
 import {
@@ -19,7 +19,9 @@ import {
 import type { UserProfile } from '@/types/database.types';
 
 export default function FriendsScreen() {
-  const { session, user } = useAuthStore();
+  const { session } = useAuthStore();
+  const { theme } = useThemeStore();
+  const c = theme.colors;
   const userId = session?.user.id ?? '';
 
   const [query, setQuery] = useState('');
@@ -50,7 +52,6 @@ export default function FriendsScreen() {
     if (text.length < 2) { setSearchResults([]); return; }
     setSearching(true);
     const results = await searchUsers(text, userId);
-    // Get friendship statuses
     const statuses: Record<string, string> = {};
     for (const u of results) {
       const f = await getFriendshipStatus(userId, u.id);
@@ -90,26 +91,26 @@ export default function FriendsScreen() {
     <ScreenWrapper>
       <View style={styles.header}>
         <TouchableOpacity onPress={() => router.back()}>
-          <Text style={styles.back}>← Retour</Text>
+          <Text style={[styles.back, { color: c.primary }]}>← Retour</Text>
         </TouchableOpacity>
-        <Text style={styles.title}>Amis</Text>
+        <Text style={[styles.title, { color: c.text }]}>Amis</Text>
       </View>
 
       <ScrollView contentContainerStyle={styles.content}>
         <View style={styles.searchBox}>
           <TextInput
-            style={styles.input}
+            style={[styles.input, { borderColor: c.border, color: c.text, backgroundColor: c.surface }]}
             placeholder="Rechercher un joueur…"
             value={query}
             onChangeText={handleSearch}
-            placeholderTextColor={Colors.textMuted}
+            placeholderTextColor={c.textMuted}
           />
-          {searching && <ActivityIndicator size="small" color={Colors.primary} />}
+          {searching && <ActivityIndicator size="small" color={c.primary} />}
         </View>
 
         {searchResults.length > 0 && (
           <View style={styles.section}>
-            <Text style={styles.sectionTitle}>Résultats</Text>
+            <Text style={[styles.sectionTitle, { color: c.text }]}>Résultats</Text>
             {searchResults.map((u) => (
               <FriendRow
                 key={u.id}
@@ -123,7 +124,7 @@ export default function FriendsScreen() {
 
         {pending.length > 0 && (
           <View style={styles.section}>
-            <Text style={styles.sectionTitle}>Demandes reçues</Text>
+            <Text style={[styles.sectionTitle, { color: c.text }]}>Demandes reçues</Text>
             {pending.map((f) => (
               <FriendRow
                 key={f.id}
@@ -137,9 +138,9 @@ export default function FriendsScreen() {
         )}
 
         <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Mes amis ({friends.length})</Text>
+          <Text style={[styles.sectionTitle, { color: c.text }]}>Mes amis ({friends.length})</Text>
           {friends.length === 0 && (
-            <Text style={styles.noFriends}>Aucun ami pour l'instant. Recherche un joueur !</Text>
+            <Text style={[styles.noFriends, { color: c.textMuted }]}>Aucun ami pour l'instant. Recherche un joueur !</Text>
           )}
           {friends.map((f) => (
             <FriendRow
@@ -157,21 +158,18 @@ export default function FriendsScreen() {
 
 const styles = StyleSheet.create({
   header: { flexDirection: 'row', alignItems: 'center', gap: Layout.spacing.md, padding: Layout.spacing.lg },
-  back: { color: Colors.primary, fontWeight: '600', fontSize: Layout.fontSize.md },
-  title: { fontSize: Layout.fontSize.xl, fontWeight: '900', color: Colors.text },
+  back: { fontWeight: '600', fontSize: Layout.fontSize.md },
+  title: { fontSize: Layout.fontSize.xl, fontWeight: '900' },
   content: { padding: Layout.spacing.lg, gap: Layout.spacing.lg },
   searchBox: { flexDirection: 'row', alignItems: 'center', gap: Layout.spacing.sm },
   input: {
     flex: 1,
     borderWidth: 2,
-    borderColor: Colors.border,
     borderRadius: Layout.radius.md,
     padding: Layout.spacing.md,
     fontSize: Layout.fontSize.md,
-    color: Colors.text,
-    backgroundColor: Colors.surface,
   },
   section: { gap: Layout.spacing.xs },
-  sectionTitle: { fontSize: Layout.fontSize.md, fontWeight: '800', color: Colors.text, marginBottom: 4 },
-  noFriends: { fontSize: Layout.fontSize.sm, color: Colors.textMuted, fontStyle: 'italic' },
+  sectionTitle: { fontSize: Layout.fontSize.md, fontWeight: '800', marginBottom: 4 },
+  noFriends: { fontSize: Layout.fontSize.sm, fontStyle: 'italic' },
 });

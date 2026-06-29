@@ -1,14 +1,16 @@
 import React, { useEffect, useRef } from 'react';
 import { Animated, StyleSheet, View, ViewStyle } from 'react-native';
-import { Colors } from '@/constants/Colors';
+import { useThemeStore } from '@/stores/themeStore';
+import { Layout } from '@/constants/Layout';
 
 interface Props {
-  progress: number; // 0 to 1
+  progress: number;
   color?: string;
   style?: ViewStyle;
 }
 
-export function ProgressBar({ progress, color = Colors.primary, style }: Props) {
+export function ProgressBar({ progress, color, style }: Props) {
+  const { theme } = useThemeStore();
   const anim = useRef(new Animated.Value(progress)).current;
 
   useEffect(() => {
@@ -16,15 +18,16 @@ export function ProgressBar({ progress, color = Colors.primary, style }: Props) 
   }, [progress]);
 
   const width = anim.interpolate({ inputRange: [0, 1], outputRange: ['0%', '100%'] });
+  const fillColor = color ?? theme.colors.primary;
 
   return (
-    <View style={[styles.track, style]}>
-      <Animated.View style={[styles.fill, { width, backgroundColor: color }]} />
+    <View style={[styles.track, { backgroundColor: theme.colors.border }, style]}>
+      <Animated.View style={[styles.fill, { width, backgroundColor: fillColor }]} />
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  track: { height: 12, borderRadius: 6, backgroundColor: Colors.border, overflow: 'hidden' },
-  fill: { height: '100%', borderRadius: 6 },
+  track: { height: 12, borderRadius: Layout.radius.full, overflow: 'hidden' },
+  fill: { height: '100%', borderRadius: Layout.radius.full },
 });

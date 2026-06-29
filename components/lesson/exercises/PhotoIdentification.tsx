@@ -2,36 +2,42 @@ import React, { useState } from 'react';
 import { FlatList, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { Image } from 'expo-image';
 import { Button } from '@/components/ui/Button';
-import { Colors } from '@/constants/Colors';
+import { useThemeStore } from '@/stores/themeStore';
 import { Layout } from '@/constants/Layout';
 import type { PhotoIdentificationData } from '@/types/lesson.types';
 
 interface Props {
   question: string;
   data: PhotoIdentificationData;
-  onSubmit: (correct: boolean) => void;
+  onSubmit: (correct: boolean, correctAnswerText?: string) => void;
 }
 
 export function PhotoIdentification({ question, data, onSubmit }: Props) {
   const [selected, setSelected] = useState<number | null>(null);
+  const { theme } = useThemeStore();
+  const c = theme.colors;
 
   function handleVerify() {
     if (selected === null) return;
-    onSubmit(selected === data.correctIndex);
+    onSubmit(selected === data.correctIndex, data.options[data.correctIndex]?.label);
   }
 
   return (
     <View style={styles.container}>
-      <Text style={styles.question}>{question}</Text>
       <FlatList
         data={data.options}
         keyExtractor={(_, i) => String(i)}
         numColumns={2}
         columnWrapperStyle={styles.row}
-        contentContainerStyle={styles.grid}
+        contentContainerStyle={[styles.grid, { paddingHorizontal: Layout.spacing.lg, paddingTop: Layout.spacing.lg }]}
+        ListHeaderComponent={<Text style={[styles.question, { color: c.text }]}>{question}</Text>}
         renderItem={({ item, index }) => (
           <TouchableOpacity
-            style={[styles.option, selected === index && styles.optionSelected]}
+            style={[
+              styles.option,
+              { borderColor: c.border, backgroundColor: c.surfaceElevated },
+              selected === index && { borderColor: c.primary },
+            ]}
             onPress={() => setSelected(index)}
             activeOpacity={0.85}
           >
@@ -41,38 +47,31 @@ export function PhotoIdentification({ question, data, onSubmit }: Props) {
               contentFit="cover"
               placeholder={{ blurhash: 'L6PZfSi_.AyE_3t7t7R**0o#DgR4' }}
             />
-            <Text style={[styles.label, selected === index && styles.labelSelected]}>
+            <Text style={[styles.label, { color: selected === index ? c.primary : c.text }]}>
               {item.label}
             </Text>
           </TouchableOpacity>
         )}
       />
-      <Button
-        label="Vérifier"
-        onPress={handleVerify}
-        disabled={selected === null}
-        style={styles.button}
-      />
+      <View style={[styles.footer, { borderTopColor: c.border }]}>
+        <Button label="Vérifier" onPress={handleVerify} disabled={selected === null} />
+      </View>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, padding: Layout.spacing.lg, gap: Layout.spacing.lg },
-  question: { fontSize: Layout.fontSize.lg, fontWeight: '700', color: Colors.text, textAlign: 'center' },
-  grid: { gap: Layout.spacing.sm },
+  container: { flex: 1 },
+  question: { fontSize: Layout.fontSize.lg, fontWeight: '700', textAlign: 'center', marginBottom: Layout.spacing.md, lineHeight: 28 },
+  grid: { gap: Layout.spacing.sm, paddingBottom: Layout.spacing.sm },
   row: { gap: Layout.spacing.sm },
   option: {
     flex: 1,
     borderWidth: 2,
-    borderColor: Colors.border,
-    borderRadius: Layout.radius.md,
+    borderRadius: Layout.radius.lg,
     overflow: 'hidden',
-    backgroundColor: Colors.surface,
   },
-  optionSelected: { borderColor: Colors.primary },
   image: { width: '100%', aspectRatio: 1 },
-  label: { textAlign: 'center', padding: Layout.spacing.sm, fontSize: Layout.fontSize.sm, fontWeight: '600', color: Colors.text },
-  labelSelected: { color: Colors.primary },
-  button: { marginTop: 'auto' },
+  label: { textAlign: 'center', padding: Layout.spacing.sm, fontSize: Layout.fontSize.sm, fontWeight: '600' },
+  footer: { padding: Layout.spacing.lg, paddingTop: Layout.spacing.md, borderTopWidth: 1 },
 });

@@ -4,7 +4,7 @@ import { router, useFocusEffect } from 'expo-router';
 import { ScreenWrapper } from '@/components/ui/ScreenWrapper';
 import { BadgeCard } from '@/components/gamification/BadgeCard';
 import { LoadingScreen } from '@/components/ui/LoadingScreen';
-import { Colors } from '@/constants/Colors';
+import { useThemeStore } from '@/stores/themeStore';
 import { Layout } from '@/constants/Layout';
 import { useAuthStore } from '@/stores/authStore';
 import { useBadgeStore } from '@/stores/badgeStore';
@@ -16,6 +16,8 @@ export default function BadgesScreen() {
   const { userBadges, loadBadges } = useBadgeStore();
   const [allBadges, setAllBadges] = useState<Badge[]>([]);
   const [loading, setLoading] = useState(true);
+  const { theme } = useThemeStore();
+  const c = theme.colors;
 
   useFocusEffect(
     useCallback(() => {
@@ -36,11 +38,11 @@ export default function BadgesScreen() {
     <ScreenWrapper>
       <View style={styles.header}>
         <TouchableOpacity onPress={() => router.back()}>
-          <Text style={styles.back}>← Retour</Text>
+          <Text style={[styles.back, { color: c.primary }]}>← Retour</Text>
         </TouchableOpacity>
         <View>
-          <Text style={styles.title}>Trophées</Text>
-          <Text style={styles.count}>{earnedCount}/{allBadges.length} obtenus</Text>
+          <Text style={[styles.title, { color: c.text }]}>Trophées</Text>
+          <Text style={[styles.count, { color: c.textMuted }]}>{earnedCount}/{allBadges.length} obtenus</Text>
         </View>
       </View>
       <FlatList
@@ -51,13 +53,7 @@ export default function BadgesScreen() {
         contentContainerStyle={styles.grid}
         renderItem={({ item }) => {
           const ub = earnedMap[item.id];
-          return (
-            <BadgeCard
-              badge={item}
-              earned={!!ub}
-              earnedAt={ub?.earned_at}
-            />
-          );
+          return <BadgeCard badge={item} earned={!!ub} earnedAt={ub?.earned_at} />;
         }}
       />
     </ScreenWrapper>
@@ -66,9 +62,9 @@ export default function BadgesScreen() {
 
 const styles = StyleSheet.create({
   header: { flexDirection: 'row', alignItems: 'center', gap: Layout.spacing.md, padding: Layout.spacing.lg },
-  back: { color: Colors.primary, fontWeight: '600', fontSize: Layout.fontSize.md },
-  title: { fontSize: Layout.fontSize.xl, fontWeight: '900', color: Colors.text },
-  count: { fontSize: Layout.fontSize.sm, color: Colors.textMuted },
+  back: { fontWeight: '600', fontSize: Layout.fontSize.md },
+  title: { fontSize: Layout.fontSize.xl, fontWeight: '900' },
+  count: { fontSize: Layout.fontSize.sm },
   grid: { padding: Layout.spacing.lg, gap: Layout.spacing.md },
   row: { gap: Layout.spacing.md, justifyContent: 'flex-start' },
 });
