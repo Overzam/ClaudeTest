@@ -323,60 +323,6 @@ export const STATIC_EXERCISES: Record<string, Exercise[]> = {
     },
   ],
 
-  // ── PASTRY ──────────────────────────────────────────────────────────────────
-
-  'Macarons Parisiens': [
-    {
-      id: 'local-pa-macaron-1', lessonId: 'local', orderIndex: 0, xpReward: 10,
-      type: 'multiple_choice',
-      question: 'Quand le macaron parisien moderne a-t-il été créé et par qui ?',
-      data: {
-        options: [
-          'En 1789 par Marie-Antoinette',
-          'En 1930 par Pierre Desfontaines chez Ladurée',
-          'En 1850 par Antonin Carême',
-          'En 1960 par Pierre Hermé',
-        ],
-        correctIndex: 1,
-      },
-    },
-    {
-      id: 'local-pa-macaron-2', lessonId: 'local', orderIndex: 1, xpReward: 10,
-      type: 'multiple_choice',
-      question: 'Le "macaronnage" consiste à…',
-      data: {
-        options: [
-          'Fouetter les blancs en neige',
-          'Plier délicatement la meringue dans la poudre pour obtenir un ruban',
-          'Cuire les coques à la vapeur',
-          'Mixer la poudre d\'amandes très finement',
-        ],
-        correctIndex: 1,
-      },
-    },
-    {
-      id: 'local-pa-macaron-3', lessonId: 'local', orderIndex: 2, xpReward: 10,
-      type: 'fill_in_blank',
-      question: 'La petite collerette qui se forme à la base des coques pendant la cuisson s\'appelle la ___.',
-      data: { answer: 'collerette', hint: 'Signe d\'une cuisson réussie' },
-    },
-    {
-      id: 'local-pa-macaron-4', lessonId: 'local', orderIndex: 3, xpReward: 10,
-      type: 'step_ordering',
-      question: 'Remets les étapes des macarons dans l\'ordre :',
-      data: {
-        steps: [
-          'Laisser croûter 30 min à température ambiante',
-          'Macaronner (mélanger poudre + meringue)',
-          'Monter les blancs en neige ferme',
-          'Cuire 12 min à 150°C',
-          'Pocher les coques sur plaque silicone',
-        ],
-        correctOrder: [2, 1, 4, 0, 3],
-      },
-    },
-  ],
-
   // ── BBQ ─────────────────────────────────────────────────────────────────────
 
   'Les Marinades': [
@@ -1077,87 +1023,6 @@ export const STATIC_EXERCISES: Record<string, Exercise[]> = {
     },
   ],
 
-  'Le Coq au Vin': [
-    {
-      id: 'local-fr-coq-1', lessonId: 'local', orderIndex: 0, xpReward: 10,
-      type: 'multiple_choice',
-      question: 'Dans le coq au vin traditionnel, avec quel vin cuit-on le poulet ?',
-      data: {
-        options: ['Vin rouge de Bourgogne (Pinot Noir)', 'Vin blanc de Loire', 'Champagne', 'Vin rosé de Provence'],
-        correctIndex: 0,
-      },
-    },
-    {
-      id: 'local-fr-coq-2', lessonId: 'local', orderIndex: 1, xpReward: 10,
-      type: 'fill_in_blank',
-      question: 'L\'action de faire revenir les lardons, oignons et champignons séparément avant de les ajouter au braisé s\'appelle une ___ garniture.',
-      data: { answer: 'bourguignonne', hint: 'Lardons, champignons, oignons grelots' },
-    },
-    {
-      id: 'local-fr-coq-3', lessonId: 'local', orderIndex: 2, xpReward: 10,
-      type: 'step_ordering',
-      question: 'Remets les étapes du coq au vin dans l\'ordre :',
-      data: {
-        steps: ['Lier la sauce avec du beurre manié', 'Faire mariner le poulet au vin 12h', 'Faire saisir les morceaux de poulet', 'Mijoter 45 min à couvert'],
-        correctOrder: [1, 2, 3, 0],
-      },
-    },
-    {
-      id: 'local-fr-coq-4', lessonId: 'local', orderIndex: 3, xpReward: 10,
-      type: 'multiple_choice',
-      question: 'Qu\'est-ce que le "beurre manié" utilisé pour lier une sauce ?',
-      data: {
-        options: [
-          'Beurre et farine malaxés à froid en proportions égales',
-          'Beurre fondu mélangé à de la fécule',
-          'Beurre clarifié avec du jaune d\'œuf',
-          'Beurre noisette réduit',
-        ],
-        correctIndex: 0,
-      },
-    },
-  ],
-
-  'La Bouillabaisse': [
-    {
-      id: 'local-fr-bouillabaise-1', lessonId: 'local', orderIndex: 0, xpReward: 10,
-      type: 'multiple_choice',
-      question: 'De quelle ville provient la bouillabaisse ?',
-      data: {
-        options: ['Marseille', 'Nice', 'Toulon', 'Montpellier'],
-        correctIndex: 0,
-      },
-    },
-    {
-      id: 'local-fr-bouillabaise-2', lessonId: 'local', orderIndex: 1, xpReward: 10,
-      type: 'fill_in_blank',
-      question: 'La sauce à l\'ail et au safran servie avec la bouillabaisse s\'appelle la ___.',
-      data: { answer: 'rouille', hint: 'Sauce orange-rouge de Provence' },
-    },
-    {
-      id: 'local-fr-bouillabaise-3', lessonId: 'local', orderIndex: 2, xpReward: 10,
-      type: 'multiple_choice',
-      question: 'Quel poisson est indispensable dans une vraie bouillabaisse marseillaise ?',
-      data: {
-        options: ['Rascasse', 'Saumon', 'Thon', 'Daurade'],
-        correctIndex: 0,
-      },
-    },
-    {
-      id: 'local-fr-bouillabaise-4', lessonId: 'local', orderIndex: 3, xpReward: 10,
-      type: 'association',
-      question: 'Associe chaque élément à son rôle dans la bouillabaisse :',
-      data: {
-        pairs: [
-          { left: 'Safran', right: 'Couleur dorée et saveur florale' },
-          { left: 'Fenouil', right: 'Arôme anisé caractéristique' },
-          { left: 'Rouille', right: 'Sauce aillée pour les croûtons' },
-          { left: 'Rascasse', right: 'Poisson de roche obligatoire' },
-        ],
-      },
-    },
-  ],
-
   // ── ITALIAN (additional) ────────────────────────────────────────────────────
 
   "L'Huile d'Olive": [
@@ -1520,7 +1385,7 @@ export const STATIC_EXERCISES: Record<string, Exercise[]> = {
     },
   ],
 
-  'Le Teriyaki': [
+  'Le Poulet Teriyaki': [
     {
       id: 'local-jp-teriyaki-1', lessonId: 'local', orderIndex: 0, xpReward: 10,
       type: 'multiple_choice',
@@ -1570,7 +1435,7 @@ export const STATIC_EXERCISES: Record<string, Exercise[]> = {
     },
   ],
 
-  "L'Onigiri": [
+  'Les Onigiri': [
     {
       id: 'local-jp-onigiri-1', lessonId: 'local', orderIndex: 0, xpReward: 10,
       type: 'multiple_choice',
@@ -1622,7 +1487,7 @@ export const STATIC_EXERCISES: Record<string, Exercise[]> = {
 
   // ── PASTRY ────────────────────────────────────────────────────────────────
 
-  'Macarons Parisiens': [
+  'Les Macarons': [
     {
       id: 'local-pastry-mac-1', lessonId: 'local', orderIndex: 0, xpReward: 10,
       type: 'multiple_choice',
