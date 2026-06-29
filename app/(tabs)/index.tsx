@@ -144,6 +144,21 @@ export default function HomeScreen() {
           </TouchableOpacity>
         )}
 
+        {/* Streak at risk banner (evening warning) */}
+        {gameStore.streakDays > 0 && new Date().getHours() >= 18 && (
+          <TouchableOpacity
+            style={[styles.streakWarning, { backgroundColor: '#FF6B2B' + '18', borderColor: '#FF6B2B' + '40' }]}
+            onPress={() => nextLesson && router.push({ pathname: '/lesson/[lessonId]', params: { lessonId: nextLesson.lesson.id, lessonTitle: nextLesson.lesson.title } })}
+            activeOpacity={0.85}
+          >
+            <Text style={styles.streakWarningEmoji}>⚠️</Text>
+            <View style={styles.challengeInfo}>
+              <Text style={[styles.challengeLabel, { color: '#FF6B2B' }]}>SÉRIE EN DANGER</Text>
+              <Text style={[styles.challengeTitle, { color: c.text }]}>Fais une leçon pour garder ta série 🔥{gameStore.streakDays}j</Text>
+            </View>
+          </TouchableOpacity>
+        )}
+
         {/* Daily challenge banner */}
         <TouchableOpacity
           style={[styles.challengeBanner, { backgroundColor: c.secondary + '20', borderColor: c.secondary + '40' }]}
@@ -299,6 +314,15 @@ const styles = StyleSheet.create({
   },
   pathTileTitle: { fontSize: Layout.fontSize.sm, fontWeight: '700', textAlign: 'center' },
   pathTileCount: { fontSize: Layout.fontSize.xs },
+  streakWarning: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    borderRadius: Layout.radius.xl,
+    padding: Layout.spacing.md,
+    gap: Layout.spacing.md,
+    borderWidth: 1,
+  },
+  streakWarningEmoji: { fontSize: 28 },
   challengeBanner: {
     flexDirection: 'row',
     alignItems: 'center',
