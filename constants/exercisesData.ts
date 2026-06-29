@@ -716,7 +716,7 @@ export const STATIC_EXERCISES: Record<string, Exercise[]> = {
       type: 'multiple_choice',
       question: 'À quelle température cuit-on le confit de canard ?',
       data: { options: ['200°C pendant 30 min', '80-90°C pendant 2-3 heures', '160°C pendant 1 heure', '50°C pendant 6 heures'], correctIndex: 1,
-        anecdote: 'Le confit est une technique de conservation gasconne : la graisse créait une barrière hermétique et pouvait conserver le canard plusieurs mois sans réfrigération.' } } },
+        anecdote: 'Le confit est une technique de conservation gasconne : la graisse créait une barrière hermétique et pouvait conserver le canard plusieurs mois sans réfrigération.' } },
     { id: 'local-fr8-2', lessonId: 'fr-8', orderIndex: 1, xpReward: 10,
       type: 'fill_in_blank',
       question: 'Avant de confir, on frotte les cuisses de canard avec du sel et des aromates, puis on les laisse mariner au frais pendant ___.',
