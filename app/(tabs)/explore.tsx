@@ -1,6 +1,8 @@
 import React, { useCallback, useState } from 'react';
 import { ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { Image } from 'expo-image';
 import { router, useFocusEffect, useLocalSearchParams } from 'expo-router';
+import { LESSON_THUMBNAIL_MAP, PATH_IMAGE_MAP } from '@/constants/recipeImages';
 import { ScreenWrapper } from '@/components/ui/ScreenWrapper';
 import { LoadingScreen } from '@/components/ui/LoadingScreen';
 import { useThemeStore } from '@/stores/themeStore';
@@ -111,6 +113,13 @@ export default function ExploreScreen() {
                     disabled={isLocked}
                     activeOpacity={0.85}
                   >
+                    {LESSON_THUMBNAIL_MAP[lesson.title] && !isLocked ? (
+                      <Image
+                        source={{ uri: LESSON_THUMBNAIL_MAP[lesson.title] }}
+                        style={[StyleSheet.absoluteFill, { borderRadius: 36, opacity: isDone ? 0.6 : 1 }]}
+                        contentFit="cover"
+                      />
+                    ) : null}
                     <Text style={[styles.nodeIcon, isLocked && { color: c.textMuted }]}>
                       {isDone ? '✓' : isLocked ? '🔒' : '▶'}
                     </Text>
@@ -167,7 +176,14 @@ export default function ExploreScreen() {
               onPress={() => setSelectedPath(path.id)}
               activeOpacity={0.85}
             >
-              <View style={[styles.pathCardEmoji, { backgroundColor: path.color + '20' }]}>
+              <View style={[styles.pathCardEmoji, { backgroundColor: path.color + '20', overflow: 'hidden' }]}>
+                {PATH_IMAGE_MAP[path.slug] ? (
+                  <Image
+                    source={{ uri: PATH_IMAGE_MAP[path.slug] }}
+                    style={[StyleSheet.absoluteFill, { opacity: 0.7 }]}
+                    contentFit="cover"
+                  />
+                ) : null}
                 <Text style={styles.pathCardEmojiText}>{path.emoji}</Text>
               </View>
               <View style={styles.pathCardContent}>
@@ -252,6 +268,7 @@ const styles = StyleSheet.create({
     borderRadius: 36,
     alignItems: 'center',
     justifyContent: 'center',
+    overflow: 'hidden',
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,

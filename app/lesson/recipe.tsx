@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { ActivityIndicator, ScrollView, StyleSheet, Text, TouchableOpacity, View, Animated } from 'react-native';
+import { Image } from 'expo-image';
 import { router, useLocalSearchParams } from 'expo-router';
 import { useThemeStore } from '@/stores/themeStore';
 import { Layout } from '@/constants/Layout';
@@ -62,6 +63,14 @@ export default function RecipeScreen() {
       <ScrollView contentContainerStyle={styles.scroll} showsVerticalScrollIndicator={false}>
         {/* Hero */}
         <View style={[styles.hero, { backgroundColor: c.primary + '12' }]}>
+          {recipe.hero_image_url ? (
+            <Image
+              source={{ uri: recipe.hero_image_url }}
+              style={styles.heroPhoto}
+              contentFit="cover"
+              transition={300}
+            />
+          ) : null}
           <Text style={styles.heroEmoji}>{recipe.emoji}</Text>
           <Text style={[styles.heroTitle, { color: c.text }]}>{recipe.title}</Text>
           <Text style={[styles.heroDesc, { color: c.textMuted }]}>{recipe.description}</Text>
@@ -184,11 +193,13 @@ const styles = StyleSheet.create({
 
   hero: {
     borderRadius: Layout.radius.xl,
-    padding: Layout.spacing.xl,
+    overflow: 'hidden',
     alignItems: 'center',
     gap: Layout.spacing.sm,
+    paddingBottom: Layout.spacing.xl,
   },
-  heroEmoji: { fontSize: 64 },
+  heroPhoto: { width: '100%', height: 200, borderRadius: 0 },
+  heroEmoji: { fontSize: 48, marginTop: Layout.spacing.md },
   heroTitle: { fontSize: Layout.fontSize.xxl, fontWeight: '900', textAlign: 'center' },
   heroDesc: { fontSize: Layout.fontSize.sm, textAlign: 'center', lineHeight: 20 },
   statsRow: { flexDirection: 'row', gap: Layout.spacing.sm, marginTop: Layout.spacing.sm, flexWrap: 'wrap', justifyContent: 'center' },
