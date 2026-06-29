@@ -21,8 +21,9 @@ function extractLessonTitles() {
   const dqRegex = /title:\s*"([^"]+)"/g;
   const sqRegex = /title:\s*'((?:[^'\\]|\\.)*)'/g;
   let m;
-  const pathTitlesKeywords = ['Cuisine', 'Barbecue', 'Pâtisserie', 'Vegan'];
-  const skip = (t) => pathTitlesKeywords.some(k => t.includes(k));
+  // Skip path-level titles (not lesson titles) — must match exactly
+  const pathTitleExact = ['Cuisine Française', 'Cuisine Italienne', 'Cuisine Japonaise', 'Cuisine Marocaine', 'Cuisine Mexicaine', 'Cuisine Indienne', 'Cuisine Thaïlandaise', 'Cuisine Grecque', 'Cuisine Chinoise', 'La Pâtisserie Française', 'Le Barbecue & Grillades', 'Le Vegan & Plant-Based', 'Pâtisserie', 'Barbecue & Grillades', 'Cuisine Vegan'];
+  const skip = (t) => pathTitleExact.includes(t);
 
   while ((m = dqRegex.exec(content)) !== null) {
     if (!skip(m[1])) titles.push(m[1]);
