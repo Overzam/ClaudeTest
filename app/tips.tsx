@@ -54,6 +54,27 @@ const TIPS: Tip[] = [
   // Conservation
   { id: 't23', category: 'Conservation', emoji: '🫙', title: 'Congélation des herbes', body: "Mixez vos herbes fraîches avec un peu d'huile d'olive et congelez-les dans un bac à glaçons. Vous aurez des portions prêtes à l'emploi toute l'année.", pro: 'Idéal pour le basilic en saison estivale' },
   { id: 't24', category: 'Conservation', emoji: '🫙', title: 'Lacto-fermentation', body: "Le sel inhibe les mauvaises bactéries et favorise les lactobacilles naturels. À 2% de sel sur le poids des légumes, vous obtenez une fermentation stable et sûre.", pro: 'Aucun équipement spécial — juste sel + légumes + bocal' },
+
+  // Viandes
+  { id: 't25', category: 'Viandes', emoji: '🥩', title: 'Tempérer la viande', body: "Sortez la viande du réfrigérateur 30-45 minutes avant la cuisson. Une viande froide au centre cuit de façon inégale — l'extérieur brûle avant que le cœur soit chaud.", pro: 'Surtout crucial pour les grosses pièces (rôtis, côtes de bœuf)' },
+  { id: 't26', category: 'Viandes', emoji: '🥩', title: 'Saisir dans la bonne graisse', body: "Utilisez du beurre clarifié (ou ghee) ou de l'huile à haute température pour saisir la viande. Le beurre ordinaire brûle à partir de 130°C — bien trop bas.", pro: 'Ajoutez le beurre non clarifié en fin de cuisson pour le goût' },
+  { id: 't27', category: 'Viandes', emoji: '🥩', title: 'Découper dans le sens inverse des fibres', body: "Repérez la direction des fibres musculaires et découpez perpendiculairement à elles. Cela raccourcit les fibres et rend la viande plus tendre à la mastication.", pro: 'Essentiel pour la bavette, le flank steak, le rôti de palette' },
+  { id: 't28', category: 'Viandes', emoji: '🐔', title: 'Poulet : sécher la peau', body: "Pour une peau croustillante, séchez le poulet avec du papier absorbant avant cuisson. L'humidité en surface crée de la vapeur qui ramollit la peau au lieu de la griller.", pro: 'Le laisser sécher 1h à l\'air libre au réfrigérateur donne les meilleurs résultats' },
+
+  // Cuisine Japonaise
+  { id: 't29', category: 'Japonais', emoji: '🍜', title: 'Le dashi, base de tout', body: "Le dashi (bouillon de kombu et bonite séchée) est à la cuisine japonaise ce que le bouillon est à la française. Il se prépare en 15 minutes mais structure toutes les saveurs.", pro: 'Ne jamais faire bouillir — le kombu libère une amertume à l\'ébullition' },
+  { id: 't30', category: 'Japonais', emoji: '🍣', title: 'Riz à sushi : le vinaigre', body: "La vinaigrette du riz à sushi (vinaigre de riz, sel, sucre) ne doit pas être mélangée mais tranchée dans le riz avec une spatule en bois, pour ne pas écraser les grains.", pro: 'Évantez le riz pendant le mélange pour qu\'il refroidisse vite et brille' },
+  { id: 't31', category: 'Japonais', emoji: '🍱', title: 'Umami naturel japonais', body: "Les Japonais utilisent le principe de 'umami synergy' : combiner kombu (glutamate) et bonite séchée (inosinate) double la perception de l'umami de façon exponentielle.", pro: '1+1=8 en matière d\'umami selon les recherches de Kikunae Ikeda' },
+
+  // Méditerranée
+  { id: 't32', category: 'Méditerranée', emoji: '🫒', title: 'Huile d\'olive : cuire ou finir', body: "L'huile d'olive extra vierge a un point de fumée à 190°C — suffisant pour la plupart des cuissons. Mais son goût s'altère à haute température. Gardez la meilleure pour finir les plats.", pro: 'Pour les friture : huile d\'olive raffinée ou huile de tournesol' },
+  { id: 't33', category: 'Méditerranée', emoji: '🧄', title: 'L\'ail : 3 intensités', body: "Ail cru : intense et piquant. Ail émincé revenu : doux et parfumé. Ail confit (1h à 90°C dans l'huile) : caramélisé, sucré, fondant. Choisissez selon l'effet voulu.", pro: 'L\'ail confit en pot se conserve 3 semaines au réfrigérateur' },
+  { id: 't34', category: 'Méditerranée', emoji: '🍋', title: 'Citron : zeste d\'abord', body: "Prélevez toujours le zeste avant de presser le citron. Le zeste contient les huiles essentielles les plus aromatiques — jusqu'à 10× plus parfumé que le jus.", pro: 'Congelez les zestes en excès — ils durent 6 mois au congélateur' },
+
+  // Œufs
+  { id: 't35', category: 'Œufs', emoji: '🥚', title: 'Tester la fraîcheur', body: "Plongez un œuf dans un verre d'eau : s'il coule à plat, il est frais. S'il se dresse debout, il vieillit. S'il flotte, jetez-le — la chambre d'air s'est trop agrandie.", pro: 'Les œufs frais sont essentiels pour pochés et à la coque' },
+  { id: 't36', category: 'Œufs', emoji: '🥚', title: 'Blancs en neige : le secret', body: "Utilisez un bol parfaitement propre et sec — une trace de gras empêche les blancs de monter. Ajoutez une pincée de sel ou quelques gouttes de citron pour stabiliser.", pro: 'Commencez à vitesse lente pour créer de petites bulles stables' },
+  { id: 't37', category: 'Œufs', emoji: '🥚', title: 'L\'œuf parfaitement poché', body: "Eau frémissante (pas bouillante) avec un filet de vinaigre. Créez un tourbillon, cassez l'œuf dans une tasse puis glissez-le au centre du tourbillon. 3 minutes pour un jaune coulant.", pro: 'Le tourbillon centre le blanc autour du jaune' },
 ];
 
 const CATEGORIES = ['Tous', ...Array.from(new Set(TIPS.map((t) => t.category)))];
