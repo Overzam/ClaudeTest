@@ -5,6 +5,7 @@ import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { I18nextProvider } from 'react-i18next';
 import { useAuthStore } from '@/stores/authStore';
+import { useProgressStore } from '@/stores/progressStore';
 import { useGameStore } from '@/stores/gameStore';
 import { usePremiumStore } from '@/stores/premiumStore';
 import { useSettingsStore } from '@/stores/settingsStore';
@@ -23,6 +24,8 @@ Notifications.setNotificationHandler({
 
 export default function RootLayout() {
   const initialize = useAuthStore((s) => s.initialize);
+  const session = useAuthStore((s) => s.session);
+  const loadProgress = useProgressStore((s) => s.loadProgress);
   const regenHearts = useGameStore((s) => s.regenHearts);
   const checkExpiry = usePremiumStore((s) => s.checkExpiry);
   const { language } = useSettingsStore();
@@ -31,6 +34,10 @@ export default function RootLayout() {
     initialize();
     getSavedLanguage().then((lang) => i18n.changeLanguage(lang));
   }, []);
+
+  useEffect(() => {
+    if (session?.user?.id) loadProgress(session.user.id);
+  }, [session?.user?.id]);
 
   useEffect(() => {
     const sub = AppState.addEventListener('change', (state) => {

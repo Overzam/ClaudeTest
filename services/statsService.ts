@@ -1,7 +1,9 @@
-import { supabase } from './supabase';
+import { supabase, isSupabaseConfigured } from './supabase';
+import { GUEST_USER_ID } from '@/stores/authStore';
 import type { UserStats } from '@/types/database.types';
 
 export async function fetchUserStats(userId: string): Promise<UserStats | null> {
+  if (userId === GUEST_USER_ID || !isSupabaseConfigured) return null;
   const { data, error } = await supabase
     .from('user_stats')
     .select('*')
@@ -12,6 +14,7 @@ export async function fetchUserStats(userId: string): Promise<UserStats | null> 
 }
 
 export async function updateXP(userId: string, xpToAdd: number) {
+  if (userId === GUEST_USER_ID || !isSupabaseConfigured) return xpToAdd;
   const { data: current } = await supabase
     .from('user_stats')
     .select('xp')
@@ -19,7 +22,6 @@ export async function updateXP(userId: string, xpToAdd: number) {
     .single();
 
   const newXP = (current?.xp ?? 0) + xpToAdd;
-
   const { error } = await supabase
     .from('user_stats')
     .update({ xp: newXP, updated_at: new Date().toISOString() })
@@ -29,10 +31,12 @@ export async function updateXP(userId: string, xpToAdd: number) {
 }
 
 export async function updateStreak(userId: string) {
+  if (userId === GUEST_USER_ID || !isSupabaseConfigured) return;
   await supabase.rpc('update_streak', { p_user_id: userId });
 }
 
 export async function updateHearts(userId: string, hearts: number) {
+  if (userId === GUEST_USER_ID || !isSupabaseConfigured) return;
   const { error } = await supabase
     .from('user_stats')
     .update({ hearts, hearts_last_refill: new Date().toISOString(), updated_at: new Date().toISOString() })
@@ -41,9 +45,9 @@ export async function updateHearts(userId: string, hearts: number) {
 }
 
 export async function incrementLessonsCompleted(userId: string) {
+  if (userId === GUEST_USER_ID || !isSupabaseConfigured) return;
   const { error } = await supabase.rpc('increment_lessons_completed', { p_user_id: userId });
   if (error) {
-    // Fallback if RPC not set up
     const { data } = await supabase.from('user_stats').select('lessons_completed').eq('user_id', userId).single();
     await supabase.from('user_stats').update({ lessons_completed: (data?.lessons_completed ?? 0) + 1 }).eq('user_id', userId);
   }
