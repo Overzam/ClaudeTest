@@ -21,7 +21,7 @@ FROM (VALUES
   ('Le Millefeuille','Feuilletage, crème pâtissière et fondant',19,70)
 ) AS v(title,description,order_index,xp_reward)
 CROSS JOIN (SELECT id FROM public.paths WHERE slug='french' LIMIT 1) p
-ON CONFLICT (path_id, order_index) DO NOTHING;
+;
 
 -- ITALIEN
 INSERT INTO public.lessons (id, path_id, title, description, order_index, xp_reward)
@@ -43,7 +43,7 @@ FROM (VALUES
   ('Le Cannolo Sicilien','Tubes frits farcis à la ricotta sucrée',19,55)
 ) AS v(title,description,order_index,xp_reward)
 CROSS JOIN (SELECT id FROM public.paths WHERE slug='italian' LIMIT 1) p
-ON CONFLICT (path_id, order_index) DO NOTHING;
+;
 
 -- JAPONAIS
 INSERT INTO public.lessons (id, path_id, title, description, order_index, xp_reward)
@@ -65,7 +65,7 @@ FROM (VALUES
   ('Le Matcha Parfait','Glace, azuki, mochi et sirop vert',19,50)
 ) AS v(title,description,order_index,xp_reward)
 CROSS JOIN (SELECT id FROM public.paths WHERE slug='japanese' LIMIT 1) p
-ON CONFLICT (path_id, order_index) DO NOTHING;
+;
 
 -- MAROCAIN
 INSERT INTO public.lessons (id, path_id, title, description, order_index, xp_reward)
@@ -78,7 +78,7 @@ FROM (VALUES
   ('Le Thé à la Menthe','Rituel du thé vert-menthe et sa mousse',9,25)
 ) AS v(title,description,order_index,xp_reward)
 CROSS JOIN (SELECT id FROM public.paths WHERE slug='moroccan' LIMIT 1) p
-ON CONFLICT (path_id, order_index) DO NOTHING;
+;
 
 -- MEXICAIN
 INSERT INTO public.lessons (id, path_id, title, description, order_index, xp_reward)
@@ -91,7 +91,7 @@ FROM (VALUES
   ('Les Churros con Chocolate','Beignets filés frits et sauce chocolat chaud',10,35)
 ) AS v(title,description,order_index,xp_reward)
 CROSS JOIN (SELECT id FROM public.paths WHERE slug='mexican' LIMIT 1) p
-ON CONFLICT (path_id, order_index) DO NOTHING;
+;
 
 -- INDIEN
 INSERT INTO public.lessons (id, path_id, title, description, order_index, xp_reward)
@@ -104,7 +104,7 @@ FROM (VALUES
   ('Le Gulab Jamun','Boulettes de lait frites siropées à la rose',9,40)
 ) AS v(title,description,order_index,xp_reward)
 CROSS JOIN (SELECT id FROM public.paths WHERE slug='indian' LIMIT 1) p
-ON CONFLICT (path_id, order_index) DO NOTHING;
+;
 
 -- THAÏLANDAIS
 INSERT INTO public.lessons (id, path_id, title, description, order_index, xp_reward)
@@ -117,7 +117,7 @@ FROM (VALUES
   ('Le Mango Sticky Rice','Riz gluant-lait de coco et mangue fraîche',9,35)
 ) AS v(title,description,order_index,xp_reward)
 CROSS JOIN (SELECT id FROM public.paths WHERE slug='thai' LIMIT 1) p
-ON CONFLICT (path_id, order_index) DO NOTHING;
+;
 
 -- GREC
 INSERT INTO public.lessons (id, path_id, title, description, order_index, xp_reward)
@@ -130,7 +130,7 @@ FROM (VALUES
   ('L''Agneau de Pâques','Épaule d''agneau confite aux herbes et citron',9,55)
 ) AS v(title,description,order_index,xp_reward)
 CROSS JOIN (SELECT id FROM public.paths WHERE slug='greek' LIMIT 1) p
-ON CONFLICT (path_id, order_index) DO NOTHING;
+;
 
 -- CHINOIS
 INSERT INTO public.lessons (id, path_id, title, description, order_index, xp_reward)
@@ -143,7 +143,7 @@ FROM (VALUES
   ('Les Egg Tarts','Tartelettes à la crème aux œufs style Hong Kong',9,40)
 ) AS v(title,description,order_index,xp_reward)
 CROSS JOIN (SELECT id FROM public.paths WHERE slug='chinese' LIMIT 1) p
-ON CONFLICT (path_id, order_index) DO NOTHING;
+;
 
 -- PÂTISSERIE
 INSERT INTO public.lessons (id, path_id, title, description, order_index, xp_reward)
@@ -156,7 +156,7 @@ FROM (VALUES
   ('Le Saint-Honoré','Choux, crème chiboust et caramel filé',9,70)
 ) AS v(title,description,order_index,xp_reward)
 CROSS JOIN (SELECT id FROM public.paths WHERE slug='pastry' LIMIT 1) p
-ON CONFLICT (path_id, order_index) DO NOTHING;
+;
 
 -- BBQ
 INSERT INTO public.lessons (id, path_id, title, description, order_index, xp_reward)
@@ -169,7 +169,7 @@ FROM (VALUES
   ('La Sauce BBQ Maison','Ketchup, vinaigre, mélasse et fumée liquide',9,35)
 ) AS v(title,description,order_index,xp_reward)
 CROSS JOIN (SELECT id FROM public.paths WHERE slug='bbq' LIMIT 1) p
-ON CONFLICT (path_id, order_index) DO NOTHING;
+;
 
 -- VEGAN
 INSERT INTO public.lessons (id, path_id, title, description, order_index, xp_reward)
@@ -182,7 +182,7 @@ FROM (VALUES
   ('Le Lait Végétal Maison','Avoine, amande, soja — faire son lait soi-même',9,30)
 ) AS v(title,description,order_index,xp_reward)
 CROSS JOIN (SELECT id FROM public.paths WHERE slug='vegan' LIMIT 1) p
-ON CONFLICT (path_id, order_index) DO NOTHING;
+;
 
 -- ============================================================
 -- EXERCICES — liés aux leçons via leur titre

@@ -110,7 +110,7 @@ export default function LessonScreen() {
   }
 
   return (
-    <View style={[styles.container, { paddingTop: insets.top, backgroundColor: theme.colors.background }]}>
+    <View style={[styles.container, { paddingTop: insets.top, paddingBottom: insets.bottom, backgroundColor: theme.colors.background }]}>
       <ExerciseHeader
         progress={progress}
         hearts={gameStore.hearts}
