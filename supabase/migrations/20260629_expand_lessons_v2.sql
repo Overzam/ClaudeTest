@@ -230,4 +230,4 @@ FROM (VALUES
   ('Le Mango Sticky Rice','fill_in_blank','La sauce au ___ de coco est mélangée au riz encore chaud pour l''imprégner.','{"answer":"lait","hint":"Lait de coco + sucre + sel — le riz absorbe tout"}',1,10)
 ) AS v(lesson_title, type, question, data, order_index, xp_reward)
 JOIN public.lessons l ON l.title = v.lesson_title
-ON CONFLICT DO NOTHING;
+;
