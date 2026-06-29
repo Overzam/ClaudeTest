@@ -85,7 +85,7 @@ export default function ExploreScreen() {
             const status = lessonProgress[lesson.id] ?? 'locked';
             const isLocked = status === 'locked';
             const isDone = status === 'completed';
-            const hasIngredients = !!LESSON_DETAILS[lesson.id];
+            const hasIngredients = !!(LESSON_DETAILS[lesson.id] ?? LESSON_DETAILS[lesson.title]);
 
             return (
               <View key={lesson.id} style={styles.lessonRow}>

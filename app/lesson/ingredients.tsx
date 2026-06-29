@@ -12,7 +12,7 @@ export default function IngredientsScreen() {
   const { theme } = useThemeStore();
   const c = theme.colors;
 
-  const detail = LESSON_DETAILS[lessonId];
+  const detail = LESSON_DETAILS[lessonId] ?? LESSON_DETAILS[lessonTitle ?? ''];
   const ingredients: Ingredient[] = detail?.ingredients ?? [];
 
   return (
