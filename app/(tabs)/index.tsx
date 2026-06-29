@@ -16,6 +16,16 @@ import { fetchUserStats } from '@/services/statsService';
 import { DuoCuistot } from '@/components/mascot/DuoCuistot';
 import type { Path, Lesson } from '@/types/database.types';
 
+function getGreeting(username: string | undefined): { text: string; sub: string } {
+  const hour = new Date().getHours();
+  const name = username ? ` ${username}` : '';
+  if (hour < 6) return { text: `Bonsoir${name} 🌙`, sub: 'La nuit des grands cuisiniers...' };
+  if (hour < 12) return { text: `Bonjour${name} ☀️`, sub: 'Prêt à cuisiner ce matin ?' };
+  if (hour < 14) return { text: `Bon appétit${name} 🍽️`, sub: 'L\'heure du déjeuner approche !' };
+  if (hour < 18) return { text: `Bel après-midi${name} 👋`, sub: 'Une leçon avant le dîner ?' };
+  return { text: `Bonsoir${name} 🍷`, sub: 'L\'heure du chef est venue.' };
+}
+
 const QUICK_TIPS = [
   "Un couteau aiguisé est plus sûr qu'un couteau émoussé — il glisse moins.",
   "Tempérez la viande 30 min avant cuisson pour une cuisson uniforme.",
@@ -42,6 +52,7 @@ export default function HomeScreen() {
   const [loading, setLoading] = useState(true);
   const { theme } = useThemeStore();
   const c = theme.colors;
+  const greeting = getGreeting(user?.username);
 
   useFocusEffect(
     useCallback(() => {
@@ -94,10 +105,8 @@ export default function HomeScreen() {
           <View style={styles.headerLeft}>
             <DuoCuistot size={64} />
             <View>
-              <Text style={[styles.greeting, { color: c.text }]}>
-                Bonjour {user?.username ?? ''} 👋
-              </Text>
-              <Text style={[styles.subGreeting, { color: c.textMuted }]}>Prêt à cuisiner ?</Text>
+              <Text style={[styles.greeting, { color: c.text }]}>{greeting.text}</Text>
+              <Text style={[styles.subGreeting, { color: c.textMuted }]}>{greeting.sub}</Text>
             </View>
           </View>
           <View style={styles.headerRight}>
