@@ -35,7 +35,7 @@ export default function RecipeBookScreen() {
         for (const path of paths) {
           const lessons = await fetchLessons(path.id);
           for (const lesson of lessons) {
-            if (lessonProgress[lesson.id] === 'completed' && LESSON_DETAILS[lesson.id]) {
+            if (lessonProgress[lesson.id] === 'completed' && (LESSON_DETAILS[lesson.id] ?? LESSON_DETAILS[lesson.title])) {
               entries.push({ lesson, path });
             }
           }
@@ -47,7 +47,7 @@ export default function RecipeBookScreen() {
     }, [session?.user.id])
   );
 
-  const detail = selected ? LESSON_DETAILS[selected.lesson.id] : null;
+  const detail = selected ? (LESSON_DETAILS[selected.lesson.id] ?? LESSON_DETAILS[selected.lesson.title]) : null;
 
   return (
     <ScreenWrapper>
@@ -82,7 +82,7 @@ export default function RecipeBookScreen() {
             contentContainerStyle={styles.grid}
             columnWrapperStyle={styles.row}
             renderItem={({ item }) => {
-              const d = LESSON_DETAILS[item.lesson.id];
+              const d = LESSON_DETAILS[item.lesson.id] ?? LESSON_DETAILS[item.lesson.title];
               return (
                 <TouchableOpacity
                   style={[styles.card, { backgroundColor: item.path.color + '15', borderColor: item.path.color + '30' }]}
