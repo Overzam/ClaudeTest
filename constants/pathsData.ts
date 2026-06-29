@@ -647,4 +647,183 @@ export const LESSON_DETAILS: Record<string, Omit<LessonDetail, 'id' | 'path_id' 
     chef_tip: "La clé du macaron : le macaronnage. Mélangez la meringue avec la poudre en écrasant contre les parois jusqu'à ce que la pâte 'coule comme un ruban'. Trop peu : coques bosselées. Trop : coques plates et collantes.",
     cultural_note: "La meringue italienne (avec sirop cuit) est plus stable que la meringue française (sucre à froid). Pour les macarons professionnels, c'est toujours la meringue italienne qui est utilisée, car elle supporte mieux l'humidité.",
   },
+
+  // ── MOROCCAN NEW LESSONS ──────────────────────────────────────────────────
+  'Le Couscous Royal': {
+    title: 'Le Couscous Royal',
+    description: 'Semoule vapeur et légumes mijotés',
+    duration_minutes: 90,
+    difficulty: 'medium',
+    ingredients: [
+      { name: 'Semoule fine', quantity: '500', unit: 'g', emoji: '🌾', tip: 'Huiler légèrement avant de rouler — les grains ne colleront pas' },
+      { name: 'Agneau épaule', quantity: '600', unit: 'g', emoji: '🍖' },
+      { name: 'Merguez', quantity: '8', emoji: '🌭' },
+      { name: 'Poulet fermier (morceaux)', quantity: '600', unit: 'g', emoji: '🍗' },
+      { name: 'Pois chiches (cuits)', quantity: '400', unit: 'g', emoji: '🫘' },
+      { name: 'Carottes, navets, courgettes', quantity: '400', unit: 'g', emoji: '🥕' },
+      { name: 'Ras-el-hanout', quantity: '2 cs', emoji: '🫙' },
+      { name: 'Harissa', quantity: 'QS', emoji: '🌶️', tip: 'Servie à part — chacun dose selon son goût' },
+    ],
+    anecdote: "Le couscous a été proclamé patrimoine culturel immatériel de l'UNESCO en 2020, soutenu conjointement par le Maroc, l'Algérie, la Tunisie, la Mauritanie, le Mali, le Niger et la Mauritanie. C'est un patrimoine partagé de l'Afrique du Nord. La semoule se roule traditionnellement à la main — un art qui se transmet de mère en fille.",
+    chef_tip: "Le secret du couscous parfait : 3 passages vapeur minimum. Entre chaque passage, roulez la semoule avec les doigts huilés pour séparer les grains. L'eau qui remonte dans le couscoussier doit frémir, pas bouillir violemment.",
+    cultural_note: "Le 'Royal' désigne la version avec 3 viandes. Le vendredi est le jour traditionnel du couscous au Maroc — on se réunit en famille après la prière du vendredi. Il se mange toujours en commun, dans un grand plat central.",
+  },
+
+  "Le Tajine d'Agneau aux Pruneaux": {
+    title: "Le Tajine d'Agneau aux Pruneaux",
+    description: 'Viande fondante, sucrée-salée',
+    duration_minutes: 120,
+    difficulty: 'medium',
+    ingredients: [
+      { name: 'Épaule d\'agneau en morceaux', quantity: '1.2', unit: 'kg', emoji: '🍖' },
+      { name: 'Pruneaux d\'Agen', quantity: '200', unit: 'g', emoji: '🫐' },
+      { name: 'Amandes mondées', quantity: '80', unit: 'g', emoji: '🌰' },
+      { name: 'Oignons râpés', quantity: '3', emoji: '🧅' },
+      { name: 'Safran', quantity: '1 pincée', emoji: '🌸', tip: 'Infuser dans l\'eau chaude' },
+      { name: 'Ras-el-hanout', quantity: '2 cs', emoji: '🫙' },
+      { name: 'Miel', quantity: '2 cs', emoji: '🍯' },
+      { name: 'Cannelle', quantity: '1 bâton', emoji: '🌿' },
+    ],
+    anecdote: "L'alliance sucré-salé dans la cuisine marocaine vient de l'influence andalouse du Moyen Âge. Les Maures chassés d'Espagne en 1492 ont apporté avec eux des techniques de cuisine raffinées incluant l'utilisation de fruits secs dans les plats de viande — une tradition héritée de la cuisine arabo-persane.",
+    chef_tip: "Cuisez à feu très doux (flamme minimale) en couvrant hermétiquement. La condensation dans le couvercle conique du tajine arrose continuellement la viande. Ne soulevez pas le couvercle pendant la cuisson.",
+    cultural_note: "Le plat tajine tire son nom du récipient en terre cuite. La forme conique du couvercle est fonctionnelle : la vapeur monte, se condense sur les parois froides et retombe sur les aliments, créant un circuit de cuisson naturel.",
+  },
+
+  // ── MEXICAN NEW LESSONS ───────────────────────────────────────────────────
+  'Le Guacamole': {
+    title: 'Le Guacamole',
+    description: 'Avocats, citron vert, coriandre',
+    duration_minutes: 10,
+    difficulty: 'easy',
+    ingredients: [
+      { name: 'Avocats Hass bien mûrs', quantity: '3', emoji: '🥑', tip: 'Doit céder sous le pouce — un avocat trop ferme donne un guacamole sans saveur' },
+      { name: 'Citron vert', quantity: '2', emoji: '🍋', tip: 'Le jus empêche l\'oxydation et apporte l\'acidité essentielle' },
+      { name: 'Coriandre fraîche', quantity: '1 bouquet', emoji: '🌿' },
+      { name: 'Oignon blanc', quantity: '1/4', emoji: '🧅', tip: 'Rincé sous l\'eau froide pour adoucir le piquant' },
+      { name: 'Piment jalapeño', quantity: '1', emoji: '🌶️' },
+      { name: 'Sel fin', quantity: 'QS', emoji: '🧂' },
+    ],
+    anecdote: "Le guacamole vient de l'aztèque 'ahuacamolli' (ahuacatl = avocat + molli = sauce). Les Aztèques le préparaient au molcajete (mortier de pierre volcanique) il y a plus de 500 ans. L'avocat Hass — la variété de 80% du marché mondial — a été développé par Rudolph Hass, facteur californien, dans les années 1930.",
+    chef_tip: "Ne jamais mixer le guacamole — écrasez grossièrement à la fourchette pour garder des morceaux. Le noyau dans le bol ne préserve PAS l'avocat de l'oxydation (mythe). Seul le citron vert et la couverture hermétique le font.",
+    cultural_note: "Le Mexique produit 30% des avocats mondiaux — principalement dans la région du Michoacán. La demande mondiale a créé des tensions sociales importantes. La période du Super Bowl américain génère une consommation de 60 000 tonnes de guacamole en un seul week-end.",
+  },
+
+  // ── INDIAN NEW LESSONS ────────────────────────────────────────────────────
+  'Le Dal Makhani': {
+    title: 'Le Dal Makhani',
+    description: 'Lentilles noires en sauce crémeuse',
+    duration_minutes: 240,
+    difficulty: 'medium',
+    ingredients: [
+      { name: 'Lentilles beluga (urad dal entières)', quantity: '250', unit: 'g', emoji: '⚫', tip: 'Tremper 12h — réduisent le temps de cuisson et améliorent la digestibilité' },
+      { name: 'Haricots rouges (rajma)', quantity: '50', unit: 'g', emoji: '🫘' },
+      { name: 'Beurre (ghee)', quantity: '60', unit: 'g', emoji: '🧈' },
+      { name: 'Tomates (conserve)', quantity: '400', unit: 'g', emoji: '🍅' },
+      { name: 'Crème liquide', quantity: '100', unit: 'ml', emoji: '🥛' },
+      { name: 'Ail-gingembre pâte', quantity: '2 cs', emoji: '🧄' },
+      { name: 'Cumin, coriandre, garam masala', quantity: 'QS', emoji: '🫙' },
+    ],
+    anecdote: "Le Dal Makhani (makhani = beurre) a été créé par Kundan Lal Gujral au restaurant Moti Mahal de Delhi dans les années 1940. La recette originale cuit les lentilles 24 heures à feu très doux dans un tandoor. Dans les restaurants indiens étoilés, le dal makhani est parfois mijoté 72 heures.",
+    chef_tip: "La longue cuisson est la clé : les lentilles doivent mijoter au moins 4 heures à feu très doux, en remuant régulièrement. Le beurre et la crème s'ajoutent en toute fin pour créer la richesse caractéristique.",
+    cultural_note: "Le dal makhani est le plat symbole de la cuisine punjabi. Il est aujourd'hui servi dans les restaurants indiens du monde entier. La version végane (sans beurre ni crème) avec du lait de coco est populaire en Occident.",
+  },
+
+  // ── BBQ & GRILL ───────────────────────────────────────────────────────────
+  'Les Marinades': {
+    title: 'Les Marinades',
+    description: 'Dry rub, sauce, lacage — les 3 méthodes',
+    duration_minutes: 30,
+    difficulty: 'easy',
+    ingredients: [
+      { name: 'Paprika fumé', quantity: '3 cs', emoji: '🫙' },
+      { name: 'Cassonade brune', quantity: '2 cs', emoji: '🍬', tip: 'Le sucre crée la croûte caramélisée — le "bark" du BBQ' },
+      { name: 'Sel kosher', quantity: '2 cs', emoji: '🧂' },
+      { name: 'Poivre noir moulu', quantity: '1 cs', emoji: '⚫' },
+      { name: 'Ail en poudre', quantity: '1 cs', emoji: '🧄' },
+      { name: 'Cumin moulu', quantity: '1 cs', emoji: '🫙' },
+      { name: 'Piment de Cayenne', quantity: '1/2 cc', emoji: '🌶️' },
+    ],
+    anecdote: "Le BBQ américain est né de la cuisson esclave du Sud des États-Unis au XVIIIe siècle. Les esclaves cuisaient les parties de porc les moins nobles (épaule, ribs, queue) au-dessus de feux lents — une technique héritée d'Afrique de l'Ouest. Ce sont eux qui ont inventé le BBQ tel qu'on le connaît.",
+    chef_tip: "Le dry rub doit être appliqué au moins 4 heures avant (idéalement 24h au frigo). Le sel extrait d'abord l'humidité, qui se dissout et réabsorbe les épices — créant une marinade sèche naturelle appelée 'pellicle'.",
+    cultural_note: "Les 4 styles régionaux de BBQ américain : Texas (bœuf, sel-poivre), Memphis (porc, dry rub), Kansas City (sauce sucrée), Carolina (vinaigre). Chaque style est une identité culturelle forte, et les débats entre fans sont passionnés.",
+  },
+
+  // ── VEGAN ─────────────────────────────────────────────────────────────────
+  'Protéines Végétales': {
+    title: 'Protéines Végétales',
+    description: 'Tofu, tempeh, seitan et légumineuses',
+    duration_minutes: 45,
+    difficulty: 'easy',
+    ingredients: [
+      { name: 'Tofu ferme', quantity: '400', unit: 'g', emoji: '⬜', tip: 'Presser 30 min pour retirer l\'eau — sinon le tofu ne colore pas' },
+      { name: 'Tempeh', quantity: '200', unit: 'g', emoji: '🟫', tip: 'Blanchir 5 min pour retirer l\'amertume' },
+      { name: 'Sauce soja', quantity: '4 cs', emoji: '🫙' },
+      { name: 'Huile de sésame', quantity: '2 cs', emoji: '🫗' },
+      { name: 'Ail & gingembre', quantity: 'QS', emoji: '🧄' },
+      { name: 'Maïzena', quantity: '2 cs', emoji: '⬜', tip: 'Enrober le tofu pour une croûte croustillante' },
+    ],
+    anecdote: "Le tofu existe depuis plus de 2000 ans en Chine. Selon la légende, il fut découvert par accident quand un chef chinois fit coaguler du lait de soja avec des cristaux de sel naturel. Le tempeh, fermenté à base de soja, est un superaliment d'Indonésie qui précède les études sur les probiotiques de plusieurs siècles.",
+    chef_tip: "Le tofu frit croustillant : presser, couper en cubes, enrober de maïzena, frire à 180°C. Le tofu absorbe les saveurs comme une éponge — marinez-le toujours. Le tempeh se mange mariné et grillé ou émietté comme du bœuf haché.",
+    cultural_note: "Les légumineuses (lentilles, pois chiches, haricots) contiennent 20-30% de protéines. Associées à une céréale (riz + lentilles = dhal, maïs + haricots = Mexique), elles forment une protéine complète avec tous les acides aminés essentiels.",
+  },
+
+  // ── THAI NEW LESSONS ──────────────────────────────────────────────────────
+  'Le Pad Thaï': {
+    title: 'Le Pad Thaï',
+    description: 'Nouilles de riz sautées style Bangkok',
+    duration_minutes: 25,
+    difficulty: 'medium',
+    ingredients: [
+      { name: 'Nouilles de riz plates (5mm)', quantity: '200', unit: 'g', emoji: '🍜', tip: 'Tremper 30 min dans l\'eau froide — cuisson directe les rend pâteuses' },
+      { name: 'Crevettes ou poulet', quantity: '250', unit: 'g', emoji: '🦐' },
+      { name: 'Tofu ferme', quantity: '100', unit: 'g', emoji: '⬜' },
+      { name: 'Œufs', quantity: '2', emoji: '🥚' },
+      { name: 'Sauce de tamarin concentrée', quantity: '3 cs', emoji: '🫙', tip: 'C\'est l\'ingrédient clé — irremplaçable' },
+      { name: 'Sauce poisson (nam pla)', quantity: '3 cs', emoji: '🫙' },
+      { name: 'Sucre de palme', quantity: '2 cs', emoji: '🍬' },
+      { name: 'Germes de soja, ciboulette, cacahuètes', quantity: 'QS', emoji: '🌱' },
+    ],
+    anecdote: "Le pad thaï a été inventé dans les années 1940 par le gouvernement thaïlandais pour promouvoir la nationalité thaïe et réduire la consommation de riz pendant une pénurie. Le Premier ministre Plaek Phibunsongkhram a littéralement lancé une campagne nationale pour que chaque citoyen mange du pad thaï. Le patriotisme peut être savoureux.",
+    chef_tip: "Le wok doit être à feu maximum et fumant avant d'ajouter les ingrédients. Les nouilles s'ajoutent en dernier avec la sauce. Évitez de trop remuer — laissez les nouilles colorer légèrement. Le citron vert et le sucre de palme servis à table permettent l'ajustement personnel.",
+    cultural_note: "En Thaïlande, il existe plus de 500 variantes régionales du pad thaï. La version de Bangkok (la plus connue) est différente des versions du nord (plus épicées) ou du sud (avec plus de fruits de mer). La version 'originale' gouvernementale de 1944 était bien différente de ce qu'on mange aujourd'hui.",
+  },
+
+  // ── GREEK NEW LESSONS ────────────────────────────────────────────────────
+  'Le Tzatziki': {
+    title: 'Le Tzatziki',
+    description: 'Yaourt grec, concombre, ail, aneth',
+    duration_minutes: 15,
+    difficulty: 'easy',
+    ingredients: [
+      { name: 'Yaourt grec entier épais', quantity: '400', unit: 'g', emoji: '⚪', tip: 'Égoutter dans un linge 2h pour retirer le petit-lait — texture plus onctueuse' },
+      { name: 'Concombre', quantity: '1 gros', emoji: '🥒', tip: 'Épépiner et saler 20 min puis presser — sinon le tzatziki sera aqueux' },
+      { name: 'Ail', quantity: '2-3 gousses', emoji: '🧄', tip: 'Selon le goût — peut être beaucoup !' },
+      { name: 'Huile d\'olive extra vierge', quantity: '3 cs', emoji: '🫒' },
+      { name: 'Aneth ou menthe fraîche', quantity: '1 bouquet', emoji: '🌿' },
+      { name: 'Vinaigre de vin blanc', quantity: '1 cs', emoji: '🫙' },
+    ],
+    anecdote: "Le tzatziki vient du turc 'cacık' qui lui-même vient du persan 'zhazh'. Cette sauce voyage avec les civilisations méditerranéennes depuis des siècles. En Inde, le 'raïta' est son équivalent au yaourt de buffle. La même idée (yaourt + légumes + aromates) a émergé indépendamment dans des cultures séparées.",
+    chef_tip: "Le concombre doit être impérativement égoutté. Râpez-le, salez, laissez 20 min, puis pressez dans un linge propre — vous retirerez 50% de son eau. Sans cela, le tzatziki sera liquide en 30 minutes.",
+    cultural_note: "La Grèce est le premier producteur mondial de yaourt par habitant. Le yaourt grec traditionnel est réalisé avec du lait de brebis ou chèvre, bien plus gras et savoureux que les versions industrielles. Un vrai tzatziki en Grèce peut contenir 6-8 gousses d'ail.",
+  },
+
+  // ── CHINESE NEW LESSONS ───────────────────────────────────────────────────
+  'Les Dim Sum': {
+    title: 'Les Dim Sum',
+    description: 'Har gow, siu mai et raviolis vapeur',
+    duration_minutes: 90,
+    difficulty: 'hard',
+    ingredients: [
+      { name: 'Farine de blé translucide (wheat starch)', quantity: '200', unit: 'g', emoji: '⬜', tip: 'C\'est ce qui rend la pâte har gow translucide — irremplaçable' },
+      { name: 'Fécule de tapioca', quantity: '50', unit: 'g', emoji: '⬜' },
+      { name: 'Crevettes crues', quantity: '400', unit: 'g', emoji: '🦐', tip: 'Hacher grossièrement — la texture en morceaux est traditionnelle' },
+      { name: 'Bambou en julienne', quantity: '100', unit: 'g', emoji: '🌿' },
+      { name: 'Sauce huître', quantity: '2 cs', emoji: '🫙' },
+      { name: 'Huile de sésame', quantity: '1 cs', emoji: '🫗' },
+      { name: 'Porc haché pour siu mai', quantity: '200', unit: 'g', emoji: '🥩' },
+    ],
+    anecdote: "Le yum cha ('boire du thé') est une tradition cantonaise du dimanche matin où les familles se réunissent autour de dim sum et de thé. La tradition remonte à 1000 ans sur la Route de la Soie, où les auberges servaient des petites bouchées aux voyageurs avec le thé. Aujourd'hui, les meilleurs restaurants de dim sum à Hong Kong servent jusqu'à 150 variétés.",
+    chef_tip: "La pâte har gow se travaille avec de l'eau bouillante (80°C minimum) qui gélatinise l'amidon et crée la translucidité. Elle doit être travaillée rapidement avant de refroidir. Les raviolis se plient avec la technique du plissage (12 plis minimum pour les puristes).",
+    cultural_note: "Hong Kong est la capitale mondiale du dim sum. Le restaurant Tim Ho Wan a obtenu une étoile Michelin en 2009 pour ses dim sum à moins de 5 dollars hongkongais (0.60€). C'était à l'époque le restaurant étoilé le moins cher du monde.",
+  },
 };
