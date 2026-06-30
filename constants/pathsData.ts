@@ -14,6 +14,8 @@ export const PATH_DETAILS: Record<string, Omit<PathDetail, 'id' | 'order_index' 
     history: "La cuisine française est reconnue patrimoine culturel immatériel de l'UNESCO depuis 2010. Elle a été codifiée au XIXe siècle par Auguste Escoffier, qui a révolutionné la restauration moderne. La brigade de cuisine, le menu dégustation, les sauces mères — tout vient de cette tradition.",
     key_ingredients: ["Beurre AOP", "Crème fraîche", "Herbes de Provence", "Vin blanc sec", "Moutarde de Dijon", "Échalotes"],
     famous_chefs: ["Auguste Escoffier", "Paul Bocuse", "Joël Robuchon", "Alain Ducasse"],
+    signature_dishes: ["Bœuf Bourguignon", "Bouillabaisse Marseillaise", "Tarte Tatin", "Soufflé au Fromage", "Paris-Brest"],
+    essential_techniques: ["Mise en place (organisation avant service)", "Monter au beurre (lier une sauce hors du feu)", "Braiser (cuisson lente en liquide couvert)", "Réaliser un fond brun de veau"],
   },
   italian: {
     slug: 'italian',
@@ -25,6 +27,8 @@ export const PATH_DETAILS: Record<string, Omit<PathDetail, 'id' | 'order_index' 
     history: "La cuisine italienne est l'une des plus influentes au monde. Née de 20 régions aux identités culinaires distinctes, elle repose sur la qualité des ingrédients plutôt que sur la complexité des techniques. La pasta existe depuis le XIIIe siècle, bien avant que Marco Polo ne revienne de Chine.",
     key_ingredients: ["Tomates San Marzano", "Huile d'olive extra vierge", "Parmigiano Reggiano", "Basilic frais", "Farine 00", "Mozzarella di bufala"],
     famous_chefs: ["Massimo Bottura", "Carlo Cracco", "Gennaro Contaldo", "Antonio Carluccio"],
+    signature_dishes: ["Cacio e Pepe", "Risotto Milanese au Safran", "Osso Buco alla Milanese", "Tiramisù Classique", "Cannolo Sicilien"],
+    essential_techniques: ["Mantecatura (finir le risotto au beurre-parmesan hors du feu)", "Sfoglia (étaler la pasta fraîche à la main)", "Al dente (sentir la cuisson sous la dent)", "Soffrito (base aromatique fondue lentement)"],
   },
   japanese: {
     slug: 'japanese',
@@ -36,6 +40,8 @@ export const PATH_DETAILS: Record<string, Omit<PathDetail, 'id' | 'order_index' 
     history: "La cuisine japonaise (washoku) est patrimoine de l'UNESCO depuis 2013. Elle repose sur 5 principes fondamentaux : 5 couleurs, 5 saveurs (dont l'umami, découvert en 1908 par le chimiste Kikunae Ikeda), 5 méthodes de cuisson. Le couteau japonais (hocho) est forgé comme une lame de samouraï.",
     key_ingredients: ["Dashi (kombu + bonite)", "Mirin", "Sauce soja", "Miso blanc", "Riz japonais à grain court", "Wasabi frais"],
     famous_chefs: ["Jiro Ono", "Nobu Matsuhisa", "Yoshihiro Murata", "Tetsuya Wakuda"],
+    signature_dishes: ["Ramen Tonkotsu de Fukuoka", "Nigiri de Thon Bluefin", "Shabu-Shabu au Wagyu", "Karaage au Yuzu", "Matcha Parfait"],
+    essential_techniques: ["Préparer le dashi (infusion kombu à 60°C)", "Cuire le riz japonais parfaitement (ratio 1:1,1)", "Ne jamais bouillir le miso (arômes fragiles)", "Maîtriser la double friture (karaage, tempura)"],
   },
   moroccan: {
     slug: 'moroccan',
@@ -47,6 +53,8 @@ export const PATH_DETAILS: Record<string, Omit<PathDetail, 'id' | 'order_index' 
     history: "La cuisine marocaine est le fruit de 3000 ans de civilisations : berbère, arabe, andalouse et juive. Le couscous — déclaré patrimoine de l'UNESCO en 2020 — se roule à la main depuis des millénaires. Le ras-el-hanout (\"tête de l'épicier\") peut contenir jusqu'à 50 épices différentes.",
     key_ingredients: ["Ras-el-hanout", "Safran de Taliouine", "Argan", "Charmoula", "Citrons confits", "Fleur d'oranger"],
     famous_chefs: ["Moha Fedal", "Fatéma Hal", "Najat Kaanache"],
+    signature_dishes: ["Pastilla au Pigeon (B'stilla)", "Couscous au Méchoui", "Tajine Kefta aux Œufs", "Cornes de Gazelle", "Harira du Ramadan"],
+    essential_techniques: ["Cuisson au tajine (condensation du couvercle conique)", "Préparer la charmoula (marinade verte)", "Infuser le safran dans l'eau tiède (jamais bouillante)", "Rouler le couscous à la vapeur (3 passages)"],
   },
   mexican: {
     slug: 'mexican',
