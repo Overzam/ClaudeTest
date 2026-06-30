@@ -111,8 +111,10 @@ export default function HomeScreen() {
   // Find the next available (unlocked but not completed) lesson across all paths
   let nextLesson: { lesson: Lesson; path: Path } | null = null;
   outer: for (const path of paths) {
-    for (const lesson of lessonsMap[path.id] ?? []) {
-      const effectiveStatus = lessonProgress[lesson.id] ?? (lesson.order_index === 0 ? 'available' : 'locked');
+    const pathLessons = lessonsMap[path.id] ?? [];
+    const minIdx = pathLessons.length > 0 ? Math.min(...pathLessons.map((l) => l.order_index)) : 0;
+    for (const lesson of pathLessons) {
+      const effectiveStatus = lessonProgress[lesson.id] ?? (lesson.order_index === minIdx ? 'available' : 'locked');
       if (effectiveStatus === 'available') {
         nextLesson = { lesson, path };
         break outer;

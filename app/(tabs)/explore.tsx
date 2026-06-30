@@ -83,10 +83,12 @@ export default function ExploreScreen() {
 
         {/* Lessons */}
         <ScrollView contentContainerStyle={styles.lessonList}>
-          {lessons.map((lesson, idx) => {
+          {(() => {
+            const minOrderIndex = lessons.length > 0 ? Math.min(...lessons.map((l) => l.order_index)) : 0;
+            return lessons.map((lesson, idx) => {
             const rawStatus = lessonProgress[lesson.id];
-            // Auto-unlock the first lesson of any path for new users
-            const status = rawStatus ?? (lesson.order_index === 0 ? 'available' : 'locked');
+            // Auto-unlock the first lesson of any path for new users (use min order_index, not hardcoded 0)
+            const status = rawStatus ?? (lesson.order_index === minOrderIndex ? 'available' : 'locked');
             const isLocked = status === 'locked';
             const isDone = status === 'completed';
             const hasIngredients = !!(LESSON_DETAILS[lesson.id] ?? LESSON_DETAILS[lesson.title]);
@@ -113,16 +115,19 @@ export default function ExploreScreen() {
                     disabled={isLocked}
                     activeOpacity={0.85}
                   >
-                    {LESSON_THUMBNAIL_MAP[lesson.title] && !isLocked ? (
-                      <>
-                        <Image
-                          source={{ uri: LESSON_THUMBNAIL_MAP[lesson.title] }}
-                          style={[StyleSheet.absoluteFill, { borderRadius: 36 }]}
-                          contentFit="cover"
-                        />
-                        <View style={[StyleSheet.absoluteFill, { borderRadius: 36, backgroundColor: isDone ? activePath.color + 'AA' : 'rgba(0,0,0,0.30)' }]} />
-                      </>
-                    ) : null}
+                    {(() => {
+                      const thumbUri = lesson.thumbnail_url ?? LESSON_THUMBNAIL_MAP[lesson.title];
+                      return thumbUri && !isLocked ? (
+                        <>
+                          <Image
+                            source={{ uri: thumbUri }}
+                            style={[StyleSheet.absoluteFill, { borderRadius: 36 }]}
+                            contentFit="cover"
+                          />
+                          <View style={[StyleSheet.absoluteFill, { borderRadius: 36, backgroundColor: isDone ? activePath.color + 'AA' : 'rgba(0,0,0,0.30)' }]} />
+                        </>
+                      ) : null;
+                    })()}
                     <Text style={[styles.nodeIcon, isLocked && { color: c.textMuted }]}>
                       {isDone ? '✓' : isLocked ? '🔒' : '▶'}
                     </Text>
@@ -155,7 +160,8 @@ export default function ExploreScreen() {
                 </View>
               </View>
             );
-          })}
+          });
+          })()}
         </ScrollView>
       </ScreenWrapper>
     );
@@ -171,7 +177,7 @@ export default function ExploreScreen() {
           const lessons = lessonsMap[path.id] ?? [];
           const completed = lessons.filter((l) => lessonProgress[l.id] === 'completed').length;
           const progress = lessons.length > 0 ? completed / lessons.length : 0;
-          const photoUrl = PATH_IMAGE_MAP[path.slug];
+          const photoUrl = PATH_IMAGE_MAP[path.slug] ?? PATH_IMAGE_MAP[path.slug?.toLowerCase()];
 
           return (
             <TouchableOpacity
