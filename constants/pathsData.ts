@@ -1956,4 +1956,195 @@ export const LESSON_DETAILS: Record<string, Omit<LessonDetail, 'id' | 'path_id' 
     chef_tip: "Ne pétrissez pas trop — un pétrissage excessif donne une texture caoutchouteuse. Mélangez juste jusqu'à homogénéité. Pour une texture fibreuse : étirez en rectangle, roulez, étirez à nouveau. Cette lamination crée des fibres similaires à la viande.",
     cultural_note: "Des restaurants vegan étoilés comme Eleven Madison Park utilisent des techniques seitan élaborées pour créer des plats de gastronomie végétale indiscernables visuellement des versions carnées.",
   },
+
+  // ===== THAI (remaining) =====
+  'Les 4 Saveurs Thaïlandaises': {
+    title: 'Les 4 Saveurs Thaïlandaises',
+    description: 'Sucré, salé, acide, pimenté — comprendre l\'équilibre des 4 saveurs qui définit toute la cuisine thaïlandaise.',
+    emoji: '🇹🇭',
+    difficulty: 'easy' as const,
+    duration_minutes: 25,
+    ingredients: [
+      { name: 'Sauce de poisson (nam pla)', emoji: '🫙', tip: 'La base du salé thaï — son odeur est forte mais son goût est umami et délicat dans un plat' },
+      { name: 'Sucre de palme (ou de canne)', emoji: '🟤', tip: 'Le sucre de palme a un goût caramélisé doux — plus complexe que le sucre blanc' },
+      { name: 'Jus de citron vert (lime)', emoji: '🍋', tip: 'Ajoutez en fin de cuisson — l\'acide s\'évapore à la chaleur' },
+      { name: 'Piments thaï (bird\'s eye chili)', emoji: '🌶️', tip: 'Ces petits piments sont 10x plus forts que les jalapeños — dosez avec parcimonie' },
+    ],
+    anecdote: "L'équilibre des 4 saveurs (rod chaat) est la première leçon dans toute cuisine thaïlandaise. Un plat thaï réussi ne doit jamais être trop sucré, trop salé, trop acide ou trop pimenté — il doit trouver le point d'harmonie où toutes les saveurs s'expriment simultanément. Les chefs thaïlandais goûtent et ajustent jusqu'à 10 fois avant de servir.",
+    chef_tip: "La technique thaïlandaise : ajoutez sauce de poisson pour le salé, sucre de palme pour équilibrer, lime pour l'acide, puis les piments. Goûtez après chaque ajout. Si le plat est trop pimenté, une touche de sucre atténue la chaleur. Si trop sucré, quelques gouttes de lime rééquilibrent tout.",
+    cultural_note: "En Thaïlande, chaque table de restaurant est équipée d'une kadang — un plateau avec 4 condiments : sauce de poisson, sucre de palme, vinaigre aux piments, piments séchés. Chaque convive ajuste son plat selon ses préférences. Le plat est un point de départ, pas une version finale.",
+  },
+
+  'Le Pad Thaï': {
+    title: 'Le Pad Thaï',
+    description: 'Nouilles de riz plates sautées au wok, crevettes ou tofu, œuf, cacahuètes, germes de soja — le plat le plus connu de Thaïlande.',
+    emoji: '🍝',
+    difficulty: 'medium' as const,
+    duration_minutes: 25,
+    ingredients: [
+      { name: 'Nouilles de riz plates (sen lek, 3mm)', emoji: '🍜', tip: 'Trempez dans l\'eau froide 30 min (pas bouillante) — elles finissent de cuire dans la poêle et absorbent mieux la sauce' },
+      { name: 'Sauce pad thaï (tamarin + sauce de poisson + sucre)', emoji: '🫙', tip: 'Préparez la sauce à l\'avance : tamarin + sauce de poisson + sucre de palme + ketchup (oui, dans l\'original de rue)' },
+      { name: 'Crevettes ou tofu ferme', emoji: '🍤', tip: 'Pressez le tofu 30 min pour chasser l\'eau, puis faites revenir jusqu\'à dorer — il absorbera mieux la sauce' },
+      { name: 'Germes de soja + ciboulette', emoji: '🌱', tip: 'Ajoutez HORS DU FEU — les germes doivent rester légèrement croquants' },
+    ],
+    anecdote: "Le pad thaï n'est pas un plat ancien — il a été créé de toutes pièces en 1938 par le Premier ministre Plaek Phibunsongkhram comme outil de nationalisme : il voulait unifier un pays divisé autour d'un plat \"national\". Il a lancé des campagnes gouvernementales pour que les vendeurs de rue servent ce plat. En 80 ans, il est devenu authentiquement thaïlandais.",
+    chef_tip: "La clé : feu très vif et wok brûlant. Le pad thaï se fait en portions individuelles — ne doublez jamais la recette dans un wok. Poussez tout sur le côté, cassez un œuf au centre, brouillez-le 10 secondes puis incorporez. Cette technique préserve la texture de chaque ingrédient.",
+    cultural_note: "En Thaïlande, le pad thaï le plus apprécié se mange chez les vendeurs de rue dont le wok noircit depuis des décennies. La \"wok hei\" (souffle du wok) est l'arôme fumé-caramélisé impossible à reproduire sur une plaque induction domestique — c'est pourquoi le pad thaï du restaurant est presque toujours meilleur que celui fait à la maison.",
+  },
+
+  'La Soupe Tom Kha Gaï': {
+    title: 'La Soupe Tom Kha Gaï',
+    description: 'Poulet et champignons dans un bouillon de coco parfumé au galanga, citronnelle et feuilles de combava.',
+    emoji: '🥥',
+    difficulty: 'easy' as const,
+    duration_minutes: 30,
+    ingredients: [
+      { name: 'Lait de coco (entier, pas allégé)', emoji: '🥥', tip: 'Le lait de coco entier donne la richesse caractéristique — le lait allégé donne un résultat aqueux et fade' },
+      { name: 'Galanga (gingembre thaï)', emoji: '🫚', tip: 'Le galanga a une note de poivre et pin unique — ne remplacez pas par du gingembre ordinaire' },
+      { name: 'Citronnelle (tiges)', emoji: '🌿', tip: 'Écrasez les tiges avec le plat du couteau pour libérer les huiles essentielles' },
+      { name: 'Feuilles de combava (kaffir lime)', emoji: '🍃', tip: 'Froissez les feuilles entre vos doigts avant de les ajouter — cela libère beaucoup plus d\'arôme' },
+    ],
+    anecdote: "\"Tom Kha\" signifie \"bouillie de galanga\" — c'est le galanga (et non le lait de coco) qui nomme ce plat. Cette soupe est originaire du nord de la Thaïlande, région influencée par la cuisine du Laos et du Myanmar. Elle existait avant que le lait de coco ne devienne l'ingrédient central dans sa version moderne.",
+    chef_tip: "Ne faites JAMAIS bouillir le lait de coco — il se sépare et devient granuleux. Ajoutez-le froid dans le bouillon chaud et maintenez à frémissement. Pour plus de richesse, ajoutez le lait de coco en deux fois : la moitié au début pour le bouillon, l'autre moitié hors du feu pour la brillance.",
+    cultural_note: "En Thaïlande, tom kha et tom yum sont les deux soupes nationales — l'une douce (coco), l'autre pimentée (citronnelle-lime-piment). Les Thaïlandais ne les considèrent pas comme des entrées mais comme des accompagnements : on mange quelques cuillerées entre les bouchées de riz, pas toute la soupe en premier.",
+  },
+
+  'La Pâte de Curry Vert': {
+    title: 'La Pâte de Curry Vert',
+    description: 'Pâte de curry vert maison au mortier : piments verts frais, galanga, citronnelle, combava — base de tout curry thaïlandais.',
+    emoji: '🌿',
+    difficulty: 'medium' as const,
+    duration_minutes: 30,
+    ingredients: [
+      { name: 'Piments verts frais (longs + bird\'s eye)', emoji: '🌶️', tip: 'La couleur verte de la pâte vient des piments — épépinez les grands pour moins de piquant, gardez les petits entiers' },
+      { name: 'Galanga frais (ou poudre en substitut)', emoji: '🫚', tip: 'Épluchez et coupez en dés — le galanga frais est beaucoup plus parfumé que séché' },
+      { name: 'Crevettes séchées (kapi) ou pâte de crevettes', emoji: '🦐', tip: 'La pâte de crevettes fermentée donne l\'umami profond caractéristique — ne l\'omettez pas pour un résultat authentique' },
+      { name: 'Citronnelle, échalotes, ail (bases)', emoji: '🌿', tip: 'Coupez tout finement avant de piler — la taille de découpe détermine le temps de pilage' },
+    ],
+    anecdote: "Les pâtes de curry thaïlandaises (kaeng) ont des centaines d'années d'histoire. Avant les mortiers, les femmes pilaient les épices sur des pierres plates près des rivières. Chaque famille garde sa recette secrète transmise oralement. Il existe plus de 20 variétés de pâtes de curry en Thaïlande — verte, rouge, jaune, massaman, panang, chiang mai...",
+    chef_tip: "Mortier impératif pour une vraie texture : commencez par les ingrédients les plus fibreux (galanga, citronnelle, écorce de combava), ajoutez ensuite les piments, puis les aromats. La pâte finale doit être très lisse et homogène. Un mixeur donne une texture plus grossière et aqueuse.",
+    cultural_note: "Au marché de Chatuchak à Bangkok, des vendeurs pilent des pâtes de curry fraîches à la demande — vous choisissez vos piments et le niveau de piquant. Cette personnalisation est au cœur de la culture culinaire thaïlandaise : chaque curry est unique selon la personne qui l'a préparé.",
+  },
+
+  'Le Larb de Viande': {
+    title: 'Le Larb de Viande',
+    description: 'Salade de viande hachée épicée du nord de la Thaïlande — riz torréfié, herbes fraîches, lime et sauce de poisson.',
+    emoji: '🥗',
+    difficulty: 'easy' as const,
+    duration_minutes: 20,
+    ingredients: [
+      { name: 'Porc haché ou poulet haché (cru ou cuit)', emoji: '🥩', tip: 'La version authentique du nord (Isan) utilise de la viande crue (koi) — pour une version plus sûre, cuisez légèrement à la vapeur' },
+      { name: 'Riz gluant torréfié (khao khua)', emoji: '🌾', tip: 'Faites griller le riz à sec jusqu\'à doré, puis moulez finement — cette poudre est l\'ingrédient signature du larb' },
+      { name: 'Feuilles de menthe et basilic thai (frais)', emoji: '🌿', tip: 'Ajoutez les herbes en DERNIER, juste avant de servir — elles s\'oxydent vite' },
+      { name: 'Piments séchés grillés + lime + sauce de poisson', emoji: '🌶️', tip: 'Équilibrez les 4 saveurs : pimenté, acide (lime), salé (sauce poisson), légèrement sucré (pincée de sucre)' },
+    ],
+    anecdote: "Le larb est le plat national officieux du Laos et la fierté de la région Isan (nord-est Thaïlande). C'est le plat de cérémonie par excellence — fêtes, funérailles, célébrations — et souvent accompagné de lao khao (alcool de riz). La poudre de riz torréfié (khao khua) est le secret qui distingue le larb de toute autre salade de viande.",
+    chef_tip: "Le riz torréfié est préparé à la demande : riz gluant cru dans une poêle sèche à feu moyen, remuez constamment jusqu'à brun doré (5-7 min), laissez refroidir, moulez au mortier ou mixeur. Conservez en bocal hermétique jusqu'à 1 mois — c'est aussi délicieux sur des soupes, salades et grillades.",
+    cultural_note: "La région Isan produit les meilleurs larb de Thaïlande selon les experts locaux. Les ouvriers agricoles mangent du larb avec du riz gluant en feuille de bananier chaque matin. C'est une cuisine paysanne pure qui est aujourd'hui servie dans les restaurants gastronomiques de Bangkok.",
+  },
+
+  // ===== GREEK (remaining) =====
+  'Les Mezze': {
+    title: 'Les Mezze',
+    description: 'Houmous, tarama, dolmades et spanakopita — l\'art du partage méditerranéen en petites portions.',
+    emoji: '🫒',
+    difficulty: 'medium' as const,
+    duration_minutes: 60,
+    ingredients: [
+      { name: 'Pois chiches cuits (pour houmous)', emoji: '🫘', tip: 'Cuisez vous-même les pois chiches — les boîtes ont un arrière-goût. Gardez l\'eau de cuisson (aquafaba) pour l\'houmous' },
+      { name: 'Tarama (œufs de cabillaud fumés)', emoji: '🐟', tip: 'Le tarama rose du commerce contient souvent du colorant — le vrai est blanc-beige et plus intense' },
+      { name: 'Feuilles de vigne en saumure (pour dolmades)', emoji: '🌿', tip: 'Rincez abondamment pour réduire le sel — les feuilles doivent être malléables mais pas détrempées' },
+      { name: 'Feta AOP', emoji: '🧀', tip: 'La vraie feta doit venir de Grèce — réfrigérée dans sa saumure, elle dure des mois' },
+    ],
+    anecdote: "Le mot \"mezze\" vient du turc \"meze\" et de l'arabe \"mazza\" (quelque chose à goûter). La culture du mezze s'étend sur tout le pourtour méditerranéen et le Moyen-Orient. La tradition veut que plus une table est garnie de petits plats, plus l'hôte honore ses invités. Refuser de manger est une insulte — demander la recette est le plus grand compliment.",
+    chef_tip: "L'ordre de service traditionnel : d'abord les dips froids (houmous, tarama, tzatziki) avec du pain pita chaud, puis les légumes farcis (dolmades, poivrons), enfin les chauds (spanakopita, keftedes). Préparez tout la veille — les mezze ont toujours meilleur goût le lendemain.",
+    cultural_note: "En Grèce, les mezze (ou mézédes au pluriel) sont associés à l'ouzeri — le bar à ouzo. On ne boit pas d'alcool sans manger en Grèce. Cette tradition de l'alcool accompagné de nourriture est profondément ancrée dans la culture grecque et méditerranéenne en général.",
+  },
+
+  // ===== CHINESE (remaining) =====
+  'Les Dim Sum': {
+    title: 'Les Dim Sum',
+    description: 'Har gow (raviolis crevettes), siu mai (porc-crevette), char siu bao — l\'art du yum cha cantonais.',
+    emoji: '🥟',
+    difficulty: 'hard' as const,
+    duration_minutes: 120,
+    ingredients: [
+      { name: 'Farine de blé (pour siu mai) ou fécule de tapioca (pour har gow)', emoji: '🌾', tip: 'La pâte har gow (translucide) nécessite de la fécule de tapioca + fécule de pomme de terre — la farine de blé la rendrait opaque' },
+      { name: 'Crevettes fraîches (décortiquées, grossières)', emoji: '🍤', tip: 'Gardez quelques morceaux grossiers dans la farce — la texture doit contraster avec la pâte fine' },
+      { name: 'Porc haché gras (pour siu mai)', emoji: '🥩', tip: 'La matière grasse du porc est essentielle — du porc maigre donnerait des siu mai secs et durs' },
+      { name: 'Bambou cuit, champignons shiitake (garnitures)', emoji: '🎋', tip: 'Hachez finement — les morceaux trop grands déchirent la pâte fine lors du pliage' },
+    ],
+    anecdote: "\"Dim sum\" signifie \"toucher le cœur\" en cantonais. Le yum cha (\"boire du thé\" accompagné de dim sum) est la tradition du dimanche matin des familles cantonaises depuis le XIXe siècle. Dans les grandes salles de dim sum de Hong Kong et Canton, des chariots d'acier poussés par des serveurs sillonnent les tables — vous pointez ce que vous voulez.",
+    chef_tip: "La clé du har gow parfait : la pâte doit être quasi transparente (2mm) et se plier sans casser. Travaillez la pâte tiède, pas froide. Pour le pliage, faites 7 petits plis sur le côté (septième = chance en cantonais). Cuisez à la vapeur sur feuille de chou ou papier huilé — ils collent sinon.",
+    cultural_note: "À Hong Kong, le dim sum est une institution sociale — les familles réservent leurs tables des semaines à l'avance. Les très bonnes maisons ont des listes d'attente permanentes. Certaines spécialités comme le char siu bao (brioche au porc laqué) peuvent être feuilletée (baked) ou vapeur, et chaque restaurant garde sa recette secrète de laque.",
+  },
+
+  'Le Mapo Tofu': {
+    title: 'Le Mapo Tofu',
+    description: 'Tofu soyeux dans une sauce épicée de doubanjiang et poivre du Sichuan — le plat le plus électrisant de Chine.',
+    emoji: '🌶️',
+    difficulty: 'easy' as const,
+    duration_minutes: 20,
+    ingredients: [
+      { name: 'Tofu soyeux (extra-silky)', emoji: '⬜', tip: 'Le tofu soyeux s\'effondre facilement — glissez-le dans la sauce plutôt que de le remuer violemment' },
+      { name: 'Doubanjiang (pâte de fève pimentée fermentée)', emoji: '🫙', tip: 'La pâte de Pixian (vieillissement minimum 1 an) est la plus recherchée — sa fermentation profonde donne la couleur rouge-brun intense' },
+      { name: 'Poivre du Sichuan (hua jiao)', emoji: '🌸', tip: 'Torréfiez à sec puis moulez — le poivre Sichuan frais doit vous engourdir légèrement les lèvres (sensation \"ma\")' },
+      { name: 'Porc haché (facultatif pour version végé)', emoji: '🥩', tip: 'La version végétarienne avec champignons shiitake est excellente et plus légère' },
+    ],
+    anecdote: "\"Mapo\" signifie \"vieille femme grêlée\" — selon la légende, une vieille femme (Chen) au visage marqué par la variole vendait ce tofu aux coolies du port de Chengdu au XIXe siècle. Sa sauce était si bonne que les gens venaient de loin. Le restaurant \"Chen Mapo Tofu\" existe encore à Chengdu, fondé par ses descendants.",
+    chef_tip: "Faites revenir la doubanjiang dans l'huile 2 minutes jusqu'à ce que l'huile rougisse — cette étape libère les capsaïcines et la couleur rouge. La sauce doit être liée par une fécule de maïs en toute fin. Servez immédiatement — le tofu continue d'absorber la sauce et devient moins soyeux avec le temps.",
+    cultural_note: "Le mapo tofu est le symbole de la cuisine du Sichuan et sa philosophie \"ma la\" (engourdissant-pimenté). Les Sichuanais considèrent que l'engourdissement du poivre Sichuan permet de \"manger plus pimenté\" en bloquant les récepteurs de douleur. Cette combinaison crée une expérience gustative unique sans équivalent dans aucune autre cuisine.",
+  },
+
+  'Le Porc Laqué': {
+    title: 'Le Porc Laqué',
+    description: 'Char siu — porc mariné miel-soja-cinq épices, rôti jusqu\'à un laquage caramélisé bordeaux brillant.',
+    emoji: '🍖',
+    difficulty: 'medium' as const,
+    duration_minutes: 60,
+    ingredients: [
+      { name: 'Échine de porc (ou filet mignon)', emoji: '🥩', tip: 'L\'échine (épaule) avec son gras est plus savoureuse et reste juteuse — le filet sèche plus vite' },
+      { name: 'Sauce hoisin + sauce soja + miel', emoji: '🫙', tip: 'La sauce hoisin est le cœur de la marinade char siu — son goût de haricot fermenté donne la profondeur' },
+      { name: 'Vin de rose (mei gui lu jiu) ou sherry', emoji: '🍷', tip: 'Le vin de rose chinois est floral et doux — substituez par du sherry dry si introuvable' },
+      { name: 'Cinq-épices (star anis, cannelle, clou, fenouil, poivre Sichuan)', emoji: '🌟', tip: 'Les cinq-épices maison (fraîchement moulus) sont 3x plus parfumés que le commerce' },
+    ],
+    anecdote: "\"Char siu\" signifie \"rôti sur fourchette\" en cantonais — le porc était traditionnellement embroché sur de grandes fourches de métal et rôti dans des fours en brique. La couleur rouge caractéristique vient du maltose et de la sauce soja — mais certains ajoutent du colorant rouge alimentaire (E124) dans la marinade commerciale.",
+    chef_tip: "Le secret du laquage parfait : badigeonnez avec la marinade toutes les 10 minutes les 3 dernières fois de cuisson. Chaque couche sèche et caramélise. La dernière couche doit être appliquée 5 minutes avant de sortir du four — elle reste brillante et collante. Servez tranché finement.",
+    cultural_note: "Le char siu est l'ingrédient le plus polyvalent de la cuisine cantonaise : il garnit les bao (brioches), les riz cantonnais, les nouilles wonton, les riz sautés. Les boucheries cantonaises (siu mei) l'exposent entier accroché en vitrine — une signature visuelle de Chinatown dans le monde entier.",
+  },
+
+  'Le Canard Laqué de Pékin': {
+    title: 'Le Canard Laqué de Pékin',
+    description: 'Peau croustillante laquée, chair juteuse — le plat impérial par excellence, consommé depuis la dynastie Yuan.',
+    emoji: '🦆',
+    difficulty: 'hard' as const,
+    duration_minutes: 1440,
+    ingredients: [
+      { name: 'Canard Pékin entier (séché)', emoji: '🦆', tip: 'Le séchage de la peau à l\'air (24-48h au réfrigérateur, non couvert) est l\'étape la plus critique — peau sèche = peau croustillante' },
+      { name: 'Maltose (sirop de malt)', emoji: '🍯', tip: 'Le maltose, dilué dans l\'eau chaude, est nappé sur la peau avant séchage — il caramélise à haute température en une croûte dorée-laquée' },
+      { name: 'Crêpes fines (bao bing)', emoji: '🫓', tip: 'Les crêpes doivent être très fines (quasi transparentes) — elles s\'achètent toutes faites ou se font à la vapeur' },
+      { name: 'Sauce hoisin + concombre + oignons verts (garniture)', emoji: '🫙', tip: 'La garniture traditionnelle de Pékin — aucune variation n\'est acceptée dans les restaurants de référence' },
+    ],
+    anecdote: "Le canard de Pékin remonte à la dynastie Yuan (XIIIe siècle) — les archives impériales mentionnent un \"canard rôti\" servi à l'Empereur Hongwu en 1330. Le restaurant Quanjude, fondé en 1864 à Pékin, a servi plus de 200 millions de canards. Il est aujourd'hui inscrit au patrimoine culturel immatériel de Pékin.",
+    chef_tip: "La technique professionnelle : pompez de l'air entre la peau et la chair du canard (une paille de barista suffit) pour les décoller. La peau gonflée sèche plus uniformément et croustille mieux. Versez de l'eau bouillante sur le canard avant le séchage pour contracter la peau et fermer les pores.",
+    cultural_note: "En Chine, aller manger du canard laqué à Pékin est un rite initiatique — les restaurants comme Da Dong et Quanjude découpent le canard en table avec une précision chirurgicale. Le canard entier donne 108 tranches (chiffre sacré en bouddhisme). La peau se mange séparément de la viande, avec juste du sucre blanc — c'est la bouchée la plus précieuse.",
+  },
+
+  // ===== PASTRY (missing) =====
+  'Les Macarons': {
+    title: 'Les Macarons',
+    description: 'Coques à la poudre d\'amandes et meringue italienne, garniture ganache ou crème au beurre — le défi ultime de la pâtisserie.',
+    emoji: '🫠',
+    difficulty: 'hard' as const,
+    duration_minutes: 90,
+    ingredients: [
+      { name: 'Poudre d\'amandes (tamisée très finement)', emoji: '🌰', tip: 'Mixez la poudre d\'amandes avec le sucre glace puis tamisez 2 fois — tout morceau grossier crée des bosses sur la coque' },
+      { name: 'Blancs d\'œufs vieillis (3-5 jours au frigo)', emoji: '🥚', tip: 'Les blancs vieillis ont moins d\'humidité et montent en meringue plus stable — essentiel pour le \"croutage\"' },
+      { name: 'Sirop de sucre cuit (meringue italienne, 118°C)', emoji: '🍬', tip: 'Meringue italienne (sucre cuit) > meringue française (sucre glace) : plus stable à l\'humidité et à la cuisson' },
+      { name: 'Colorant liposoluble en poudre', emoji: '🎨', tip: 'Le colorant liquide ajoute de l\'humidité — utilisez uniquement des colorants en poudre ou en gel épais' },
+    ],
+    anecdote: "Le macaron parisien moderne (deux coques + ganache) a été créé par Ladurée en 1930 — les macarons existaient depuis le XVIe siècle (importés d'Italie par Catherine de Médicis) mais en version simple, sans ganache. Ladurée a eu l'idée de les assembler par paires. Aujourd'hui, Ladurée vend plus de 15 000 macarons par jour dans le monde.",
+    chef_tip: "Les 3 étapes critiques : 1) macaronner jusqu'à la \"texture ruban\" (la pâte doit tomber en ruban continu, pas en morceaux) ; 2) le croutage (30-60 min à l'air libre jusqu'à une peau sèche au toucher) ; 3) cuire à 150°C ventilé avec la porte légèrement entrouverte. Chaque four est différent — il faut toujours faire un test.",
+    cultural_note: "Le macaron est devenu un symbole de luxe et de savoir-faire français dans le monde entier. À Paris, les vitrines de macarons colorés de Ladurée, Pierre Hermé et Jean-Paul Hévin font partie du paysage gastronomique de la ville. La \"guerre des macarons\" entre Hermé et Ladurée a élevé la pâtisserie française au rang d'art contemporain.",
+  },
 };
