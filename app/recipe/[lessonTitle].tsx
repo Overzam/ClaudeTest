@@ -1,5 +1,5 @@
-import React from 'react';
-import { ScrollView, StyleSheet, Text, View, TouchableOpacity } from 'react-native';
+import React, { useEffect, useState } from 'react';
+import { ActivityIndicator, ScrollView, StyleSheet, Text, View, TouchableOpacity } from 'react-native';
 import { useLocalSearchParams, router } from 'expo-router';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from '@expo/vector-icons';
@@ -8,6 +8,8 @@ import { useThemeStore } from '@/stores/themeStore';
 import { RECIPES } from '@/constants/recipesData';
 import { LESSON_DETAILS } from '@/constants/pathsData';
 import { Layout } from '@/constants/Layout';
+import { fetchRecipeByTitle, type Recipe as SupabaseRecipe } from '@/services/recipeService';
+import type { RecipeDetail } from '@/types/database.types';
 
 function SectionHeader({ icon, label, color }: { icon: any; label: string; color: string }) {
   return (
@@ -19,22 +21,81 @@ function SectionHeader({ icon, label, color }: { icon: any; label: string; color
 }
 const sectionHeaderStyle = { fontSize: 15, fontWeight: '800' as const };
 
+// Convert Supabase recipe format → RecipeDetail format for display
+function supabaseToRecipeDetail(r: SupabaseRecipe): RecipeDetail {
+  const diffMap: Record<string, 'easy' | 'medium' | 'hard'> = {
+    facile: 'easy', moyen: 'medium', difficile: 'hard', expert: 'hard',
+  };
+  return {
+    id: r.id,
+    path_id: '',
+    title: r.title,
+    description: r.description,
+    emoji: r.emoji,
+    order_index: 0,
+    xp_reward: 0,
+    thumbnail_url: r.hero_image_url ?? null,
+    difficulty: diffMap[r.difficulty] ?? 'easy',
+    ingredients: r.ingredients.map((ing) => ({
+      name: ing.item,
+      quantity: ing.qty,
+      emoji: '🥄',
+      note: ing.tip,
+    })),
+    anecdote: '',
+    chef_tip: r.chef_tip,
+    cultural_note: r.cultural_note,
+    // Steps stored under "steps" key for display, mirrored from instructions
+    steps: r.instructions,
+  } as any;
+}
+
 export default function RecipeDetailScreen() {
   const { lessonTitle } = useLocalSearchParams<{ lessonTitle: string }>();
   const { theme } = useThemeStore();
   const c = theme.colors;
 
   const title = decodeURIComponent(lessonTitle ?? '');
-  const recipe = RECIPES[title];
+  const [loading, setLoading] = useState(true);
+  const [supabaseRecipe, setSupabaseRecipe] = useState<SupabaseRecipe | null>(null);
+
+  useEffect(() => {
+    fetchRecipeByTitle(title).then((r) => {
+      setSupabaseRecipe(r);
+      setLoading(false);
+    });
+  }, [title]);
+
+  // Priority: Supabase > local RECIPES constant > LESSON_DETAILS fallback
+  const recipe = RECIPES[title] ?? null;
   const lessonDetail = LESSON_DETAILS[title];
 
-  const totalTime = recipe ? recipe.prep_time_min + recipe.cook_time_min : null;
+  // When Supabase has data, override the local recipe
+  const displayRecipe = supabaseRecipe ? supabaseToRecipeDetail(supabaseRecipe) : recipe;
+
+  const totalTime = displayRecipe ? displayRecipe.prep_time_min + displayRecipe.cook_time_min : null;
 
   const difficultyColor = (d?: string) => {
-    if (d === 'Facile') return '#22c55e';
-    if (d === 'Moyen') return '#f59e0b';
+    if (d === 'Facile' || d === 'easy' || d === 'facile') return '#22c55e';
+    if (d === 'Moyen' || d === 'medium' || d === 'moyen') return '#f59e0b';
     return '#ef4444';
   };
+
+  if (loading) {
+    return (
+      <ScreenWrapper>
+        <View style={[styles.header, { borderBottomColor: c.border }]}>
+          <TouchableOpacity onPress={() => router.back()} hitSlop={8}>
+            <Ionicons name="arrow-back" size={24} color={c.primary} />
+          </TouchableOpacity>
+          <Text style={[styles.headerTitle, { color: c.text }]} numberOfLines={1}>{title}</Text>
+        </View>
+        <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
+          <ActivityIndicator size="large" color={c.primary} />
+        </View>
+      </ScreenWrapper>
+    );
+  }
 
   return (
     <ScreenWrapper>
@@ -52,31 +113,33 @@ export default function RecipeDetailScreen() {
           colors={[c.primary + '30', c.secondary + '15']}
           style={styles.hero}
         >
-          <Text style={styles.heroEmoji}>{recipe?.emoji ?? lessonDetail?.emoji ?? '🍽️'}</Text>
-          <Text style={[styles.heroTitle, { color: c.text }]}>{recipe?.title ?? title}</Text>
-          {recipe?.description && (
-            <Text style={[styles.heroDesc, { color: c.textMuted }]}>{recipe.description}</Text>
+          <Text style={styles.heroEmoji}>{displayRecipe?.emoji ?? lessonDetail?.emoji ?? '🍽️'}</Text>
+          <Text style={[styles.heroTitle, { color: c.text }]}>{displayRecipe?.title ?? title}</Text>
+          {displayRecipe?.description && (
+            <Text style={[styles.heroDesc, { color: c.textMuted }]}>{displayRecipe.description}</Text>
           )}
-          {recipe && (
-            <View style={[styles.diffBadge, { backgroundColor: difficultyColor(recipe.difficulty) + '20' }]}>
-              <Text style={[styles.diffText, { color: difficultyColor(recipe.difficulty) }]}>
-                {recipe.difficulty}
+          {displayRecipe && (
+            <View style={[styles.diffBadge, { backgroundColor: difficultyColor(displayRecipe.difficulty as string) + '20' }]}>
+              <Text style={[styles.diffText, { color: difficultyColor(displayRecipe.difficulty as string) }]}>
+                {(displayRecipe.difficulty as string) === 'easy' || (displayRecipe.difficulty as string) === 'facile' ? 'Facile'
+                  : (displayRecipe.difficulty as string) === 'medium' || (displayRecipe.difficulty as string) === 'moyen' ? 'Moyen'
+                  : 'Expert'}
               </Text>
             </View>
           )}
         </LinearGradient>
 
         {/* Time + servings cards */}
-        {recipe && (
+        {displayRecipe && (
           <View style={styles.metaRow}>
             <View style={[styles.metaCard, { backgroundColor: c.surfaceElevated, borderColor: c.border }]}>
               <Text style={styles.metaEmoji}>🔪</Text>
-              <Text style={[styles.metaValue, { color: c.text }]}>{recipe.prep_time_min} min</Text>
+              <Text style={[styles.metaValue, { color: c.text }]}>{displayRecipe.prep_time_min} min</Text>
               <Text style={[styles.metaLabel, { color: c.textMuted }]}>Préparation</Text>
             </View>
             <View style={[styles.metaCard, { backgroundColor: c.surfaceElevated, borderColor: c.border }]}>
               <Text style={styles.metaEmoji}>🔥</Text>
-              <Text style={[styles.metaValue, { color: c.text }]}>{recipe.cook_time_min} min</Text>
+              <Text style={[styles.metaValue, { color: c.text }]}>{displayRecipe.cook_time_min} min</Text>
               <Text style={[styles.metaLabel, { color: c.textMuted }]}>Cuisson</Text>
             </View>
             <View style={[styles.metaCard, { backgroundColor: c.primary + '15', borderColor: c.primary + '30' }]}>
@@ -86,19 +149,19 @@ export default function RecipeDetailScreen() {
             </View>
             <View style={[styles.metaCard, { backgroundColor: c.surfaceElevated, borderColor: c.border }]}>
               <Text style={styles.metaEmoji}>🍽️</Text>
-              <Text style={[styles.metaValue, { color: c.text }]}>{recipe.servings}</Text>
+              <Text style={[styles.metaValue, { color: c.text }]}>{displayRecipe.servings}</Text>
               <Text style={[styles.metaLabel, { color: c.textMuted }]}>Portions</Text>
             </View>
           </View>
         )}
 
         {/* Ingredients */}
-        {recipe && recipe.ingredients.length > 0 && (
+        {displayRecipe && displayRecipe.ingredients.length > 0 && (
           <View style={[styles.section, { backgroundColor: c.surfaceElevated, borderColor: c.border }]}>
             <SectionHeader icon="nutrition" label="Ingrédients" color={c.text} />
-            <Text style={[styles.sectionSub, { color: c.textMuted }]}>Pour {recipe.servings} personne{recipe.servings > 1 ? 's' : ''}</Text>
-            {recipe.ingredients.map((ing, i) => (
-              <View key={i} style={[styles.ingRow, i < recipe.ingredients.length - 1 && { borderBottomColor: c.border, borderBottomWidth: 1 }]}>
+            <Text style={[styles.sectionSub, { color: c.textMuted }]}>Pour {displayRecipe.servings} personne{displayRecipe.servings > 1 ? 's' : ''}</Text>
+            {displayRecipe.ingredients.map((ing, i) => (
+              <View key={i} style={[styles.ingRow, i < displayRecipe.ingredients.length - 1 && { borderBottomColor: c.border, borderBottomWidth: 1 }]}>
                 <Text style={styles.ingEmoji}>{ing.emoji}</Text>
                 <View style={styles.ingInfo}>
                   <Text style={[styles.ingName, { color: c.text }]}>{ing.name}</Text>
@@ -110,11 +173,11 @@ export default function RecipeDetailScreen() {
           </View>
         )}
 
-        {/* Steps */}
-        {recipe && recipe.steps.length > 0 && (
+        {/* Steps — Supabase uses "steps" key injected by supabaseToRecipeDetail */}
+        {displayRecipe && (displayRecipe as any).steps?.length > 0 && (
           <View style={[styles.section, { backgroundColor: c.surfaceElevated, borderColor: c.border }]}>
             <SectionHeader icon="list" label="Étapes" color={c.text} />
-            {recipe.steps.map((step, i) => (
+            {((displayRecipe as any).steps as string[]).map((step, i) => (
               <View key={i} style={styles.stepRow}>
                 <LinearGradient
                   colors={[c.primary, c.secondary ?? c.primary]}
@@ -129,23 +192,23 @@ export default function RecipeDetailScreen() {
         )}
 
         {/* Chef tip */}
-        {(recipe?.chef_tip || lessonDetail?.chef_tip) && (
+        {(displayRecipe?.chef_tip || lessonDetail?.chef_tip) && (
           <View style={[styles.section, { backgroundColor: c.primary + '10', borderColor: c.primary + '30' }]}>
             <SectionHeader icon="bulb" label="Conseil du Chef" color={c.primary} />
-            <Text style={[styles.sectionText, { color: c.text }]}>{recipe?.chef_tip ?? lessonDetail?.chef_tip}</Text>
+            <Text style={[styles.sectionText, { color: c.text }]}>{displayRecipe?.chef_tip ?? lessonDetail?.chef_tip}</Text>
           </View>
         )}
 
         {/* Anecdote */}
-        {(recipe?.anecdote || lessonDetail?.anecdote) && (
+        {(displayRecipe?.anecdote || lessonDetail?.anecdote) && (
           <View style={[styles.section, { backgroundColor: c.surfaceElevated, borderColor: c.border }]}>
             <SectionHeader icon="book-outline" label="Anecdote" color={c.text} />
-            <Text style={[styles.sectionText, { color: c.textMuted }]}>{recipe?.anecdote ?? lessonDetail?.anecdote}</Text>
+            <Text style={[styles.sectionText, { color: c.textMuted }]}>{displayRecipe?.anecdote ?? lessonDetail?.anecdote}</Text>
           </View>
         )}
 
         {/* Cultural note fallback */}
-        {!recipe && lessonDetail && (
+        {!displayRecipe && lessonDetail && (
           <>
             {lessonDetail.cultural_note && (
               <View style={[styles.section, { backgroundColor: c.surfaceElevated, borderColor: c.border }]}>
@@ -175,7 +238,7 @@ export default function RecipeDetailScreen() {
           </>
         )}
 
-        {!recipe && !lessonDetail && (
+        {!displayRecipe && !lessonDetail && (
           <View style={[styles.comingSoon, { backgroundColor: c.surfaceElevated, borderColor: c.border }]}>
             <Text style={styles.comingSoonEmoji}>🔜</Text>
             <Text style={[styles.comingSoonText, { color: c.textMuted }]}>Recette bientôt disponible !</Text>

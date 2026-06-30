@@ -47,6 +47,17 @@ export default function RecipeScreen() {
     }
   }, [loading, recipe]);
 
+  function goToComplete() {
+    router.replace({
+      pathname: '/lesson/complete',
+      params: {
+        xpEarned: xpEarned ?? '0',
+        score: score ?? '100',
+        mistakes: mistakes ?? '0',
+      },
+    });
+  }
+
   if (loading || !recipe) {
     return (
       <View style={[styles.center, { backgroundColor: c.background }]}>
