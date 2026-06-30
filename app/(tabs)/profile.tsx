@@ -60,10 +60,24 @@ export default function ProfileScreen() {
       <ScrollView contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
         {/* Header */}
         <View style={[styles.header, { backgroundColor: c.primary + '12', borderRadius: Layout.radius.xl }]}>
-          <Avatar name={user?.username} size={80} />
+          <TouchableOpacity onPress={() => router.push('/edit-profile')} activeOpacity={0.85} style={styles.avatarWrap}>
+            <Avatar name={user?.username} uri={user?.avatar_url} size={80} />
+            <View style={[styles.editBadge, { backgroundColor: c.primary }]}>
+              <Ionicons name="camera" size={13} color="#fff" />
+            </View>
+          </TouchableOpacity>
           <Text style={[styles.username, { color: c.text }]}>{user?.username ?? '—'}</Text>
-          <View style={[styles.levelBadge, { backgroundColor: c.primary }]}>
-            <Text style={styles.levelText}>Niv. {level}</Text>
+          <View style={styles.headerActions}>
+            <View style={[styles.levelBadge, { backgroundColor: c.primary }]}>
+              <Text style={styles.levelText}>Niv. {level}</Text>
+            </View>
+            <TouchableOpacity
+              style={[styles.editProfileBtn, { borderColor: c.border }]}
+              onPress={() => router.push('/edit-profile')}
+            >
+              <Ionicons name="create-outline" size={14} color={c.textMuted} />
+              <Text style={[styles.editProfileText, { color: c.textMuted }]}>Modifier</Text>
+            </TouchableOpacity>
           </View>
         </View>
 
@@ -209,13 +223,37 @@ const calStyles = StyleSheet.create({
 const styles = StyleSheet.create({
   content: { padding: Layout.spacing.lg, gap: Layout.spacing.md, paddingBottom: 40 },
   header: { alignItems: 'center', gap: Layout.spacing.sm, paddingVertical: Layout.spacing.xl },
+  avatarWrap: { position: 'relative' },
+  editBadge: {
+    position: 'absolute',
+    bottom: 2,
+    right: 2,
+    width: 24,
+    height: 24,
+    borderRadius: 12,
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderWidth: 2,
+    borderColor: '#fff',
+  },
   username: { fontSize: Layout.fontSize.xl, fontWeight: '800' },
+  headerActions: { flexDirection: 'row', alignItems: 'center', gap: Layout.spacing.sm },
   levelBadge: {
     paddingHorizontal: Layout.spacing.md,
     paddingVertical: 4,
     borderRadius: 20,
   },
   levelText: { color: '#fff', fontWeight: '800', fontSize: Layout.fontSize.sm },
+  editProfileBtn: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 4,
+    paddingHorizontal: Layout.spacing.sm,
+    paddingVertical: 4,
+    borderRadius: Layout.radius.full,
+    borderWidth: 1,
+  },
+  editProfileText: { fontSize: Layout.fontSize.xs, fontWeight: '600' },
   statsRow: { flexDirection: 'row', gap: Layout.spacing.sm },
   statCard: {
     flex: 1,
