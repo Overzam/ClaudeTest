@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import { ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { Animated, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import * as Haptics from 'expo-haptics';
 import { Button } from '@/components/ui/Button';
 import { useThemeStore } from '@/stores/themeStore';
 import { Layout } from '@/constants/Layout';
@@ -16,6 +17,12 @@ export function MultipleChoice({ question, data, onSubmit }: Props) {
   const { theme } = useThemeStore();
   const c = theme.colors;
 
+  function handleSelect(i: number) {
+    if (selected === i) return;
+    setSelected(i);
+    Haptics.selectionAsync();
+  }
+
   function handleVerify() {
     if (selected === null) return;
     const correct = selected === data.correctIndex;
@@ -24,7 +31,7 @@ export function MultipleChoice({ question, data, onSubmit }: Props) {
 
   return (
     <View style={styles.container}>
-      <ScrollView contentContainerStyle={styles.scroll} showsVerticalScrollIndicator={false}>
+      <ScrollView style={styles.scrollView} contentContainerStyle={styles.scroll} showsVerticalScrollIndicator={false}>
         <Text style={[styles.question, { color: c.text }]}>{question}</Text>
         <View style={styles.options}>
           {data.options.map((option, i) => (
@@ -35,11 +42,13 @@ export function MultipleChoice({ question, data, onSubmit }: Props) {
                 { borderColor: c.border, backgroundColor: c.surfaceElevated },
                 selected === i && { borderColor: c.primary, backgroundColor: c.primary + '12' },
               ]}
-              onPress={() => setSelected(i)}
+              onPress={() => handleSelect(i)}
               activeOpacity={0.75}
             >
               <View style={[styles.optionDot, { borderColor: selected === i ? c.primary : c.border, backgroundColor: selected === i ? c.primary : 'transparent' }]}>
-                {selected === i && <View style={styles.optionDotInner} />}
+                <Text style={[styles.optionLetter, { color: selected === i ? '#fff' : c.textSecondary }]}>
+                  {['A', 'B', 'C', 'D'][i] ?? String(i + 1)}
+                </Text>
               </View>
               <Text style={[styles.optionText, { color: selected === i ? c.primary : c.text }]}>
                 {option}
@@ -61,6 +70,7 @@ export function MultipleChoice({ question, data, onSubmit }: Props) {
 
 const styles = StyleSheet.create({
   container: { flex: 1 },
+  scrollView: { flex: 1 },
   scroll: { padding: Layout.spacing.lg, gap: Layout.spacing.lg, paddingBottom: Layout.spacing.sm },
   question: { fontSize: Layout.fontSize.lg, fontWeight: '700', textAlign: 'center', lineHeight: 28 },
   options: { gap: Layout.spacing.sm },
@@ -81,7 +91,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     flexShrink: 0,
   },
-  optionDotInner: { width: 10, height: 10, borderRadius: 5, backgroundColor: '#fff' },
+  optionLetter: { fontSize: 12, fontWeight: '800' },
   optionText: { fontSize: Layout.fontSize.md, fontWeight: '600', flex: 1 },
   footer: { padding: Layout.spacing.lg, paddingTop: Layout.spacing.md, borderTopWidth: 1 },
 });

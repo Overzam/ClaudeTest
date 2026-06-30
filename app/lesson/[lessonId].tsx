@@ -1,5 +1,5 @@
-import React, { useEffect } from 'react';
-import { Alert, StyleSheet, View } from 'react-native';
+import React, { useEffect, useState } from 'react';
+import { Alert, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { router, useLocalSearchParams } from 'expo-router';
 import { ExerciseHeader } from '@/components/lesson/ExerciseHeader';
@@ -18,10 +18,12 @@ import { useAuthStore } from '@/stores/authStore';
 import { submitLessonProgress, unlockNextLesson, fetchLessonById } from '@/services/lessonService';
 import { updateStreak, incrementLessonsCompleted } from '@/services/statsService';
 import { useBadgeStore } from '@/stores/badgeStore';
+import { NoHeartsModal } from '@/components/gamification/NoHeartsModal';
 
 export default function LessonScreen() {
   const insets = useSafeAreaInsets();
   const { theme } = useThemeStore();
+  const [showNoHearts, setShowNoHearts] = useState(false);
   const { lessonId, lessonTitle } = useLocalSearchParams<{ lessonId: string; lessonTitle?: string }>();
   const { session } = useAuthStore();
   const lessonStore = useLessonStore();
@@ -64,6 +66,7 @@ export default function LessonScreen() {
       pathname: '/lesson/recipe',
       params: {
         lessonId,
+        lessonTitle: lessonTitle ?? '',
         xpEarned: String(lessonStore.xpEarned),
         score: String(lessonStore.score),
         mistakes: String(lessonStore.mistakesCount),
@@ -78,8 +81,29 @@ export default function LessonScreen() {
     ]);
   }
 
-  if (lessonStore.phase === 'loading' || !lessonStore.exercises.length) {
+  if (lessonStore.phase === 'loading') {
     return <LoadingScreen />;
+  }
+
+  if (!lessonStore.exercises.length) {
+    return (
+      <View style={[styles.container, { paddingTop: insets.top, paddingBottom: insets.bottom, backgroundColor: theme.colors.background }]}>
+        <ExerciseHeader progress={0} hearts={gameStore.hearts} onClose={handleClose} />
+        <View style={styles.comingSoon}>
+          <Text style={[styles.comingSoonEmoji]}>🍳</Text>
+          <Text style={[styles.comingSoonTitle, { color: theme.colors.text }]}>Leçon bientôt disponible</Text>
+          <Text style={[styles.comingSoonSubtitle, { color: theme.colors.textMuted }]}>
+            Les exercices pour cette leçon sont en cours de préparation. Reviens vite !
+          </Text>
+          <TouchableOpacity
+            style={[styles.comingSoonButton, { backgroundColor: theme.colors.primary }]}
+            onPress={handleClose}
+          >
+            <Text style={styles.comingSoonButtonText}>Retour</Text>
+          </TouchableOpacity>
+        </View>
+      </View>
+    );
   }
 
   const exercise = lessonStore.exercises[lessonStore.currentIndex];
@@ -88,13 +112,11 @@ export default function LessonScreen() {
   function renderExercise() {
     const submit = (correct: boolean, correctAnswerText?: string) => {
       lessonStore.submitAnswer(correct, correctAnswerText);
-      if (!correct) gameStore.loseHeart();
-      if (gameStore.hearts <= 1 && !correct) {
-        setTimeout(() => {
-          Alert.alert('Plus de vies !', 'Reviens dans quelques heures pour récupérer des vies.', [
-            { text: 'OK', onPress: () => router.back() },
-          ]);
-        }, 500);
+      if (!correct) {
+        gameStore.loseHeart();
+        if (gameStore.hearts <= 1) {
+          setTimeout(() => setShowNoHearts(true), 600);
+        }
       }
     };
 
@@ -124,9 +146,15 @@ export default function LessonScreen() {
         <AnswerFeedback
           correct={lessonStore.lastAnswerCorrect}
           correctAnswerText={lessonStore.correctAnswerText}
+          explanation={lessonStore.lastAnswerCorrect && (exercise?.data as any)?.anecdote ? (exercise.data as any).anecdote : undefined}
           onContinue={lessonStore.nextExercise}
         />
       )}
+      <NoHeartsModal
+        visible={showNoHearts}
+        onClose={() => { setShowNoHearts(false); router.back(); }}
+        onRefill={() => { setShowNoHearts(false); router.push('/premium' as any); }}
+      />
     </View>
   );
 }
@@ -134,5 +162,11 @@ export default function LessonScreen() {
 const styles = StyleSheet.create({
   container: { flex: 1 },
   exercise: { flex: 1 },
+  comingSoon: { flex: 1, alignItems: 'center', justifyContent: 'center', paddingHorizontal: 32, gap: 16 },
+  comingSoonEmoji: { fontSize: 64 },
+  comingSoonTitle: { fontSize: 22, fontWeight: '700', textAlign: 'center' },
+  comingSoonSubtitle: { fontSize: 15, textAlign: 'center', lineHeight: 22 },
+  comingSoonButton: { marginTop: 8, paddingVertical: 14, paddingHorizontal: 40, borderRadius: 12 },
+  comingSoonButtonText: { color: '#fff', fontWeight: '700', fontSize: 16 },
 });
 

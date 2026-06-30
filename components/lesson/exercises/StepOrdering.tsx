@@ -1,5 +1,5 @@
 import React, { useMemo, useState } from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import DraggableFlatList, { RenderItemParams, ScaleDecorator } from 'react-native-draggable-flatlist';
 import { Button } from '@/components/ui/Button';
 import { useThemeStore } from '@/stores/themeStore';
@@ -42,16 +42,19 @@ export function StepOrdering({ question, data, onSubmit }: Props) {
   function renderItem({ item, drag, isActive }: RenderItemParams<StepItem>) {
     return (
       <ScaleDecorator>
-        <View style={[
-          styles.item,
-          { backgroundColor: c.surfaceElevated, borderColor: c.border },
-          isActive && { borderColor: c.primary, elevation: 8 },
-        ]}>
+        <TouchableOpacity
+          onLongPress={drag}
+          delayLongPress={150}
+          activeOpacity={0.85}
+          style={[
+            styles.item,
+            { backgroundColor: c.surfaceElevated, borderColor: c.border },
+            isActive && { borderColor: c.primary, shadowOpacity: 0.2, elevation: 8 },
+          ]}
+        >
           <Text style={[styles.handle, { color: c.textMuted }]}>☰</Text>
-          <Text style={[styles.label, { color: c.text }]} onLongPress={drag}>
-            {item.label}
-          </Text>
-        </View>
+          <Text style={[styles.label, { color: c.text }]}>{item.label}</Text>
+        </TouchableOpacity>
       </ScaleDecorator>
     );
   }
@@ -60,13 +63,15 @@ export function StepOrdering({ question, data, onSubmit }: Props) {
     <View style={styles.container}>
       <Text style={[styles.question, { color: c.text }]}>{question}</Text>
       <Text style={[styles.hint, { color: c.textMuted }]}>Maintenez et glissez pour réordonner</Text>
-      <DraggableFlatList
-        data={items}
-        keyExtractor={(item) => item.key}
-        renderItem={renderItem}
-        onDragEnd={({ data: newData }) => setItems(newData)}
-        contentContainerStyle={styles.list}
-      />
+      <View style={styles.listWrapper}>
+        <DraggableFlatList
+          data={items}
+          keyExtractor={(item) => item.key}
+          renderItem={renderItem}
+          onDragEnd={({ data: newData }) => setItems(newData)}
+          contentContainerStyle={styles.listContent}
+        />
+      </View>
       <View style={[styles.footer, { borderTopColor: c.border }]}>
         <Button label="Vérifier" onPress={handleVerify} />
       </View>
@@ -78,7 +83,8 @@ const styles = StyleSheet.create({
   container: { flex: 1 },
   question: { fontSize: Layout.fontSize.lg, fontWeight: '700', textAlign: 'center', padding: Layout.spacing.lg, paddingBottom: Layout.spacing.sm },
   hint: { fontSize: Layout.fontSize.sm, textAlign: 'center', paddingBottom: Layout.spacing.md },
-  list: { gap: Layout.spacing.sm, paddingHorizontal: Layout.spacing.lg },
+  listWrapper: { flex: 1 },
+  listContent: { gap: Layout.spacing.sm, paddingHorizontal: Layout.spacing.lg },
   item: {
     flexDirection: 'row',
     alignItems: 'center',

@@ -21,8 +21,8 @@ const DIFFICULTY_COLOR: Record<string, string> = {
 };
 
 export default function RecipeScreen() {
-  const { lessonId, xpEarned, score, mistakes } = useLocalSearchParams<{
-    lessonId: string; xpEarned?: string; score?: string; mistakes?: string;
+  const { lessonId, lessonTitle, xpEarned, score, mistakes } = useLocalSearchParams<{
+    lessonId: string; lessonTitle?: string; xpEarned?: string; score?: string; mistakes?: string;
   }>();
   const { theme } = useThemeStore();
   const c = theme.colors;
@@ -34,7 +34,7 @@ export default function RecipeScreen() {
 
   useEffect(() => {
     if (lessonId) {
-      fetchRecipe(lessonId).then((r) => { setRecipe(r); setLoading(false); });
+      fetchRecipe(lessonId, lessonTitle).then((r) => { setRecipe(r); setLoading(false); });
     }
   }, [lessonId]);
 

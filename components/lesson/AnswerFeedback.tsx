@@ -36,7 +36,12 @@ export function AnswerFeedback({ correct, correctAnswerText, explanation, onCont
           <Text style={[styles.correctAnswerText, { color: c.text }]}>{correctAnswerText}</Text>
         </View>
       )}
-      {explanation && <Text style={[styles.explanation, { color: c.textMuted }]}>{explanation}</Text>}
+      {explanation && (
+        <View style={[styles.anecdoteBox, { backgroundColor: c.primary + '10', borderColor: c.primary + '30' }]}>
+          <Text style={[styles.anecdoteLabel, { color: c.primary }]}>📖 Le saviez-vous ?</Text>
+          <Text style={[styles.explanation, { color: c.textSecondary }]}>{explanation}</Text>
+        </View>
+      )}
       <Button
         label="Continuer"
         onPress={onContinue}
@@ -64,6 +69,8 @@ const styles = StyleSheet.create({
   },
   correctAnswerLabel: { fontSize: Layout.fontSize.xs, fontWeight: '800' },
   correctAnswerText: { fontSize: Layout.fontSize.sm, fontWeight: '600' },
-  explanation: { fontSize: Layout.fontSize.sm },
+  anecdoteBox: { borderRadius: Layout.radius.md, borderWidth: 1, padding: Layout.spacing.md, gap: 4 },
+  anecdoteLabel: { fontSize: Layout.fontSize.xs, fontWeight: '800' },
+  explanation: { fontSize: Layout.fontSize.sm, lineHeight: 18 },
   button: { marginTop: Layout.spacing.sm },
 });

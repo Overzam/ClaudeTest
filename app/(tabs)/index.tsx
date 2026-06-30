@@ -1,5 +1,6 @@
 import React, { useCallback, useState } from 'react';
 import { ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { LinearGradient } from 'expo-linear-gradient';
 import { router, useFocusEffect } from 'expo-router';
 import { ScreenWrapper } from '@/components/ui/ScreenWrapper';
 import { StreakBadge } from '@/components/gamification/StreakBadge';
@@ -112,7 +113,7 @@ export default function HomeScreen() {
           </View>
           <View style={styles.headerRight}>
             <StreakBadge streakDays={gameStore.streakDays} />
-            <HeartsDisplay hearts={gameStore.hearts} />
+            <HeartsDisplay hearts={gameStore.hearts} compact />
           </View>
         </View>
 
@@ -121,17 +122,39 @@ export default function HomeScreen() {
         {/* Next lesson shortcut */}
         {nextLesson && (
           <TouchableOpacity
-            style={[styles.nextLessonCard, { backgroundColor: nextLesson.path.color + '15', borderColor: nextLesson.path.color + '40' }]}
             onPress={() => router.push({ pathname: '/lesson/[lessonId]', params: { lessonId: nextLesson!.lesson.id, lessonTitle: nextLesson!.lesson.title } })}
             activeOpacity={0.85}
+            style={styles.nextLessonCardWrapper}
           >
-            <Text style={styles.nextLessonEmoji}>{nextLesson.path.emoji}</Text>
+            <LinearGradient
+              colors={[nextLesson.path.color + 'CC', nextLesson.path.color + '88']}
+              style={styles.nextLessonCard}
+              start={{ x: 0, y: 0 }}
+              end={{ x: 1, y: 1 }}
+            >
+              <Text style={styles.nextLessonEmoji}>{nextLesson.path.emoji}</Text>
+              <View style={styles.challengeInfo}>
+                <Text style={styles.nextLessonLabel}>PROCHAINE LEÇON</Text>
+                <Text style={styles.nextLessonTitle} numberOfLines={1}>{nextLesson.lesson.title}</Text>
+              </View>
+              <View style={styles.nextLessonXP}>
+                <Text style={styles.nextLessonXPText}>+{nextLesson.lesson.xp_reward} XP</Text>
+              </View>
+            </LinearGradient>
+          </TouchableOpacity>
+        )}
+
+        {/* Streak at risk banner (evening warning) */}
+        {gameStore.streakDays > 0 && new Date().getHours() >= 18 && (
+          <TouchableOpacity
+            style={[styles.streakWarning, { backgroundColor: '#FF6B2B' + '18', borderColor: '#FF6B2B' + '40' }]}
+            onPress={() => nextLesson && router.push({ pathname: '/lesson/[lessonId]', params: { lessonId: nextLesson.lesson.id, lessonTitle: nextLesson.lesson.title } })}
+            activeOpacity={0.85}
+          >
+            <Text style={styles.streakWarningEmoji}>⚠️</Text>
             <View style={styles.challengeInfo}>
-              <Text style={[styles.challengeLabel, { color: nextLesson.path.color }]}>PROCHAINE LEÇON</Text>
-              <Text style={[styles.challengeTitle, { color: c.text }]} numberOfLines={1}>{nextLesson.lesson.title}</Text>
-            </View>
-            <View style={[styles.nextLessonXP, { backgroundColor: nextLesson.path.color }]}>
-              <Text style={styles.nextLessonXPText}>+{nextLesson.lesson.xp_reward} XP</Text>
+              <Text style={[styles.challengeLabel, { color: '#FF6B2B' }]}>SÉRIE EN DANGER</Text>
+              <Text style={[styles.challengeTitle, { color: c.text }]}>Fais une leçon pour garder ta série 🔥{gameStore.streakDays}j</Text>
             </View>
           </TouchableOpacity>
         )}
@@ -209,10 +232,15 @@ export default function HomeScreen() {
                 onPress={() => router.push({ pathname: '/(tabs)/explore', params: { pathId: path.id } })}
                 activeOpacity={0.85}
               >
-                <View style={[styles.pathTileEmoji, { backgroundColor: path.color + '20' }]}>
+                <LinearGradient
+                  colors={[path.color + '35', path.color + '12']}
+                  style={styles.pathTileEmoji}
+                  start={{ x: 0, y: 0 }}
+                  end={{ x: 1, y: 1 }}
+                >
                   <Text style={styles.pathEmojiText}>{path.emoji}</Text>
                   {isDone && <Text style={styles.doneBadge}>✓</Text>}
-                </View>
+                </LinearGradient>
                 <Text style={[styles.pathTileTitle, { color: c.text }]} numberOfLines={2}>
                   {path.title}
                 </Text>
@@ -286,6 +314,15 @@ const styles = StyleSheet.create({
   },
   pathTileTitle: { fontSize: Layout.fontSize.sm, fontWeight: '700', textAlign: 'center' },
   pathTileCount: { fontSize: Layout.fontSize.xs },
+  streakWarning: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    borderRadius: Layout.radius.xl,
+    padding: Layout.spacing.md,
+    gap: Layout.spacing.md,
+    borderWidth: 1,
+  },
+  streakWarningEmoji: { fontSize: 28 },
   challengeBanner: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -308,19 +345,22 @@ const styles = StyleSheet.create({
     borderWidth: 1,
   },
   tipBannerEmoji: { fontSize: 28 },
+  nextLessonCardWrapper: { borderRadius: Layout.radius.xl, overflow: 'hidden' },
   nextLessonCard: {
     flexDirection: 'row',
     alignItems: 'center',
     borderRadius: Layout.radius.xl,
     padding: Layout.spacing.md,
     gap: Layout.spacing.md,
-    borderWidth: 1.5,
   },
-  nextLessonEmoji: { fontSize: 32 },
+  nextLessonEmoji: { fontSize: 36 },
+  nextLessonLabel: { fontSize: Layout.fontSize.xs, fontWeight: '800', letterSpacing: 1, color: 'rgba(255,255,255,0.8)' },
+  nextLessonTitle: { fontSize: Layout.fontSize.md, fontWeight: '800', color: '#fff' },
   nextLessonXP: {
     borderRadius: Layout.radius.full,
     paddingHorizontal: Layout.spacing.sm,
     paddingVertical: 4,
+    backgroundColor: 'rgba(255,255,255,0.25)',
   },
   nextLessonXPText: { color: '#fff', fontWeight: '800', fontSize: Layout.fontSize.xs },
 });

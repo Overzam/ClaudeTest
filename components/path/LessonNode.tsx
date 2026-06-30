@@ -1,5 +1,6 @@
 import React from 'react';
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { LinearGradient } from 'expo-linear-gradient';
 import { useThemeStore } from '@/stores/themeStore';
 import { Layout } from '@/constants/Layout';
 import type { Lesson } from '@/types/database.types';
@@ -26,19 +27,29 @@ export function LessonNode({ lesson, status, pathColor, onPress }: Props) {
       disabled={isLocked}
       activeOpacity={0.8}
     >
-      <View
-        style={[
-          styles.node,
-          { backgroundColor: c.surface },
-          isDone && { backgroundColor: pathColor },
-          !isDone && !isLocked && { borderColor: pathColor, borderWidth: 3 },
-          isLocked && { backgroundColor: c.border, shadowOpacity: 0 },
-        ]}
-      >
-        <Text style={[styles.icon, { color: isDone ? '#fff' : isLocked ? c.textMuted : c.text }]}>
-          {isDone ? '✓' : isLocked ? '🔒' : '▶'}
-        </Text>
-      </View>
+      {isDone ? (
+        <LinearGradient
+          colors={[pathColor, pathColor + 'BB']}
+          style={styles.node}
+          start={{ x: 0, y: 0 }}
+          end={{ x: 1, y: 1 }}
+        >
+          <Text style={[styles.icon, { color: '#fff' }]}>✓</Text>
+        </LinearGradient>
+      ) : (
+        <View
+          style={[
+            styles.node,
+            { backgroundColor: c.surface },
+            !isLocked && { borderColor: pathColor, borderWidth: 3 },
+            isLocked && { backgroundColor: c.border, shadowOpacity: 0 },
+          ]}
+        >
+          <Text style={[styles.icon, { color: isLocked ? c.textMuted : pathColor }]}>
+            {isLocked ? '🔒' : '▶'}
+          </Text>
+        </View>
+      )}
       <Text style={[styles.label, { color: isLocked ? c.textMuted : c.text }]} numberOfLines={2}>
         {lesson.title}
       </Text>

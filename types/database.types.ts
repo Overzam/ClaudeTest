@@ -89,10 +89,32 @@ export interface Friendship {
 
 export interface Ingredient {
   name: string;
-  quantity: string;
+  quantity?: string;
   unit?: string;
   emoji: string;
   tip?: string;
+}
+
+export interface RecipeIngredient {
+  name: string;
+  quantity: string;
+  emoji: string;
+  note?: string;
+}
+
+export interface RecipeDetail {
+  lessonTitle: string;
+  title: string;
+  description: string;
+  emoji: string;
+  prep_time_min: number;
+  cook_time_min: number;
+  servings: number;
+  difficulty: 'Facile' | 'Moyen' | 'Expert';
+  ingredients: RecipeIngredient[];
+  steps: string[];
+  chef_tip: string;
+  anecdote: string;
 }
 
 export interface LessonDetail {
@@ -100,11 +122,12 @@ export interface LessonDetail {
   path_id: string;
   title: string;
   description: string | null;
+  emoji?: string;
   order_index: number;
   xp_reward: number;
   thumbnail_url: string | null;
-  duration_minutes: number;
-  difficulty: 'easy' | 'medium' | 'hard';
+  duration_minutes?: number;
+  difficulty?: 'easy' | 'medium' | 'hard';
   ingredients: Ingredient[];
   anecdote: string;
   chef_tip: string;

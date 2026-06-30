@@ -21,7 +21,7 @@ export function ExerciseHeader({ progress, hearts, onClose }: Props) {
         <Ionicons name="close" size={28} color={c.textMuted} />
       </TouchableOpacity>
       <ProgressBar progress={progress} style={styles.bar} />
-      <HeartsDisplay hearts={hearts} />
+      <HeartsDisplay hearts={hearts} compact />
     </View>
   );
 }

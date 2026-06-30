@@ -1,5 +1,5 @@
 import React, { useCallback, useState } from 'react';
-import { FlatList, Modal, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { FlatList, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { router, useFocusEffect } from 'expo-router';
 import { ScreenWrapper } from '@/components/ui/ScreenWrapper';
 import { useThemeStore } from '@/stores/themeStore';
@@ -22,7 +22,6 @@ export default function RecipeBookScreen() {
   const c = theme.colors;
 
   const [recipes, setRecipes] = useState<RecipeEntry[]>([]);
-  const [selected, setSelected] = useState<RecipeEntry | null>(null);
   const [loading, setLoading] = useState(true);
 
   useFocusEffect(
@@ -30,12 +29,13 @@ export default function RecipeBookScreen() {
       if (!session?.user.id) return;
       async function load() {
         await loadProgress(session!.user.id);
+        const freshProgress = useProgressStore.getState().lessonProgress;
         const paths = await fetchPaths();
         const entries: RecipeEntry[] = [];
         for (const path of paths) {
           const lessons = await fetchLessons(path.id);
           for (const lesson of lessons) {
-            if (lessonProgress[lesson.id] === 'completed' && (LESSON_DETAILS[lesson.id] ?? LESSON_DETAILS[lesson.title])) {
+            if (freshProgress[lesson.id] === 'completed' && (LESSON_DETAILS[lesson.id] ?? LESSON_DETAILS[lesson.title])) {
               entries.push({ lesson, path });
             }
           }
@@ -46,8 +46,6 @@ export default function RecipeBookScreen() {
       load();
     }, [session?.user.id])
   );
-
-  const detail = selected ? (LESSON_DETAILS[selected.lesson.id] ?? LESSON_DETAILS[selected.lesson.title]) : null;
 
   return (
     <ScreenWrapper>
@@ -86,7 +84,7 @@ export default function RecipeBookScreen() {
               return (
                 <TouchableOpacity
                   style={[styles.card, { backgroundColor: item.path.color + '15', borderColor: item.path.color + '30' }]}
-                  onPress={() => setSelected(item)}
+                  onPress={() => router.push(`/recipe/${encodeURIComponent(item.lesson.title)}` as any)}
                   activeOpacity={0.8}
                 >
                   <Text style={styles.cardEmoji}>{item.path.emoji}</Text>
@@ -108,64 +106,6 @@ export default function RecipeBookScreen() {
         </>
       )}
 
-      {/* Recipe detail modal */}
-      <Modal visible={!!selected} animationType="slide" presentationStyle="pageSheet">
-        {selected && detail && (
-          <ScreenWrapper>
-            <View style={[styles.modalHeader, { borderBottomColor: c.border }]}>
-              <TouchableOpacity onPress={() => setSelected(null)}>
-                <Text style={[styles.back, { color: c.primary }]}>✕ Fermer</Text>
-              </TouchableOpacity>
-              <Text style={[styles.modalTitle, { color: c.text }]} numberOfLines={1}>
-                {selected.lesson.title}
-              </Text>
-            </View>
-
-            <ScrollView contentContainerStyle={styles.modalContent}>
-              <View style={[styles.modalHero, { backgroundColor: selected.path.color + '15' }]}>
-                <Text style={styles.modalEmoji}>{selected.path.emoji}</Text>
-                <Text style={[styles.modalPathLabel, { color: selected.path.color }]}>{selected.path.title}</Text>
-              </View>
-
-              {detail.anecdote && (
-                <View style={[styles.section, { backgroundColor: c.surfaceElevated, borderColor: c.border }]}>
-                  <Text style={[styles.sectionLabel, { color: c.textMuted }]}>📖 Anecdote</Text>
-                  <Text style={[styles.sectionText, { color: c.text }]}>{detail.anecdote}</Text>
-                </View>
-              )}
-
-              {detail.ingredients.length > 0 && (
-                <View style={[styles.section, { backgroundColor: c.surfaceElevated, borderColor: c.border }]}>
-                  <Text style={[styles.sectionLabel, { color: c.textMuted }]}>🧄 Ingrédients</Text>
-                  {detail.ingredients.map((ing, i) => (
-                    <View key={i} style={styles.ingRow}>
-                      <Text style={styles.ingEmoji}>{ing.emoji}</Text>
-                      <Text style={[styles.ingName, { color: c.text }]}>{ing.name}</Text>
-                      <Text style={[styles.ingQty, { color: c.primary }]}>
-                        {ing.quantity}{ing.unit ? ` ${ing.unit}` : ''}
-                      </Text>
-                    </View>
-                  ))}
-                </View>
-              )}
-
-              {detail.chef_tip && (
-                <View style={[styles.section, { backgroundColor: c.primary + '10', borderColor: c.primary + '30' }]}>
-                  <Text style={[styles.sectionLabel, { color: c.primary }]}>👨‍🍳 Conseil du Chef</Text>
-                  <Text style={[styles.sectionText, { color: c.text }]}>{detail.chef_tip}</Text>
-                </View>
-              )}
-
-              {detail.cultural_note && (
-                <View style={[styles.section, { backgroundColor: c.secondary + '15', borderColor: c.secondary + '30' }]}>
-                  <Text style={[styles.sectionLabel, { color: c.textSecondary }]}>🌍 Note Culturelle</Text>
-                  <Text style={[styles.sectionText, { color: c.text }]}>{detail.cultural_note}</Text>
-                </View>
-              )}
-            </ScrollView>
-          </ScreenWrapper>
-        )}
-      </Modal>
     </ScreenWrapper>
   );
 }
@@ -201,33 +141,4 @@ const styles = StyleSheet.create({
   diffBadge: { paddingHorizontal: Layout.spacing.sm, paddingVertical: 2, borderRadius: 12 },
   diffText: { fontSize: Layout.fontSize.xs, fontWeight: '700' },
   cardPath: { fontSize: Layout.fontSize.xs },
-  modalHeader: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: Layout.spacing.md,
-    padding: Layout.spacing.lg,
-    borderBottomWidth: 1,
-  },
-  modalTitle: { flex: 1, fontSize: Layout.fontSize.lg, fontWeight: '800' },
-  modalContent: { padding: Layout.spacing.lg, gap: Layout.spacing.md, paddingBottom: 40 },
-  modalHero: {
-    borderRadius: Layout.radius.xl,
-    padding: Layout.spacing.xl,
-    alignItems: 'center',
-    gap: Layout.spacing.sm,
-  },
-  modalEmoji: { fontSize: 56 },
-  modalPathLabel: { fontSize: Layout.fontSize.md, fontWeight: '700' },
-  section: {
-    borderRadius: Layout.radius.lg,
-    padding: Layout.spacing.md,
-    gap: Layout.spacing.sm,
-    borderWidth: 1,
-  },
-  sectionLabel: { fontSize: Layout.fontSize.xs, fontWeight: '800', textTransform: 'uppercase', letterSpacing: 1 },
-  sectionText: { fontSize: Layout.fontSize.sm, lineHeight: 20 },
-  ingRow: { flexDirection: 'row', alignItems: 'center', gap: Layout.spacing.sm },
-  ingEmoji: { fontSize: 20, width: 28 },
-  ingName: { flex: 1, fontSize: Layout.fontSize.sm, fontWeight: '600' },
-  ingQty: { fontSize: Layout.fontSize.sm, fontWeight: '700' },
 });

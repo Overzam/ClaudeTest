@@ -37,62 +37,15 @@ export async function fetchExercises(lessonId: string, lessonTitle?: string): Pr
         await cacheExercises(lessonId, exercises);
         return exercises;
       }
-    } catch (_) {}
+    } catch (e) { console.warn('[lessonService] fetchExercises Supabase error:', e); }
   }
 
   // Fall back to local static exercises keyed by title, then by id
   const local = getLocalExercises(lessonTitle ?? lessonId);
   if (local) return local;
 
-  // Generic fallback
-  return generateGenericExercises(lessonId);
-}
-
-function generateGenericExercises(lessonId: string): Exercise[] {
-  return [
-    {
-      id: `gen-${lessonId}-1`, lessonId, orderIndex: 0, xpReward: 10,
-      type: 'multiple_choice',
-      question: 'Quel est le principe fondamental de toute bonne cuisson ?',
-      data: {
-        options: [
-          'Ajouter beaucoup d\'épices',
-          'Maîtriser la chaleur et les temps de cuisson',
-          'Utiliser des ingrédients chers',
-          'Suivre exactement une recette sans improviser',
-        ],
-        correctIndex: 1,
-      },
-    },
-    {
-      id: `gen-${lessonId}-2`, lessonId, orderIndex: 1, xpReward: 10,
-      type: 'multiple_choice',
-      question: 'La réaction chimique qui crée la croûte dorée sur les aliments s\'appelle…',
-      data: {
-        options: ['La caramélisation', 'La réaction de Maillard', 'La saponification', 'La pasteurisation'],
-        correctIndex: 1,
-      },
-    },
-    {
-      id: `gen-${lessonId}-3`, lessonId, orderIndex: 2, xpReward: 10,
-      type: 'fill_in_blank',
-      question: 'La 5e saveur fondamentale, présente dans le parmesan et le miso, s\'appelle l\'___.',
-      data: { answer: 'umami', hint: 'Découverte en 1908 par Kikunae Ikeda' },
-    },
-    {
-      id: `gen-${lessonId}-4`, lessonId, orderIndex: 3, xpReward: 10,
-      type: 'association',
-      question: 'Associe chaque technique à son effet :',
-      data: {
-        pairs: [
-          { left: 'Saisir à feu vif', right: 'Créer une croûte dorée (Maillard)' },
-          { left: 'Mijoter doucement', right: 'Attendrir les fibres et fondre le collagène' },
-          { left: 'Blanchir à l\'eau', right: 'Fixer la couleur et pré-cuire' },
-          { left: 'Flamber', right: 'Brûler l\'alcool et caraméliser en surface' },
-        ],
-      },
-    },
-  ];
+  // No exercises available for this lesson yet
+  return [];
 }
 
 export async function fetchLessonById(lessonId: string) {

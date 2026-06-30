@@ -97,11 +97,13 @@ export default function ProfileScreen() {
         <View style={styles.actionGrid}>
           {[
             { emoji: '👥', label: 'Amis', route: '/friends' },
+            { emoji: '🏅', label: 'Classement', route: '/leaderboard' },
             { emoji: '🏆', label: `Trophées${userBadges.length > 0 ? ` (${userBadges.length})` : ''}`, route: '/badges' },
             { emoji: isPremium() ? '✨' : '⭐', label: isPremium() ? 'Premium actif' : 'RecipeQuest+', route: '/premium', highlight: isPremium() },
             { emoji: '🛒', label: `Boutique · 🪙${coins}`, route: '/shop' },
             { emoji: '📖', label: 'Carnet de Recettes', route: '/recipe-book' },
             { emoji: '💡', label: 'Astuces & Techniques', route: '/tips' },
+            { emoji: '📚', label: 'Glossaire Culinaire', route: '/glossary' },
           ].map(({ emoji, label, route, highlight }) => (
             <TouchableOpacity
               key={route}

@@ -25,17 +25,39 @@ function attachHeroImage(recipe: Recipe): Recipe {
   return img ? { ...recipe, hero_image_url: img } : recipe;
 }
 
-export async function fetchRecipe(lessonId: string): Promise<Recipe | null> {
-  if (!isSupabaseConfigured) return null;
-  try {
-    const { data, error } = await supabase
-      .from('recipes')
-      .select('*')
-      .eq('lesson_id', lessonId)
-      .single();
-    if (error || !data) return null;
-    return attachHeroImage(data as Recipe);
-  } catch {
-    return null;
+export async function fetchRecipe(lessonId: string, lessonTitle?: string): Promise<Recipe | null> {
+  if (isSupabaseConfigured) {
+    try {
+      const { data, error } = await supabase
+        .from('recipes')
+        .select('*')
+        .eq('lesson_id', lessonId)
+        .single();
+      if (!error && data) return attachHeroImage(data as Recipe);
+    } catch {}
   }
+
+  // Local fallback: minimal recipe card so user always sees something
+  if (lessonTitle) return makeLocalRecipe(lessonId, lessonTitle);
+  return null;
+}
+
+function makeLocalRecipe(lessonId: string, lessonTitle: string): Recipe {
+  return {
+    id: `local-${lessonId}`,
+    lesson_id: lessonId,
+    title: lessonTitle,
+    description: 'Recette à découvrir après avoir complété plus de leçons.',
+    emoji: '🍽️',
+    prep_time_min: 0,
+    cook_time_min: 0,
+    servings: 0,
+    difficulty: 'facile',
+    avg_price_eur: '—',
+    ingredients: [],
+    instructions: ['Contenu de la recette bientôt disponible.'],
+    chef_tip: '',
+    cultural_note: '',
+    hero_image_url: RECIPE_IMAGE_MAP[lessonTitle],
+  };
 }

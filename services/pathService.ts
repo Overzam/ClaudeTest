@@ -18,16 +18,14 @@ export async function fetchPaths(): Promise<Path[]> {
         await cachePaths(data);
         return data;
       }
-    } catch (_) {}
+    } catch (e) { console.warn('[pathService] fetchPaths Supabase error:', e); }
   }
 
   return LOCAL_PATHS;
 }
 
 export async function fetchLessons(pathId: string): Promise<Lesson[]> {
-  const cached = await getCachedLessons(pathId);
-  if (cached && cached.length > 0) return cached;
-
+  // Always try Supabase first when configured — cache may be stale after migrations
   if (isSupabaseConfigured) {
     try {
       const { data, error } = await supabase
@@ -39,8 +37,12 @@ export async function fetchLessons(pathId: string): Promise<Lesson[]> {
         await cacheLessons(pathId, data);
         return data;
       }
-    } catch (_) {}
+    } catch (e) { console.warn('[pathService] fetchLessons Supabase error:', e); }
   }
+
+  // Offline fallback: cache then local static data
+  const cached = await getCachedLessons(pathId);
+  if (cached && cached.length > 0) return cached;
 
   return LOCAL_LESSONS[pathId] ?? [];
 }

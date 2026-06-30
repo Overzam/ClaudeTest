@@ -55,9 +55,10 @@ export const useGameStore = create<GameState>()(
       loseHeart: async () => {
         // Premium users have unlimited hearts
         if (usePremiumStore.getState().isPremium()) return;
-        const { hearts, userId } = get();
+        const { hearts, heartsLastRefill, userId } = get();
         const newHearts = Math.max(0, hearts - 1);
-        set({ hearts: newHearts });
+        const now = new Date().toISOString();
+        set({ hearts: newHearts, heartsLastRefill: heartsLastRefill ?? now });
         if (userId) await updateHearts(userId, newHearts);
       },
 
