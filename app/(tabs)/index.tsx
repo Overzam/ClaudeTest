@@ -113,7 +113,7 @@ export default function HomeScreen() {
           </View>
           <View style={styles.headerRight}>
             <StreakBadge streakDays={gameStore.streakDays} />
-            <HeartsDisplay hearts={gameStore.hearts} />
+            <HeartsDisplay hearts={gameStore.hearts} compact />
           </View>
         </View>
 
