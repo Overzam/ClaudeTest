@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import { FlatList, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
+import { FlatList, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
+import { Ionicons } from '@expo/vector-icons';
 import { router } from 'expo-router';
 import { ScreenWrapper } from '@/components/ui/ScreenWrapper';
 import { useThemeStore } from '@/stores/themeStore';
@@ -96,18 +97,18 @@ export default function TipsScreen() {
   return (
     <ScreenWrapper>
       <View style={[styles.header, { borderBottomColor: c.border }]}>
-        <TouchableOpacity onPress={() => router.back()}>
-          <Text style={[styles.back, { color: c.primary }]}>← Retour</Text>
+        <TouchableOpacity onPress={() => router.back()} hitSlop={8}>
+          <Ionicons name="arrow-back" size={24} color={c.primary} />
         </TouchableOpacity>
         <Text style={[styles.title, { color: c.text }]}>Astuces & Techniques</Text>
-        <TouchableOpacity onPress={() => router.push('/glossary' as any)} style={{ marginLeft: 'auto' }}>
-          <Text style={[styles.back, { color: c.primary }]}>Glossaire →</Text>
+        <TouchableOpacity onPress={() => router.push('/glossary' as any)} hitSlop={8} style={{ marginLeft: 'auto' }}>
+          <Text style={[styles.glossaryLink, { color: c.primary }]}>Glossaire</Text>
         </TouchableOpacity>
       </View>
 
       {/* Search */}
       <View style={[styles.searchBar, { backgroundColor: c.surfaceElevated, borderColor: c.border }]}>
-        <Text style={[styles.searchIcon, { color: c.textMuted }]}>🔍</Text>
+        <Ionicons name="search" size={16} color={c.textMuted} />
         <TextInput
           style={[styles.searchInput, { color: c.text }]}
           placeholder="Rechercher une technique…"
@@ -116,21 +117,21 @@ export default function TipsScreen() {
           onChangeText={setQuery}
         />
         {query.length > 0 && (
-          <TouchableOpacity onPress={() => setQuery('')}>
-            <Text style={[styles.clearBtn, { color: c.textMuted }]}>✕</Text>
+          <TouchableOpacity onPress={() => setQuery('')} hitSlop={8}>
+            <Ionicons name="close-circle" size={18} color={c.textMuted} />
           </TouchableOpacity>
         )}
       </View>
 
       {/* Category chips */}
-      <FlatList
+      <ScrollView
         horizontal
-        data={CATEGORIES}
-        keyExtractor={(c) => c}
         showsHorizontalScrollIndicator={false}
         contentContainerStyle={styles.chips}
-        renderItem={({ item }) => (
+      >
+        {CATEGORIES.map((item) => (
           <TouchableOpacity
+            key={item}
             style={[
               styles.chip,
               { backgroundColor: item === activeCategory ? c.primary : c.surfaceElevated, borderColor: item === activeCategory ? c.primary : c.border },
@@ -139,8 +140,8 @@ export default function TipsScreen() {
           >
             <Text style={[styles.chipText, { color: item === activeCategory ? '#fff' : c.text }]}>{item}</Text>
           </TouchableOpacity>
-        )}
-      />
+        ))}
+      </ScrollView>
 
       {/* Tips list */}
       <FlatList
@@ -150,7 +151,7 @@ export default function TipsScreen() {
         ItemSeparatorComponent={() => <View style={{ height: Layout.spacing.sm }} />}
         ListEmptyComponent={
           <View style={styles.empty}>
-            <Text style={styles.emptyEmoji}>🔍</Text>
+            <Ionicons name="search" size={40} color={c.textMuted} />
             <Text style={[styles.emptyText, { color: c.textMuted }]}>Aucune astuce trouvée</Text>
           </View>
         }
@@ -170,14 +171,15 @@ export default function TipsScreen() {
                   </View>
                   <Text style={[styles.tipTitle, { color: c.text }]}>{item.title}</Text>
                 </View>
-                <Text style={[styles.chevron, { color: c.textMuted }]}>{isOpen ? '▲' : '▼'}</Text>
+                <Ionicons name={isOpen ? 'chevron-up' : 'chevron-down'} size={16} color={c.textMuted} />
               </View>
               {isOpen && (
                 <View style={styles.tipBody}>
                   <Text style={[styles.tipBodyText, { color: c.text }]}>{item.body}</Text>
                   {item.pro && (
                     <View style={[styles.proBox, { backgroundColor: c.xpBlue + '15', borderColor: c.xpBlue + '30' }]}>
-                      <Text style={[styles.proLabel, { color: c.xpBlue }]}>💡 Le saviez-vous ?</Text>
+                      <Ionicons name="bulb-outline" size={14} color={c.xpBlue} style={{ marginBottom: 2 }} />
+                      <Text style={[styles.proLabel, { color: c.xpBlue }]}>Le saviez-vous ?</Text>
                       <Text style={[styles.proText, { color: c.textSecondary }]}>{item.pro}</Text>
                     </View>
                   )}
@@ -199,8 +201,8 @@ const styles = StyleSheet.create({
     padding: Layout.spacing.lg,
     borderBottomWidth: 1,
   },
-  back: { fontSize: Layout.fontSize.md, fontWeight: '600' },
-  title: { fontSize: Layout.fontSize.xl, fontWeight: '900' },
+  glossaryLink: { fontSize: Layout.fontSize.sm, fontWeight: '700' },
+  title: { fontSize: Layout.fontSize.xl, fontWeight: '900', flex: 1 },
   searchBar: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -212,9 +214,9 @@ const styles = StyleSheet.create({
     paddingVertical: 10,
     gap: Layout.spacing.sm,
   },
-  searchIcon: { fontSize: 16 },
+  searchIcon: {},
   searchInput: { flex: 1, fontSize: Layout.fontSize.md },
-  clearBtn: { fontSize: 16, fontWeight: '600' },
+  clearBtn: {},
   chips: { paddingHorizontal: Layout.spacing.lg, paddingVertical: Layout.spacing.md, gap: Layout.spacing.sm },
   chip: {
     paddingHorizontal: Layout.spacing.md,
@@ -245,9 +247,9 @@ const styles = StyleSheet.create({
   proBox: {
     borderRadius: Layout.radius.md,
     padding: Layout.spacing.sm,
-    gap: 4,
+    gap: 2,
     borderWidth: 1,
   },
-  proLabel: { fontSize: Layout.fontSize.xs, fontWeight: '700' },
+  proLabel: { fontSize: Layout.fontSize.xs, fontWeight: '800' },
   proText: { fontSize: Layout.fontSize.sm, lineHeight: 20 },
 });
