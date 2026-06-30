@@ -1,5 +1,5 @@
-import React from 'react';
-import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import React, { useRef } from 'react';
+import { Animated, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useThemeStore } from '@/stores/themeStore';
 import { Layout } from '@/constants/Layout';
@@ -19,37 +19,48 @@ export function LessonNode({ lesson, status, pathColor, onPress }: Props) {
   const c = theme.colors;
   const isLocked = status === 'locked';
   const isDone = status === 'completed';
+  const isNext = status === 'available';
+  const scale = useRef(new Animated.Value(1)).current;
+
+  const animateTo = (toValue: number) => {
+    Animated.spring(scale, { toValue, useNativeDriver: true, speed: 30, bounciness: 8 }).start();
+  };
 
   return (
     <TouchableOpacity
       style={styles.wrapper}
       onPress={onPress}
+      onPressIn={() => !isLocked && animateTo(0.88)}
+      onPressOut={() => !isLocked && animateTo(1)}
       disabled={isLocked}
       activeOpacity={0.8}
     >
-      {isDone ? (
-        <LinearGradient
-          colors={[pathColor, pathColor + 'BB']}
-          style={styles.node}
-          start={{ x: 0, y: 0 }}
-          end={{ x: 1, y: 1 }}
-        >
-          <Text style={[styles.icon, { color: '#fff' }]}>✓</Text>
-        </LinearGradient>
-      ) : (
-        <View
-          style={[
-            styles.node,
-            { backgroundColor: c.surface },
-            !isLocked && { borderColor: pathColor, borderWidth: 3 },
-            isLocked && { backgroundColor: c.border, shadowOpacity: 0 },
-          ]}
-        >
-          <Text style={[styles.icon, { color: isLocked ? c.textMuted : pathColor }]}>
-            {isLocked ? '🔒' : '▶'}
-          </Text>
-        </View>
-      )}
+      <Animated.View style={{ transform: [{ scale }] }}>
+        {isDone ? (
+          <LinearGradient
+            colors={[pathColor, pathColor + 'BB']}
+            style={styles.node}
+            start={{ x: 0, y: 0 }}
+            end={{ x: 1, y: 1 }}
+          >
+            <Text style={[styles.icon, { color: '#fff' }]}>✓</Text>
+          </LinearGradient>
+        ) : (
+          <View
+            style={[
+              styles.node,
+              { backgroundColor: c.surface },
+              !isLocked && { borderColor: pathColor, borderWidth: 3 },
+              isLocked && { backgroundColor: c.border, shadowOpacity: 0 },
+              isNext && { shadowColor: pathColor, shadowOpacity: 0.35, shadowRadius: 10 },
+            ]}
+          >
+            <Text style={[styles.icon, { color: isLocked ? c.textMuted : pathColor }]}>
+              {isLocked ? '🔒' : '▶'}
+            </Text>
+          </View>
+        )}
+      </Animated.View>
       <Text style={[styles.label, { color: isLocked ? c.textMuted : c.text }]} numberOfLines={2}>
         {lesson.title}
       </Text>
