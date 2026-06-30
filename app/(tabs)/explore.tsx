@@ -22,6 +22,7 @@ export default function ExploreScreen() {
   const [selectedPath, setSelectedPath] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState('');
+  const [lessonSearch, setLessonSearch] = useState('');
   const { pathId } = useLocalSearchParams<{ pathId?: string }>();
   const { theme } = useThemeStore();
   const c = theme.colors;
@@ -52,23 +53,25 @@ export default function ExploreScreen() {
   const activePath = paths.find((p) => p.id === selectedPath);
 
   if (selectedPath && activePath) {
-    const lessons = lessonsMap[selectedPath] ?? [];
-    const completed = lessons.filter((l) => lessonProgress[l.id] === 'completed').length;
-    const progress = lessons.length > 0 ? completed / lessons.length : 0;
+    const allLessons = lessonsMap[selectedPath] ?? [];
+    const lessons = lessonSearch.trim()
+      ? allLessons.filter((l) => l.title.toLowerCase().includes(lessonSearch.toLowerCase()))
+      : allLessons;
+    const completed = allLessons.filter((l) => lessonProgress[l.id] === 'completed').length;
+    const progress = allLessons.length > 0 ? completed / allLessons.length : 0;
 
     return (
       <ScreenWrapper>
-        {/* Path header */}
         <View style={[styles.pathHeader, { backgroundColor: activePath.color + '18' }]}>
-          <TouchableOpacity onPress={() => setSelectedPath(null)} style={styles.backBtn}>
-            <Text style={[styles.backText, { color: c.primary }]}>{String.fromCharCode(8592)} Parcours</Text>
+          <TouchableOpacity onPress={() => { setSelectedPath(null); setLessonSearch(''); }} style={styles.backBtn}>
+            <Text style={[styles.backText, { color: c.primary }]}>{String.fromCharCode(0x2190)} Parcours</Text>
           </TouchableOpacity>
           <View style={styles.pathMeta}>
             <Text style={styles.pathEmoji}>{activePath.emoji}</Text>
             <View style={styles.pathInfo}>
               <Text style={[styles.pathTitle, { color: c.text }]}>{activePath.title}</Text>
               <Text style={[styles.pathStats, { color: c.textSecondary }]}>
-                {completed}/{lessons.length} leçons terminées
+                {completed}/{allLessons.length} le{String.fromCharCode(0xE7)}ons termin{String.fromCharCode(0xE9)}es
               </Text>
               <View style={[styles.progressTrack, { backgroundColor: c.border }]}>
                 <View style={[styles.progressFill, { width: `${progress * 100}%`, backgroundColor: activePath.color }]} />
@@ -79,14 +82,36 @@ export default function ExploreScreen() {
             style={[styles.detailBtn, { borderColor: activePath.color, backgroundColor: activePath.color + '10' }]}
             onPress={() => router.push({ pathname: '/path/[slug]', params: { slug: activePath.slug } })}
           >
-            <Text style={[styles.detailBtnText, { color: activePath.color }]}>{String.fromCharCode(192)} propos de ce parcours {String.fromCharCode(8594)}</Text>
+            <Text style={[styles.detailBtnText, { color: activePath.color }]}>{String.fromCharCode(0xC0)} propos de ce parcours {String.fromCharCode(0x2192)}</Text>
           </TouchableOpacity>
+
+          <View style={[styles.lessonSearchBox, { backgroundColor: c.surfaceElevated, borderColor: c.border }]}>
+            <Ionicons name="search" size={14} color={c.textMuted} />
+            <TextInput
+              style={[styles.lessonSearchInput, { color: c.text }]}
+              placeholder="Rechercher une le{String.fromCharCode(0xE7)}on{String.fromCharCode(0x2026)}"
+              placeholderTextColor={c.textMuted}
+              value={lessonSearch}
+              onChangeText={setLessonSearch}
+            />
+            {lessonSearch.length > 0 && (
+              <TouchableOpacity onPress={() => setLessonSearch('')} hitSlop={8}>
+                <Ionicons name="close-circle" size={14} color={c.textMuted} />
+              </TouchableOpacity>
+            )}
+          </View>
         </View>
 
-        {/* Lessons */}
         <ScrollView contentContainerStyle={styles.lessonList}>
+          {lessons.length === 0 && lessonSearch.trim() ? (
+            <View style={{ alignItems: 'center', paddingTop: 40, gap: 8 }}>
+              <Text style={{ fontSize: 32 }}>{String.fromCodePoint(0x1F50D)}</Text>
+              <Text style={{ fontSize: Layout.fontSize.md, fontWeight: '700', color: c.text }}>Aucune le{String.fromCharCode(0xE7)}on trouv{String.fromCharCode(0xE9)}e</Text>
+              <Text style={{ fontSize: Layout.fontSize.sm, color: c.textMuted }}>Essaie un autre mot-cl{String.fromCharCode(0xE9)}.</Text>
+            </View>
+          ) : null}
           {(() => {
-            const minOrderIndex = lessons.length > 0 ? Math.min(...lessons.map((l) => l.order_index)) : 0;
+            const minOrderIndex = allLessons.length > 0 ? Math.min(...allLessons.map((l) => l.order_index)) : 0;
             return lessons.map((lesson, idx) => {
             const rawStatus = lessonProgress[lesson.id];
             const status = rawStatus ?? (lesson.order_index === minOrderIndex ? 'available' : 'locked');
@@ -96,7 +121,7 @@ export default function ExploreScreen() {
 
             return (
               <View key={lesson.id} style={styles.lessonRow}>
-                {idx > 0 && (
+                {idx > 0 && !lessonSearch.trim() && (
                   <View style={[styles.connector, { backgroundColor: isDone ? activePath.color : c.border }]} />
                 )}
 
@@ -150,7 +175,7 @@ export default function ExploreScreen() {
                             })
                           }
                         >
-                          <Text style={[styles.ingTagText, { color: activePath.color }]}>{String.fromCharCode(0x1F9C4)} Ingrédients</Text>
+                          <Text style={[styles.ingTagText, { color: activePath.color }]}>{String.fromCodePoint(0x1F9C4)} Ingr{String.fromCharCode(0xE9)}dients</Text>
                         </TouchableOpacity>
                       )}
                     </View>
@@ -181,7 +206,7 @@ export default function ExploreScreen() {
           <Ionicons name="search" size={16} color={c.textMuted} />
           <TextInput
             style={[styles.searchInput, { color: c.text }]}
-            placeholder="Rechercher un parcours…"
+            placeholder="Rechercher un parcours{String.fromCharCode(0x2026)}"
             placeholderTextColor={c.textMuted}
             value={search}
             onChangeText={setSearch}
@@ -223,7 +248,7 @@ export default function ExploreScreen() {
                 <View style={styles.pathCardTop}>
                   <Text style={styles.pathCardEmojiText}>{path.emoji}</Text>
                   {completed === lessons.length && lessons.length > 0 && (
-                    <Text style={styles.completedBadge}>{String.fromCharCode(0x1F3C6)}</Text>
+                    <Text style={styles.completedBadge}>{String.fromCodePoint(0x1F3C6)}</Text>
                   )}
                 </View>
                 <Text style={styles.pathCardTitle}>{path.title}</Text>
@@ -234,7 +259,7 @@ export default function ExploreScreen() {
                   <View style={styles.progressTrackWhite}>
                     <View style={[styles.progressFillWhite, { width: `${progress * 100}%` }]} />
                   </View>
-                  <Text style={styles.pathCardCount}>{completed}/{lessons.length} leçons</Text>
+                  <Text style={styles.pathCardCount}>{completed}/{lessons.length} le{String.fromCharCode(0xE7)}ons</Text>
                 </View>
               </View>
             </TouchableOpacity>
@@ -297,6 +322,17 @@ const styles = StyleSheet.create({
   pathCardCount: { fontSize: 11, fontWeight: '700', color: 'rgba(255,255,255,0.9)' },
   progressTrack: { height: 6, borderRadius: 3, overflow: 'hidden' },
   progressFill: { height: '100%', borderRadius: 3 },
+
+  lessonSearchBox: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: Layout.spacing.sm,
+    borderRadius: Layout.radius.full,
+    borderWidth: 1,
+    paddingHorizontal: Layout.spacing.md,
+    paddingVertical: 7,
+  },
+  lessonSearchInput: { flex: 1, fontSize: Layout.fontSize.sm },
 
   pathHeader: { padding: Layout.spacing.lg, gap: Layout.spacing.md },
   backBtn: {},

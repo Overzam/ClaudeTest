@@ -3,6 +3,7 @@ import { ActivityIndicator, Modal, ScrollView, StyleSheet, Text, TouchableOpacit
 import { useLocalSearchParams, router } from 'expo-router';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from '@expo/vector-icons';
+import * as Haptics from 'expo-haptics';
 import { ScreenWrapper } from '@/components/ui/ScreenWrapper';
 import { useThemeStore } from '@/stores/themeStore';
 import { useFavoritesStore } from '@/stores/favoritesStore';
@@ -49,10 +50,23 @@ function supabaseToRecipeDetail(r: SupabaseRecipe): RecipeDetail {
   } as any;
 }
 
-function CookingTimerModal({ visible, onClose, color }: { visible: boolean; onClose: () => void; color: string }) {
+interface TimerModalProps {
+  visible: boolean;
+  onClose: () => void;
+  color: string;
+  bgColor: string;
+  textColor: string;
+  mutedColor: string;
+  borderColor: string;
+  surfaceColor: string;
+}
+
+function CookingTimerModal({ visible, onClose, color, bgColor, textColor, mutedColor, borderColor, surfaceColor }: TimerModalProps) {
   const [seconds, setSeconds] = useState(0);
+  const [totalSeconds, setTotalSeconds] = useState(0);
   const [running, setRunning] = useState(false);
   const [preset, setPreset] = useState<number | null>(null);
+  const [done, setDone] = useState(false);
   const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
   useEffect(() => {
@@ -62,6 +76,8 @@ function CookingTimerModal({ visible, onClose, color }: { visible: boolean; onCl
           if (s <= 1) {
             clearInterval(intervalRef.current!);
             setRunning(false);
+            setDone(true);
+            Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
             return 0;
           }
           return s - 1;
@@ -73,6 +89,8 @@ function CookingTimerModal({ visible, onClose, color }: { visible: boolean; onCl
     return () => { if (intervalRef.current) clearInterval(intervalRef.current); };
   }, [running]);
 
+  useEffect(() => { if (running) setDone(false); }, [running]);
+
   const PRESETS = [
     { label: '1 min', value: 60 },
     { label: '5 min', value: 300 },
@@ -83,27 +101,53 @@ function CookingTimerModal({ visible, onClose, color }: { visible: boolean; onCl
 
   const mm = String(Math.floor(seconds / 60)).padStart(2, '0');
   const ss = String(seconds % 60).padStart(2, '0');
+  const progress = totalSeconds > 0 ? seconds / totalSeconds : 0;
 
   function applyPreset(val: number) {
     setRunning(false);
+    setDone(false);
     setSeconds(val);
+    setTotalSeconds(val);
     setPreset(val);
+    Haptics.selectionAsync();
+  }
+
+  function adjust(delta: number) {
+    if (running) return;
+    const next = Math.max(0, seconds + delta);
+    setSeconds(next);
+    setTotalSeconds(next);
+    setPreset(next);
+    setDone(false);
+    Haptics.selectionAsync();
   }
 
   function reset() {
     setRunning(false);
+    setDone(false);
     setSeconds(preset ?? 0);
   }
+
+  function stop() {
+    setRunning(false);
+    setDone(false);
+    setSeconds(0);
+    setTotalSeconds(0);
+    setPreset(null);
+  }
+
+  const accentColor = done ? '#ef4444' : color;
 
   return (
     <Modal visible={visible} transparent animationType="slide" onRequestClose={onClose}>
       <View style={timerStyles.backdrop}>
-        <View style={timerStyles.sheet}>
-          <View style={timerStyles.handle} />
+        <View style={[timerStyles.sheet, { backgroundColor: bgColor }]}>
+          <View style={[timerStyles.handle, { backgroundColor: borderColor }]} />
+
           <View style={timerStyles.timerHeader}>
-            <Text style={timerStyles.timerTitle}>{String.fromCharCode(0x23F1)} Minuteur de cuisine</Text>
+            <Text style={[timerStyles.timerTitle, { color: textColor }]}>{String.fromCodePoint(0x23F1)}️ Minuteur de cuisine</Text>
             <TouchableOpacity onPress={onClose} hitSlop={8}>
-              <Ionicons name="close" size={22} color="#666" />
+              <Ionicons name="close" size={22} color={mutedColor} />
             </TouchableOpacity>
           </View>
 
@@ -111,36 +155,62 @@ function CookingTimerModal({ visible, onClose, color }: { visible: boolean; onCl
             {PRESETS.map((p) => (
               <TouchableOpacity
                 key={p.value}
-                style={[timerStyles.presetBtn, preset === p.value && { backgroundColor: color + '25', borderColor: color }]}
+                style={[timerStyles.presetBtn, { backgroundColor: surfaceColor, borderColor }, preset === p.value && { backgroundColor: color + '25', borderColor: color }]}
                 onPress={() => applyPreset(p.value)}
               >
-                <Text style={[timerStyles.presetText, preset === p.value && { color }]}>{p.label}</Text>
+                <Text style={[timerStyles.presetText, { color: mutedColor }, preset === p.value && { color }]}>{p.label}</Text>
               </TouchableOpacity>
             ))}
           </View>
 
-          <View style={[timerStyles.display, { borderColor: seconds === 0 && preset ? '#ef4444' : color }]}>
-            <Text style={[timerStyles.displayText, { color: seconds === 0 && preset ? '#ef4444' : color }]}>
+          <View style={timerStyles.adjustRow}>
+            <TouchableOpacity
+              style={[timerStyles.adjustBtn, { backgroundColor: surfaceColor, borderColor }]}
+              onPress={() => adjust(-60)}
+              disabled={running}
+            >
+              <Text style={[timerStyles.adjustText, { color: running ? mutedColor : textColor }]}>{String.fromCharCode(0x2212)}1 min</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={[timerStyles.adjustBtn, { backgroundColor: surfaceColor, borderColor }]}
+              onPress={() => adjust(60)}
+              disabled={running}
+            >
+              <Text style={[timerStyles.adjustText, { color: running ? mutedColor : textColor }]}>+1 min</Text>
+            </TouchableOpacity>
+          </View>
+
+          <View style={[timerStyles.display, { backgroundColor: accentColor + '10', borderColor: accentColor }]}>
+            <Text style={[timerStyles.displayText, { color: accentColor }]}>
               {mm}:{ss}
             </Text>
-            {seconds === 0 && preset && (
-              <Text style={timerStyles.doneText}>Temps écoulé ! 🔔</Text>
+            {done && (
+              <Text style={timerStyles.doneText}>Temps {String.fromCharCode(0xE9)}coul{String.fromCharCode(0xE9)} ! {String.fromCodePoint(0x1F514)}</Text>
             )}
           </View>
 
+          {totalSeconds > 0 && (
+            <View style={[timerStyles.progressTrack, { backgroundColor: borderColor }]}>
+              <View style={[timerStyles.progressFill, { width: `${progress * 100}%`, backgroundColor: accentColor }]} />
+            </View>
+          )}
+
           <View style={timerStyles.controls}>
-            <TouchableOpacity style={timerStyles.ctrlBtn} onPress={reset}>
-              <Ionicons name="refresh" size={22} color="#666" />
+            <TouchableOpacity style={[timerStyles.ctrlBtn, { backgroundColor: surfaceColor }]} onPress={reset}>
+              <Ionicons name="refresh" size={22} color={mutedColor} />
             </TouchableOpacity>
             <TouchableOpacity
-              style={[timerStyles.playBtn, { backgroundColor: color }]}
-              onPress={() => setRunning((r) => !r)}
+              style={[timerStyles.playBtn, { backgroundColor: seconds === 0 ? mutedColor + '40' : accentColor }]}
+              onPress={() => {
+                Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+                setRunning((r) => !r);
+              }}
               disabled={seconds === 0}
             >
               <Ionicons name={running ? 'pause' : 'play'} size={28} color="#fff" />
             </TouchableOpacity>
-            <TouchableOpacity style={timerStyles.ctrlBtn} onPress={() => { setRunning(false); setSeconds(0); setPreset(null); }}>
-              <Ionicons name="stop" size={22} color="#666" />
+            <TouchableOpacity style={[timerStyles.ctrlBtn, { backgroundColor: surfaceColor }]} onPress={stop}>
+              <Ionicons name="stop" size={22} color={mutedColor} />
             </TouchableOpacity>
           </View>
         </View>
@@ -151,18 +221,23 @@ function CookingTimerModal({ visible, onClose, color }: { visible: boolean; onCl
 
 const timerStyles = StyleSheet.create({
   backdrop: { flex: 1, backgroundColor: 'rgba(0,0,0,0.5)', justifyContent: 'flex-end' },
-  sheet: { backgroundColor: '#fff', borderTopLeftRadius: 28, borderTopRightRadius: 28, padding: 24, gap: 20 },
-  handle: { width: 40, height: 4, borderRadius: 2, backgroundColor: '#ddd', alignSelf: 'center', marginBottom: -8 },
+  sheet: { borderTopLeftRadius: 28, borderTopRightRadius: 28, padding: 24, gap: 16 },
+  handle: { width: 40, height: 4, borderRadius: 2, alignSelf: 'center', marginBottom: -4 },
   timerHeader: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
-  timerTitle: { fontSize: 17, fontWeight: '800', color: '#1a1a1a' },
+  timerTitle: { fontSize: 17, fontWeight: '800' },
   presets: { flexDirection: 'row', flexWrap: 'wrap', gap: 8 },
-  presetBtn: { paddingHorizontal: 14, paddingVertical: 7, borderRadius: 20, borderWidth: 1, borderColor: '#ddd', backgroundColor: '#f5f5f5' },
-  presetText: { fontSize: 13, fontWeight: '700', color: '#555' },
-  display: { alignItems: 'center', borderWidth: 3, borderRadius: 20, paddingVertical: 20, gap: 6 },
+  presetBtn: { paddingHorizontal: 14, paddingVertical: 7, borderRadius: 20, borderWidth: 1 },
+  presetText: { fontSize: 13, fontWeight: '700' },
+  adjustRow: { flexDirection: 'row', gap: 8 },
+  adjustBtn: { flex: 1, paddingVertical: 8, borderRadius: 12, borderWidth: 1, alignItems: 'center' },
+  adjustText: { fontSize: 14, fontWeight: '700' },
+  display: { alignItems: 'center', borderWidth: 2, borderRadius: 20, paddingVertical: 20, gap: 4 },
   displayText: { fontSize: 56, fontWeight: '900', letterSpacing: 4 },
   doneText: { fontSize: 14, fontWeight: '700', color: '#ef4444' },
+  progressTrack: { height: 6, borderRadius: 3, overflow: 'hidden' },
+  progressFill: { height: '100%', borderRadius: 3 },
   controls: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 24 },
-  ctrlBtn: { width: 48, height: 48, borderRadius: 24, backgroundColor: '#f0f0f0', alignItems: 'center', justifyContent: 'center' },
+  ctrlBtn: { width: 48, height: 48, borderRadius: 24, alignItems: 'center', justifyContent: 'center' },
   playBtn: { width: 64, height: 64, borderRadius: 32, alignItems: 'center', justifyContent: 'center' },
 });
 
@@ -224,13 +299,28 @@ export default function RecipeDetailScreen() {
           <TouchableOpacity onPress={() => setTimerVisible(true)} hitSlop={8}>
             <Ionicons name="timer-outline" size={24} color={c.primary} />
           </TouchableOpacity>
-          <TouchableOpacity onPress={() => toggleFavorite(title)} hitSlop={8}>
+          <TouchableOpacity
+            onPress={() => {
+              toggleFavorite(title);
+              Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+            }}
+            hitSlop={8}
+          >
             <Ionicons name={fav ? 'heart' : 'heart-outline'} size={24} color={fav ? '#ef4444' : c.primary} />
           </TouchableOpacity>
         </View>
       </View>
 
-      <CookingTimerModal visible={timerVisible} onClose={() => setTimerVisible(false)} color={c.primary} />
+      <CookingTimerModal
+        visible={timerVisible}
+        onClose={() => setTimerVisible(false)}
+        color={c.primary}
+        bgColor={c.surface}
+        textColor={c.text}
+        mutedColor={c.textMuted}
+        borderColor={c.border}
+        surfaceColor={c.surfaceElevated}
+      />
 
       <ScrollView contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
         <LinearGradient
@@ -256,12 +346,12 @@ export default function RecipeDetailScreen() {
         {displayRecipe && (
           <View style={styles.metaRow}>
             <View style={[styles.metaCard, { backgroundColor: c.surfaceElevated, borderColor: c.border }]}>
-              <Text style={styles.metaEmoji}>{String.fromCharCode(0x1F52A)}</Text>
+              <Text style={styles.metaEmoji}>{String.fromCodePoint(0x1F52A)}</Text>
               <Text style={[styles.metaValue, { color: c.text }]}>{displayRecipe.prep_time_min} min</Text>
-              <Text style={[styles.metaLabel, { color: c.textMuted }]}>Préparation</Text>
+              <Text style={[styles.metaLabel, { color: c.textMuted }]}>Pr{String.fromCharCode(0xE9)}paration</Text>
             </View>
             <View style={[styles.metaCard, { backgroundColor: c.surfaceElevated, borderColor: c.border }]}>
-              <Text style={styles.metaEmoji}>{String.fromCharCode(0x1F525)}</Text>
+              <Text style={styles.metaEmoji}>{String.fromCodePoint(0x1F525)}</Text>
               <Text style={[styles.metaValue, { color: c.text }]}>{displayRecipe.cook_time_min} min</Text>
               <Text style={[styles.metaLabel, { color: c.textMuted }]}>Cuisson</Text>
             </View>
@@ -269,12 +359,12 @@ export default function RecipeDetailScreen() {
               style={[styles.metaCard, { backgroundColor: c.primary + '15', borderColor: c.primary + '30' }]}
               onPress={() => setTimerVisible(true)}
             >
-              <Text style={styles.metaEmoji}>{String.fromCharCode(0x23F1)}</Text>
+              <Text style={styles.metaEmoji}>{String.fromCodePoint(0x23F1)}️</Text>
               <Text style={[styles.metaValue, { color: c.primary }]}>{totalTime} min</Text>
               <Text style={[styles.metaLabel, { color: c.primary + 'aa' }]}>Minuteur</Text>
             </TouchableOpacity>
             <View style={[styles.metaCard, { backgroundColor: c.surfaceElevated, borderColor: c.border }]}>
-              <Text style={styles.metaEmoji}>{String.fromCharCode(0x1F37D)}️</Text>
+              <Text style={styles.metaEmoji}>{String.fromCodePoint(0x1F37D)}️</Text>
               <Text style={[styles.metaValue, { color: c.text }]}>{displayRecipe.servings}</Text>
               <Text style={[styles.metaLabel, { color: c.textMuted }]}>Portions</Text>
             </View>
@@ -283,7 +373,7 @@ export default function RecipeDetailScreen() {
 
         {displayRecipe && displayRecipe.ingredients.length > 0 && (
           <View style={[styles.section, { backgroundColor: c.surfaceElevated, borderColor: c.border }]}>
-            <SectionHeader icon="nutrition" label="Ingrédients" color={c.text} />
+            <SectionHeader icon="nutrition" label="Ingr{String.fromCharCode(0xE9)}dients" color={c.text} />
             <Text style={[styles.sectionSub, { color: c.textMuted }]}>Pour {displayRecipe.servings} personne{displayRecipe.servings > 1 ? 's' : ''}</Text>
             {displayRecipe.ingredients.map((ing, i) => (
               <View key={i} style={[styles.ingRow, i < displayRecipe.ingredients.length - 1 && { borderBottomColor: c.border, borderBottomWidth: 1 }]}>
@@ -300,7 +390,7 @@ export default function RecipeDetailScreen() {
 
         {displayRecipe && (displayRecipe as any).steps?.length > 0 && (
           <View style={[styles.section, { backgroundColor: c.surfaceElevated, borderColor: c.border }]}>
-            <SectionHeader icon="list" label="Étapes" color={c.text} />
+            <SectionHeader icon="list" label="{String.fromCharCode(0xC9)}tapes" color={c.text} />
             {((displayRecipe as any).steps as string[]).map((step, i) => (
               <View key={i} style={styles.stepRow}>
                 <LinearGradient
@@ -339,7 +429,7 @@ export default function RecipeDetailScreen() {
             )}
             {lessonDetail.ingredients.length > 0 && (
               <View style={[styles.section, { backgroundColor: c.surfaceElevated, borderColor: c.border }]}>
-                <SectionHeader icon="nutrition" label="Ingrédients clés" color={c.text} />
+                <SectionHeader icon="nutrition" label="Ingr{String.fromCharCode(0xE9)}dients cl{String.fromCharCode(0xE9)}s" color={c.text} />
                 {lessonDetail.ingredients.map((ing, i) => (
                   <View key={i} style={[styles.ingRow, i < lessonDetail.ingredients.length - 1 && { borderBottomColor: c.border, borderBottomWidth: 1 }]}>
                     <Text style={styles.ingEmoji}>{ing.emoji}</Text>
@@ -353,16 +443,16 @@ export default function RecipeDetailScreen() {
               </View>
             )}
             <View style={[styles.comingSoon, { backgroundColor: c.surfaceElevated, borderColor: c.border }]}>
-              <Text style={styles.comingSoonEmoji}>{String.fromCharCode(0x1F51C)}</Text>
-              <Text style={[styles.comingSoonText, { color: c.textMuted }]}>Recette complète bientôt disponible !</Text>
+              <Text style={styles.comingSoonEmoji}>{String.fromCodePoint(0x1F51C)}</Text>
+              <Text style={[styles.comingSoonText, { color: c.textMuted }]}>Recette compl{String.fromCharCode(0xE8)}te bient{String.fromCharCode(0xF4)}t disponible !</Text>
             </View>
           </>
         )}
 
         {!displayRecipe && !lessonDetail && (
           <View style={[styles.comingSoon, { backgroundColor: c.surfaceElevated, borderColor: c.border }]}>
-            <Text style={styles.comingSoonEmoji}>{String.fromCharCode(0x1F51C)}</Text>
-            <Text style={[styles.comingSoonText, { color: c.textMuted }]}>Recette bientôt disponible !</Text>
+            <Text style={styles.comingSoonEmoji}>{String.fromCodePoint(0x1F51C)}</Text>
+            <Text style={[styles.comingSoonText, { color: c.textMuted }]}>Recette bient{String.fromCharCode(0xF4)}t disponible !</Text>
           </View>
         )}
       </ScrollView>

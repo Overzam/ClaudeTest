@@ -71,7 +71,6 @@ export default function RecipesTabScreen() {
         <Text style={[styles.title, { color: c.text }]}>Carnet de Recettes</Text>
       </View>
 
-      {/* Search bar */}
       {!loading && recipes.length > 0 && (
         <View style={[styles.searchRow, { borderBottomColor: c.border }]}>
           <View style={[styles.searchBox, { backgroundColor: c.surfaceElevated, borderColor: c.border }]}>
@@ -94,6 +93,11 @@ export default function RecipesTabScreen() {
             onPress={() => setShowFavoritesOnly((v) => !v)}
           >
             <Ionicons name={showFavoritesOnly ? 'heart' : 'heart-outline'} size={18} color={showFavoritesOnly ? '#fff' : c.textMuted} />
+            {favorites.size > 0 && !showFavoritesOnly && (
+              <View style={[styles.badge, { backgroundColor: '#ef4444' }]}>
+                <Text style={styles.badgeText}>{favorites.size}</Text>
+              </View>
+            )}
           </TouchableOpacity>
         </View>
       )}
@@ -218,6 +222,18 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
+  badge: {
+    position: 'absolute',
+    top: -4,
+    right: -4,
+    minWidth: 16,
+    height: 16,
+    borderRadius: 8,
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingHorizontal: 3,
+  },
+  badgeText: { color: '#fff', fontSize: 9, fontWeight: '900' },
   center: { flex: 1, alignItems: 'center', justifyContent: 'center', gap: Layout.spacing.md, padding: Layout.spacing.xl },
   loadingText: { fontSize: Layout.fontSize.md },
   emptyEmoji: { fontSize: 56 },
