@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { ActivityIndicator, Modal, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { ActivityIndicator, Modal, ScrollView, Share, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { useLocalSearchParams, router } from 'expo-router';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from '@expo/vector-icons';
@@ -50,6 +50,9 @@ function supabaseToRecipeDetail(r: SupabaseRecipe): RecipeDetail {
   } as any;
 }
 
+// ──────────────────────────────────────────────────────────────
+// Cooking Timer Modal
+// ──────────────────────────────────────────────────────────────
 interface TimerModalProps {
   visible: boolean;
   onClose: () => void;
@@ -89,6 +92,7 @@ function CookingTimerModal({ visible, onClose, color, bgColor, textColor, mutedC
     return () => { if (intervalRef.current) clearInterval(intervalRef.current); };
   }, [running]);
 
+  // Reset done state when a new preset is applied or timer is restarted
   useEffect(() => { if (running) setDone(false); }, [running]);
 
   const PRESETS = [
@@ -145,12 +149,13 @@ function CookingTimerModal({ visible, onClose, color, bgColor, textColor, mutedC
           <View style={[timerStyles.handle, { backgroundColor: borderColor }]} />
 
           <View style={timerStyles.timerHeader}>
-            <Text style={[timerStyles.timerTitle, { color: textColor }]}>{String.fromCodePoint(0x23F1)}️ Minuteur de cuisine</Text>
+            <Text style={[timerStyles.timerTitle, { color: textColor }]}>⏱️ Minuteur de cuisine</Text>
             <TouchableOpacity onPress={onClose} hitSlop={8}>
               <Ionicons name="close" size={22} color={mutedColor} />
             </TouchableOpacity>
           </View>
 
+          {/* Presets */}
           <View style={timerStyles.presets}>
             {PRESETS.map((p) => (
               <TouchableOpacity
@@ -163,13 +168,14 @@ function CookingTimerModal({ visible, onClose, color, bgColor, textColor, mutedC
             ))}
           </View>
 
+          {/* Adjust row */}
           <View style={timerStyles.adjustRow}>
             <TouchableOpacity
               style={[timerStyles.adjustBtn, { backgroundColor: surfaceColor, borderColor }]}
               onPress={() => adjust(-60)}
               disabled={running}
             >
-              <Text style={[timerStyles.adjustText, { color: running ? mutedColor : textColor }]}>{String.fromCharCode(0x2212)}1 min</Text>
+              <Text style={[timerStyles.adjustText, { color: running ? mutedColor : textColor }]}>−1 min</Text>
             </TouchableOpacity>
             <TouchableOpacity
               style={[timerStyles.adjustBtn, { backgroundColor: surfaceColor, borderColor }]}
@@ -180,21 +186,24 @@ function CookingTimerModal({ visible, onClose, color, bgColor, textColor, mutedC
             </TouchableOpacity>
           </View>
 
+          {/* Display */}
           <View style={[timerStyles.display, { backgroundColor: accentColor + '10', borderColor: accentColor }]}>
             <Text style={[timerStyles.displayText, { color: accentColor }]}>
               {mm}:{ss}
             </Text>
             {done && (
-              <Text style={timerStyles.doneText}>Temps {String.fromCharCode(0xE9)}coul{String.fromCharCode(0xE9)} ! {String.fromCodePoint(0x1F514)}</Text>
+              <Text style={timerStyles.doneText}>Temps écoulé ! 🔔</Text>
             )}
           </View>
 
+          {/* Progress bar */}
           {totalSeconds > 0 && (
             <View style={[timerStyles.progressTrack, { backgroundColor: borderColor }]}>
               <View style={[timerStyles.progressFill, { width: `${progress * 100}%`, backgroundColor: accentColor }]} />
             </View>
           )}
 
+          {/* Controls */}
           <View style={timerStyles.controls}>
             <TouchableOpacity style={[timerStyles.ctrlBtn, { backgroundColor: surfaceColor }]} onPress={reset}>
               <Ionicons name="refresh" size={22} color={mutedColor} />
@@ -241,6 +250,9 @@ const timerStyles = StyleSheet.create({
   playBtn: { width: 64, height: 64, borderRadius: 32, alignItems: 'center', justifyContent: 'center' },
 });
 
+// ──────────────────────────────────────────────────────────────
+// Main screen
+// ──────────────────────────────────────────────────────────────
 export default function RecipeDetailScreen() {
   const { lessonTitle } = useLocalSearchParams<{ lessonTitle: string }>();
   const { theme } = useThemeStore();
@@ -251,20 +263,62 @@ export default function RecipeDetailScreen() {
   const [loading, setLoading] = useState(true);
   const [supabaseRecipe, setSupabaseRecipe] = useState<SupabaseRecipe | null>(null);
   const [timerVisible, setTimerVisible] = useState(false);
+  const [checkedIngredients, setCheckedIngredients] = useState<Set<number>>(new Set());
+  const [checkedSteps, setCheckedSteps] = useState<Set<number>>(new Set());
 
   const fav = isFavorite(title);
+
+  function toggleIngredient(i: number) {
+    setCheckedIngredients((prev) => {
+      const next = new Set(prev);
+      if (next.has(i)) next.delete(i);
+      else next.add(i);
+      return next;
+    });
+    Haptics.selectionAsync();
+  }
+
+  function toggleStep(i: number) {
+    setCheckedSteps((prev) => {
+      const next = new Set(prev);
+      if (next.has(i)) next.delete(i);
+      else next.add(i);
+      return next;
+    });
+    Haptics.selectionAsync();
+  }
 
   useEffect(() => {
     fetchRecipeByTitle(title).then((r) => {
       setSupabaseRecipe(r);
       setLoading(false);
     });
+    setCheckedIngredients(new Set());
+    setCheckedSteps(new Set());
   }, [title]);
 
   const recipe = RECIPES[title] ?? null;
   const lessonDetail = LESSON_DETAILS[title];
   const displayRecipe = supabaseRecipe ? supabaseToRecipeDetail(supabaseRecipe) : recipe;
   const totalTime = displayRecipe ? displayRecipe.prep_time_min + displayRecipe.cook_time_min : null;
+  const steps: string[] = (displayRecipe as any)?.steps ?? [];
+
+  async function shareRecipe() {
+    const ingredientsText = displayRecipe?.ingredients.length
+      ? displayRecipe.ingredients.map((ing) => `• ${ing.name}${ing.quantity ? ` — ${ing.quantity}` : ''}`).join('\n')
+      : '';
+    const stepsText = steps.length
+      ? steps.map((s, i) => `${i + 1}. ${s}`).join('\n')
+      : '';
+    const message = [
+      `${displayRecipe?.emoji ?? lessonDetail?.emoji ?? '🍽️'} ${displayRecipe?.title ?? title}`,
+      ingredientsText && `\nIngrédients:\n${ingredientsText}`,
+      stepsText && `\nÉtapes:\n${stepsText}`,
+    ].filter(Boolean).join('\n');
+    try {
+      await Share.share({ message, title: displayRecipe?.title ?? title });
+    } catch {}
+  }
 
   const difficultyColor = (d?: string) => {
     if (d === 'Facile' || d === 'easy' || d === 'facile') return '#22c55e';
@@ -290,12 +344,16 @@ export default function RecipeDetailScreen() {
 
   return (
     <ScreenWrapper>
+      {/* Header */}
       <View style={[styles.header, { borderBottomColor: c.border }]}>
         <TouchableOpacity onPress={() => router.back()} hitSlop={8}>
           <Ionicons name="arrow-back" size={24} color={c.primary} />
         </TouchableOpacity>
         <Text style={[styles.headerTitle, { color: c.text }]} numberOfLines={1}>{title}</Text>
         <View style={styles.headerActions}>
+          <TouchableOpacity onPress={shareRecipe} hitSlop={8}>
+            <Ionicons name="share-outline" size={24} color={c.primary} />
+          </TouchableOpacity>
           <TouchableOpacity onPress={() => setTimerVisible(true)} hitSlop={8}>
             <Ionicons name="timer-outline" size={24} color={c.primary} />
           </TouchableOpacity>
@@ -323,6 +381,7 @@ export default function RecipeDetailScreen() {
       />
 
       <ScrollView contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
+        {/* Hero */}
         <LinearGradient
           colors={[c.primary + '30', c.secondary + '15']}
           style={styles.hero}
@@ -343,15 +402,16 @@ export default function RecipeDetailScreen() {
           )}
         </LinearGradient>
 
+        {/* Time + servings cards */}
         {displayRecipe && (
           <View style={styles.metaRow}>
             <View style={[styles.metaCard, { backgroundColor: c.surfaceElevated, borderColor: c.border }]}>
-              <Text style={styles.metaEmoji}>{String.fromCodePoint(0x1F52A)}</Text>
+              <Text style={styles.metaEmoji}>🔪</Text>
               <Text style={[styles.metaValue, { color: c.text }]}>{displayRecipe.prep_time_min} min</Text>
-              <Text style={[styles.metaLabel, { color: c.textMuted }]}>Pr{String.fromCharCode(0xE9)}paration</Text>
+              <Text style={[styles.metaLabel, { color: c.textMuted }]}>Préparation</Text>
             </View>
             <View style={[styles.metaCard, { backgroundColor: c.surfaceElevated, borderColor: c.border }]}>
-              <Text style={styles.metaEmoji}>{String.fromCodePoint(0x1F525)}</Text>
+              <Text style={styles.metaEmoji}>🔥</Text>
               <Text style={[styles.metaValue, { color: c.text }]}>{displayRecipe.cook_time_min} min</Text>
               <Text style={[styles.metaLabel, { color: c.textMuted }]}>Cuisson</Text>
             </View>
@@ -359,52 +419,96 @@ export default function RecipeDetailScreen() {
               style={[styles.metaCard, { backgroundColor: c.primary + '15', borderColor: c.primary + '30' }]}
               onPress={() => setTimerVisible(true)}
             >
-              <Text style={styles.metaEmoji}>{String.fromCodePoint(0x23F1)}️</Text>
+              <Text style={styles.metaEmoji}>⏱️</Text>
               <Text style={[styles.metaValue, { color: c.primary }]}>{totalTime} min</Text>
               <Text style={[styles.metaLabel, { color: c.primary + 'aa' }]}>Minuteur</Text>
             </TouchableOpacity>
             <View style={[styles.metaCard, { backgroundColor: c.surfaceElevated, borderColor: c.border }]}>
-              <Text style={styles.metaEmoji}>{String.fromCodePoint(0x1F37D)}️</Text>
+              <Text style={styles.metaEmoji}>🍽️</Text>
               <Text style={[styles.metaValue, { color: c.text }]}>{displayRecipe.servings}</Text>
               <Text style={[styles.metaLabel, { color: c.textMuted }]}>Portions</Text>
             </View>
           </View>
         )}
 
+        {/* Ingredients */}
         {displayRecipe && displayRecipe.ingredients.length > 0 && (
           <View style={[styles.section, { backgroundColor: c.surfaceElevated, borderColor: c.border }]}>
-            <SectionHeader icon="nutrition" label="Ingr{String.fromCharCode(0xE9)}dients" color={c.text} />
-            <Text style={[styles.sectionSub, { color: c.textMuted }]}>Pour {displayRecipe.servings} personne{displayRecipe.servings > 1 ? 's' : ''}</Text>
-            {displayRecipe.ingredients.map((ing, i) => (
-              <View key={i} style={[styles.ingRow, i < displayRecipe.ingredients.length - 1 && { borderBottomColor: c.border, borderBottomWidth: 1 }]}>
-                <Text style={styles.ingEmoji}>{ing.emoji}</Text>
-                <View style={styles.ingInfo}>
-                  <Text style={[styles.ingName, { color: c.text }]}>{ing.name}</Text>
-                  {ing.note && <Text style={[styles.ingNote, { color: c.textMuted }]}>{ing.note}</Text>}
-                </View>
-                <Text style={[styles.ingQty, { color: c.primary }]}>{ing.quantity}</Text>
-              </View>
-            ))}
-          </View>
-        )}
-
-        {displayRecipe && (displayRecipe as any).steps?.length > 0 && (
-          <View style={[styles.section, { backgroundColor: c.surfaceElevated, borderColor: c.border }]}>
-            <SectionHeader icon="list" label="{String.fromCharCode(0xC9)}tapes" color={c.text} />
-            {((displayRecipe as any).steps as string[]).map((step, i) => (
-              <View key={i} style={styles.stepRow}>
-                <LinearGradient
-                  colors={[c.primary, c.secondary ?? c.primary]}
-                  style={styles.stepNum}
+            <View style={styles.sectionHeaderRow}>
+              <SectionHeader icon="nutrition" label="Ingrédients" color={c.text} />
+              {checkedIngredients.size > 0 && (
+                <Text style={[styles.checklistCount, { color: c.primary }]}>
+                  {checkedIngredients.size}/{displayRecipe.ingredients.length}
+                </Text>
+              )}
+            </View>
+            <Text style={[styles.sectionSub, { color: c.textMuted }]}>Pour {displayRecipe.servings} personne{displayRecipe.servings > 1 ? 's' : ''} · Touche un ingrédient pour le cocher</Text>
+            {displayRecipe.ingredients.map((ing, i) => {
+              const checked = checkedIngredients.has(i);
+              return (
+                <TouchableOpacity
+                  key={i}
+                  style={[styles.ingRow, i < displayRecipe.ingredients.length - 1 && { borderBottomColor: c.border, borderBottomWidth: 1 }]}
+                  onPress={() => toggleIngredient(i)}
+                  activeOpacity={0.6}
                 >
-                  <Text style={styles.stepNumText}>{i + 1}</Text>
-                </LinearGradient>
-                <Text style={[styles.stepText, { color: c.text }]}>{step}</Text>
-              </View>
-            ))}
+                  <Ionicons
+                    name={checked ? 'checkbox' : 'square-outline'}
+                    size={20}
+                    color={checked ? c.primary : c.textMuted}
+                  />
+                  <Text style={styles.ingEmoji}>{ing.emoji}</Text>
+                  <View style={styles.ingInfo}>
+                    <Text style={[styles.ingName, { color: c.text }, checked && styles.struckThrough]}>{ing.name}</Text>
+                    {ing.note && <Text style={[styles.ingNote, { color: c.textMuted }]}>{ing.note}</Text>}
+                  </View>
+                  <Text style={[styles.ingQty, { color: c.primary }, checked && styles.struckThrough]}>{ing.quantity}</Text>
+                </TouchableOpacity>
+              );
+            })}
           </View>
         )}
 
+        {/* Steps */}
+        {displayRecipe && steps.length > 0 && (
+          <View style={[styles.section, { backgroundColor: c.surfaceElevated, borderColor: c.border }]}>
+            <View style={styles.sectionHeaderRow}>
+              <SectionHeader icon="list" label="Étapes" color={c.text} />
+              {checkedSteps.size > 0 && (
+                <Text style={[styles.checklistCount, { color: c.primary }]}>
+                  {checkedSteps.size}/{steps.length}
+                </Text>
+              )}
+            </View>
+            {checkedSteps.size > 0 && (
+              <View style={[styles.progressTrackSlim, { backgroundColor: c.border }]}>
+                <View style={[styles.progressFillSlim, { width: `${(checkedSteps.size / steps.length) * 100}%`, backgroundColor: c.primary }]} />
+              </View>
+            )}
+            {steps.map((step, i) => {
+              const checked = checkedSteps.has(i);
+              return (
+                <TouchableOpacity key={i} style={styles.stepRow} onPress={() => toggleStep(i)} activeOpacity={0.6}>
+                  {checked ? (
+                    <View style={[styles.stepNum, { backgroundColor: c.primary }]}>
+                      <Ionicons name="checkmark" size={16} color="#fff" />
+                    </View>
+                  ) : (
+                    <LinearGradient
+                      colors={[c.primary, c.secondary ?? c.primary]}
+                      style={styles.stepNum}
+                    >
+                      <Text style={styles.stepNumText}>{i + 1}</Text>
+                    </LinearGradient>
+                  )}
+                  <Text style={[styles.stepText, { color: checked ? c.textMuted : c.text }, checked && styles.struckThrough]}>{step}</Text>
+                </TouchableOpacity>
+              );
+            })}
+          </View>
+        )}
+
+        {/* Chef tip */}
         {(displayRecipe?.chef_tip || lessonDetail?.chef_tip) && (
           <View style={[styles.section, { backgroundColor: c.primary + '10', borderColor: c.primary + '30' }]}>
             <SectionHeader icon="bulb" label="Conseil du Chef" color={c.primary} />
@@ -412,6 +516,7 @@ export default function RecipeDetailScreen() {
           </View>
         )}
 
+        {/* Anecdote */}
         {(displayRecipe?.anecdote || lessonDetail?.anecdote) && (
           <View style={[styles.section, { backgroundColor: c.surfaceElevated, borderColor: c.border }]}>
             <SectionHeader icon="book-outline" label="Anecdote" color={c.text} />
@@ -419,6 +524,7 @@ export default function RecipeDetailScreen() {
           </View>
         )}
 
+        {/* Cultural note fallback */}
         {!displayRecipe && lessonDetail && (
           <>
             {lessonDetail.cultural_note && (
@@ -429,7 +535,7 @@ export default function RecipeDetailScreen() {
             )}
             {lessonDetail.ingredients.length > 0 && (
               <View style={[styles.section, { backgroundColor: c.surfaceElevated, borderColor: c.border }]}>
-                <SectionHeader icon="nutrition" label="Ingr{String.fromCharCode(0xE9)}dients cl{String.fromCharCode(0xE9)}s" color={c.text} />
+                <SectionHeader icon="nutrition" label="Ingrédients clés" color={c.text} />
                 {lessonDetail.ingredients.map((ing, i) => (
                   <View key={i} style={[styles.ingRow, i < lessonDetail.ingredients.length - 1 && { borderBottomColor: c.border, borderBottomWidth: 1 }]}>
                     <Text style={styles.ingEmoji}>{ing.emoji}</Text>
@@ -443,16 +549,16 @@ export default function RecipeDetailScreen() {
               </View>
             )}
             <View style={[styles.comingSoon, { backgroundColor: c.surfaceElevated, borderColor: c.border }]}>
-              <Text style={styles.comingSoonEmoji}>{String.fromCodePoint(0x1F51C)}</Text>
-              <Text style={[styles.comingSoonText, { color: c.textMuted }]}>Recette compl{String.fromCharCode(0xE8)}te bient{String.fromCharCode(0xF4)}t disponible !</Text>
+              <Text style={styles.comingSoonEmoji}>🔜</Text>
+              <Text style={[styles.comingSoonText, { color: c.textMuted }]}>Recette complète bientôt disponible !</Text>
             </View>
           </>
         )}
 
         {!displayRecipe && !lessonDetail && (
           <View style={[styles.comingSoon, { backgroundColor: c.surfaceElevated, borderColor: c.border }]}>
-            <Text style={styles.comingSoonEmoji}>{String.fromCodePoint(0x1F51C)}</Text>
-            <Text style={[styles.comingSoonText, { color: c.textMuted }]}>Recette bient{String.fromCharCode(0xF4)}t disponible !</Text>
+            <Text style={styles.comingSoonEmoji}>🔜</Text>
+            <Text style={[styles.comingSoonText, { color: c.textMuted }]}>Recette bientôt disponible !</Text>
           </View>
         )}
       </ScrollView>
@@ -501,6 +607,11 @@ const styles = StyleSheet.create({
     borderWidth: 1,
   },
   sectionTitle: { fontSize: Layout.fontSize.md, fontWeight: '800', marginBottom: 2 },
+  sectionHeaderRow: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' },
+  checklistCount: { fontSize: Layout.fontSize.xs, fontWeight: '800' },
+  struckThrough: { textDecorationLine: 'line-through', opacity: 0.5 },
+  progressTrackSlim: { height: 4, borderRadius: 2, overflow: 'hidden', marginBottom: 4 },
+  progressFillSlim: { height: '100%', borderRadius: 2 },
   sectionSub: { fontSize: Layout.fontSize.xs, marginBottom: 4 },
   sectionText: { fontSize: Layout.fontSize.sm, lineHeight: 22 },
   ingRow: {
