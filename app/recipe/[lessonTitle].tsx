@@ -1,10 +1,11 @@
-import React, { useEffect, useState } from 'react';
-import { ActivityIndicator, ScrollView, StyleSheet, Text, View, TouchableOpacity } from 'react-native';
+import React, { useEffect, useRef, useState } from 'react';
+import { ActivityIndicator, Modal, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { useLocalSearchParams, router } from 'expo-router';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from '@expo/vector-icons';
 import { ScreenWrapper } from '@/components/ui/ScreenWrapper';
 import { useThemeStore } from '@/stores/themeStore';
+import { useFavoritesStore } from '@/stores/favoritesStore';
 import { RECIPES } from '@/constants/recipesData';
 import { LESSON_DETAILS } from '@/constants/pathsData';
 import { Layout } from '@/constants/Layout';
@@ -21,7 +22,6 @@ function SectionHeader({ icon, label, color }: { icon: any; label: string; color
 }
 const sectionHeaderStyle = { fontSize: 15, fontWeight: '800' as const };
 
-// Convert Supabase recipe format → RecipeDetail format for display
 function supabaseToRecipeDetail(r: SupabaseRecipe): RecipeDetail {
   const diffMap: Record<string, 'easy' | 'medium' | 'hard'> = {
     facile: 'easy', moyen: 'medium', difficile: 'hard', expert: 'hard',
@@ -45,19 +45,139 @@ function supabaseToRecipeDetail(r: SupabaseRecipe): RecipeDetail {
     anecdote: '',
     chef_tip: r.chef_tip,
     cultural_note: r.cultural_note,
-    // Steps stored under "steps" key for display, mirrored from instructions
     steps: r.instructions,
   } as any;
 }
 
+function CookingTimerModal({ visible, onClose, color }: { visible: boolean; onClose: () => void; color: string }) {
+  const [seconds, setSeconds] = useState(0);
+  const [running, setRunning] = useState(false);
+  const [preset, setPreset] = useState<number | null>(null);
+  const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
+
+  useEffect(() => {
+    if (running && seconds > 0) {
+      intervalRef.current = setInterval(() => {
+        setSeconds((s) => {
+          if (s <= 1) {
+            clearInterval(intervalRef.current!);
+            setRunning(false);
+            return 0;
+          }
+          return s - 1;
+        });
+      }, 1000);
+    } else {
+      if (intervalRef.current) clearInterval(intervalRef.current);
+    }
+    return () => { if (intervalRef.current) clearInterval(intervalRef.current); };
+  }, [running]);
+
+  const PRESETS = [
+    { label: '1 min', value: 60 },
+    { label: '5 min', value: 300 },
+    { label: '10 min', value: 600 },
+    { label: '15 min', value: 900 },
+    { label: '30 min', value: 1800 },
+  ];
+
+  const mm = String(Math.floor(seconds / 60)).padStart(2, '0');
+  const ss = String(seconds % 60).padStart(2, '0');
+
+  function applyPreset(val: number) {
+    setRunning(false);
+    setSeconds(val);
+    setPreset(val);
+  }
+
+  function reset() {
+    setRunning(false);
+    setSeconds(preset ?? 0);
+  }
+
+  return (
+    <Modal visible={visible} transparent animationType="slide" onRequestClose={onClose}>
+      <View style={timerStyles.backdrop}>
+        <View style={timerStyles.sheet}>
+          <View style={timerStyles.handle} />
+          <View style={timerStyles.timerHeader}>
+            <Text style={timerStyles.timerTitle}>{String.fromCharCode(0x23F1)} Minuteur de cuisine</Text>
+            <TouchableOpacity onPress={onClose} hitSlop={8}>
+              <Ionicons name="close" size={22} color="#666" />
+            </TouchableOpacity>
+          </View>
+
+          <View style={timerStyles.presets}>
+            {PRESETS.map((p) => (
+              <TouchableOpacity
+                key={p.value}
+                style={[timerStyles.presetBtn, preset === p.value && { backgroundColor: color + '25', borderColor: color }]}
+                onPress={() => applyPreset(p.value)}
+              >
+                <Text style={[timerStyles.presetText, preset === p.value && { color }]}>{p.label}</Text>
+              </TouchableOpacity>
+            ))}
+          </View>
+
+          <View style={[timerStyles.display, { borderColor: seconds === 0 && preset ? '#ef4444' : color }]}>
+            <Text style={[timerStyles.displayText, { color: seconds === 0 && preset ? '#ef4444' : color }]}>
+              {mm}:{ss}
+            </Text>
+            {seconds === 0 && preset && (
+              <Text style={timerStyles.doneText}>Temps écoulé ! 🔔</Text>
+            )}
+          </View>
+
+          <View style={timerStyles.controls}>
+            <TouchableOpacity style={timerStyles.ctrlBtn} onPress={reset}>
+              <Ionicons name="refresh" size={22} color="#666" />
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={[timerStyles.playBtn, { backgroundColor: color }]}
+              onPress={() => setRunning((r) => !r)}
+              disabled={seconds === 0}
+            >
+              <Ionicons name={running ? 'pause' : 'play'} size={28} color="#fff" />
+            </TouchableOpacity>
+            <TouchableOpacity style={timerStyles.ctrlBtn} onPress={() => { setRunning(false); setSeconds(0); setPreset(null); }}>
+              <Ionicons name="stop" size={22} color="#666" />
+            </TouchableOpacity>
+          </View>
+        </View>
+      </View>
+    </Modal>
+  );
+}
+
+const timerStyles = StyleSheet.create({
+  backdrop: { flex: 1, backgroundColor: 'rgba(0,0,0,0.5)', justifyContent: 'flex-end' },
+  sheet: { backgroundColor: '#fff', borderTopLeftRadius: 28, borderTopRightRadius: 28, padding: 24, gap: 20 },
+  handle: { width: 40, height: 4, borderRadius: 2, backgroundColor: '#ddd', alignSelf: 'center', marginBottom: -8 },
+  timerHeader: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
+  timerTitle: { fontSize: 17, fontWeight: '800', color: '#1a1a1a' },
+  presets: { flexDirection: 'row', flexWrap: 'wrap', gap: 8 },
+  presetBtn: { paddingHorizontal: 14, paddingVertical: 7, borderRadius: 20, borderWidth: 1, borderColor: '#ddd', backgroundColor: '#f5f5f5' },
+  presetText: { fontSize: 13, fontWeight: '700', color: '#555' },
+  display: { alignItems: 'center', borderWidth: 3, borderRadius: 20, paddingVertical: 20, gap: 6 },
+  displayText: { fontSize: 56, fontWeight: '900', letterSpacing: 4 },
+  doneText: { fontSize: 14, fontWeight: '700', color: '#ef4444' },
+  controls: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 24 },
+  ctrlBtn: { width: 48, height: 48, borderRadius: 24, backgroundColor: '#f0f0f0', alignItems: 'center', justifyContent: 'center' },
+  playBtn: { width: 64, height: 64, borderRadius: 32, alignItems: 'center', justifyContent: 'center' },
+});
+
 export default function RecipeDetailScreen() {
   const { lessonTitle } = useLocalSearchParams<{ lessonTitle: string }>();
   const { theme } = useThemeStore();
+  const { toggleFavorite, isFavorite } = useFavoritesStore();
   const c = theme.colors;
 
   const title = decodeURIComponent(lessonTitle ?? '');
   const [loading, setLoading] = useState(true);
   const [supabaseRecipe, setSupabaseRecipe] = useState<SupabaseRecipe | null>(null);
+  const [timerVisible, setTimerVisible] = useState(false);
+
+  const fav = isFavorite(title);
 
   useEffect(() => {
     fetchRecipeByTitle(title).then((r) => {
@@ -66,13 +186,9 @@ export default function RecipeDetailScreen() {
     });
   }, [title]);
 
-  // Priority: Supabase > local RECIPES constant > LESSON_DETAILS fallback
   const recipe = RECIPES[title] ?? null;
   const lessonDetail = LESSON_DETAILS[title];
-
-  // When Supabase has data, override the local recipe
   const displayRecipe = supabaseRecipe ? supabaseToRecipeDetail(supabaseRecipe) : recipe;
-
   const totalTime = displayRecipe ? displayRecipe.prep_time_min + displayRecipe.cook_time_min : null;
 
   const difficultyColor = (d?: string) => {
@@ -99,16 +215,24 @@ export default function RecipeDetailScreen() {
 
   return (
     <ScreenWrapper>
-      {/* Header */}
       <View style={[styles.header, { borderBottomColor: c.border }]}>
         <TouchableOpacity onPress={() => router.back()} hitSlop={8}>
           <Ionicons name="arrow-back" size={24} color={c.primary} />
         </TouchableOpacity>
         <Text style={[styles.headerTitle, { color: c.text }]} numberOfLines={1}>{title}</Text>
+        <View style={styles.headerActions}>
+          <TouchableOpacity onPress={() => setTimerVisible(true)} hitSlop={8}>
+            <Ionicons name="timer-outline" size={24} color={c.primary} />
+          </TouchableOpacity>
+          <TouchableOpacity onPress={() => toggleFavorite(title)} hitSlop={8}>
+            <Ionicons name={fav ? 'heart' : 'heart-outline'} size={24} color={fav ? '#ef4444' : c.primary} />
+          </TouchableOpacity>
+        </View>
       </View>
 
+      <CookingTimerModal visible={timerVisible} onClose={() => setTimerVisible(false)} color={c.primary} />
+
       <ScrollView contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
-        {/* Hero */}
         <LinearGradient
           colors={[c.primary + '30', c.secondary + '15']}
           style={styles.hero}
@@ -129,33 +253,34 @@ export default function RecipeDetailScreen() {
           )}
         </LinearGradient>
 
-        {/* Time + servings cards */}
         {displayRecipe && (
           <View style={styles.metaRow}>
             <View style={[styles.metaCard, { backgroundColor: c.surfaceElevated, borderColor: c.border }]}>
-              <Text style={styles.metaEmoji}>🔪</Text>
+              <Text style={styles.metaEmoji}>{String.fromCharCode(0x1F52A)}</Text>
               <Text style={[styles.metaValue, { color: c.text }]}>{displayRecipe.prep_time_min} min</Text>
               <Text style={[styles.metaLabel, { color: c.textMuted }]}>Préparation</Text>
             </View>
             <View style={[styles.metaCard, { backgroundColor: c.surfaceElevated, borderColor: c.border }]}>
-              <Text style={styles.metaEmoji}>🔥</Text>
+              <Text style={styles.metaEmoji}>{String.fromCharCode(0x1F525)}</Text>
               <Text style={[styles.metaValue, { color: c.text }]}>{displayRecipe.cook_time_min} min</Text>
               <Text style={[styles.metaLabel, { color: c.textMuted }]}>Cuisson</Text>
             </View>
-            <View style={[styles.metaCard, { backgroundColor: c.primary + '15', borderColor: c.primary + '30' }]}>
-              <Text style={styles.metaEmoji}>⏱️</Text>
+            <TouchableOpacity
+              style={[styles.metaCard, { backgroundColor: c.primary + '15', borderColor: c.primary + '30' }]}
+              onPress={() => setTimerVisible(true)}
+            >
+              <Text style={styles.metaEmoji}>{String.fromCharCode(0x23F1)}</Text>
               <Text style={[styles.metaValue, { color: c.primary }]}>{totalTime} min</Text>
-              <Text style={[styles.metaLabel, { color: c.primary + 'aa' }]}>Total</Text>
-            </View>
+              <Text style={[styles.metaLabel, { color: c.primary + 'aa' }]}>Minuteur</Text>
+            </TouchableOpacity>
             <View style={[styles.metaCard, { backgroundColor: c.surfaceElevated, borderColor: c.border }]}>
-              <Text style={styles.metaEmoji}>🍽️</Text>
+              <Text style={styles.metaEmoji}>{String.fromCharCode(0x1F37D)}️</Text>
               <Text style={[styles.metaValue, { color: c.text }]}>{displayRecipe.servings}</Text>
               <Text style={[styles.metaLabel, { color: c.textMuted }]}>Portions</Text>
             </View>
           </View>
         )}
 
-        {/* Ingredients */}
         {displayRecipe && displayRecipe.ingredients.length > 0 && (
           <View style={[styles.section, { backgroundColor: c.surfaceElevated, borderColor: c.border }]}>
             <SectionHeader icon="nutrition" label="Ingrédients" color={c.text} />
@@ -173,7 +298,6 @@ export default function RecipeDetailScreen() {
           </View>
         )}
 
-        {/* Steps — Supabase uses "steps" key injected by supabaseToRecipeDetail */}
         {displayRecipe && (displayRecipe as any).steps?.length > 0 && (
           <View style={[styles.section, { backgroundColor: c.surfaceElevated, borderColor: c.border }]}>
             <SectionHeader icon="list" label="Étapes" color={c.text} />
@@ -191,7 +315,6 @@ export default function RecipeDetailScreen() {
           </View>
         )}
 
-        {/* Chef tip */}
         {(displayRecipe?.chef_tip || lessonDetail?.chef_tip) && (
           <View style={[styles.section, { backgroundColor: c.primary + '10', borderColor: c.primary + '30' }]}>
             <SectionHeader icon="bulb" label="Conseil du Chef" color={c.primary} />
@@ -199,7 +322,6 @@ export default function RecipeDetailScreen() {
           </View>
         )}
 
-        {/* Anecdote */}
         {(displayRecipe?.anecdote || lessonDetail?.anecdote) && (
           <View style={[styles.section, { backgroundColor: c.surfaceElevated, borderColor: c.border }]}>
             <SectionHeader icon="book-outline" label="Anecdote" color={c.text} />
@@ -207,7 +329,6 @@ export default function RecipeDetailScreen() {
           </View>
         )}
 
-        {/* Cultural note fallback */}
         {!displayRecipe && lessonDetail && (
           <>
             {lessonDetail.cultural_note && (
@@ -232,7 +353,7 @@ export default function RecipeDetailScreen() {
               </View>
             )}
             <View style={[styles.comingSoon, { backgroundColor: c.surfaceElevated, borderColor: c.border }]}>
-              <Text style={styles.comingSoonEmoji}>🔜</Text>
+              <Text style={styles.comingSoonEmoji}>{String.fromCharCode(0x1F51C)}</Text>
               <Text style={[styles.comingSoonText, { color: c.textMuted }]}>Recette complète bientôt disponible !</Text>
             </View>
           </>
@@ -240,7 +361,7 @@ export default function RecipeDetailScreen() {
 
         {!displayRecipe && !lessonDetail && (
           <View style={[styles.comingSoon, { backgroundColor: c.surfaceElevated, borderColor: c.border }]}>
-            <Text style={styles.comingSoonEmoji}>🔜</Text>
+            <Text style={styles.comingSoonEmoji}>{String.fromCharCode(0x1F51C)}</Text>
             <Text style={[styles.comingSoonText, { color: c.textMuted }]}>Recette bientôt disponible !</Text>
           </View>
         )}
@@ -258,6 +379,7 @@ const styles = StyleSheet.create({
     borderBottomWidth: 1,
   },
   headerTitle: { flex: 1, fontSize: Layout.fontSize.lg, fontWeight: '800' },
+  headerActions: { flexDirection: 'row', gap: Layout.spacing.md, alignItems: 'center' },
   content: { padding: Layout.spacing.lg, gap: Layout.spacing.md, paddingBottom: 48 },
   hero: {
     borderRadius: Layout.radius.xl,
