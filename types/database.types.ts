@@ -95,6 +95,28 @@ export interface Ingredient {
   tip?: string;
 }
 
+export interface RecipeIngredient {
+  name: string;
+  quantity: string;
+  emoji: string;
+  note?: string;
+}
+
+export interface RecipeDetail {
+  lessonTitle: string;
+  title: string;
+  description: string;
+  emoji: string;
+  prep_time_min: number;
+  cook_time_min: number;
+  servings: number;
+  difficulty: 'Facile' | 'Moyen' | 'Expert';
+  ingredients: RecipeIngredient[];
+  steps: string[];
+  chef_tip: string;
+  anecdote: string;
+}
+
 export interface LessonDetail {
   id: string;
   path_id: string;
