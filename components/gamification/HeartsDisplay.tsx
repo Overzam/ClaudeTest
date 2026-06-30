@@ -1,5 +1,6 @@
 import React from 'react';
 import { StyleSheet, Text, View, ViewStyle } from 'react-native';
+import { Ionicons } from '@expo/vector-icons';
 import { MAX_HEARTS } from '@/constants/Config';
 import { useThemeStore } from '@/stores/themeStore';
 import { Layout } from '@/constants/Layout';
@@ -7,7 +8,6 @@ import { Layout } from '@/constants/Layout';
 interface Props {
   hearts: number;
   style?: ViewStyle;
-  /** compact=true shows ❤️ 5 badge (for headers); false shows individual hearts (for detail views) */
   compact?: boolean;
 }
 
@@ -18,7 +18,7 @@ export function HeartsDisplay({ hearts, style, compact = false }: Props) {
   if (compact) {
     return (
       <View style={[styles.badge, { backgroundColor: '#ef444420' }, style]}>
-        <Text style={styles.badgeEmoji}>❤️</Text>
+        <Ionicons name="heart" size={16} color="#ef4444" />
         <Text style={[styles.badgeCount, { color: '#ef4444' }]}>{hearts}</Text>
       </View>
     );
@@ -27,9 +27,7 @@ export function HeartsDisplay({ hearts, style, compact = false }: Props) {
   return (
     <View style={[styles.row, style]}>
       {Array.from({ length: MAX_HEARTS }).map((_, i) => (
-        <Text key={i} style={[styles.heart, i >= hearts && styles.empty]}>
-          ❤️
-        </Text>
+        <Ionicons key={i} name="heart" size={20} color="#ef4444" style={{ opacity: i < hearts ? 1 : 0.2 }} />
       ))}
     </View>
   );
@@ -37,8 +35,6 @@ export function HeartsDisplay({ hearts, style, compact = false }: Props) {
 
 const styles = StyleSheet.create({
   row: { flexDirection: 'row', gap: 2 },
-  heart: { fontSize: 18 },
-  empty: { opacity: 0.2 },
   badge: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -47,6 +43,5 @@ const styles = StyleSheet.create({
     borderRadius: Layout.radius.full,
     gap: 2,
   },
-  badgeEmoji: { fontSize: 16 },
   badgeCount: { fontWeight: '700', fontSize: Layout.fontSize.sm },
 });

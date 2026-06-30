@@ -16,7 +16,7 @@ interface RecipeEntry {
   path: Path;
 }
 
-export default function RecipeBookScreen() {
+export default function RecipesTabScreen() {
   const { theme } = useThemeStore();
   const { lessonProgress, loadProgress } = useProgressStore();
   const { session } = useAuthStore();
@@ -51,9 +51,6 @@ export default function RecipeBookScreen() {
   return (
     <ScreenWrapper>
       <View style={[styles.header, { borderBottomColor: c.border }]}>
-        <TouchableOpacity onPress={() => router.back()} hitSlop={8}>
-          <Ionicons name="arrow-back" size={24} color={c.primary} />
-        </TouchableOpacity>
         <Ionicons name="book" size={22} color={c.primary} />
         <Text style={[styles.title, { color: c.text }]}>Carnet de Recettes</Text>
       </View>
@@ -69,6 +66,12 @@ export default function RecipeBookScreen() {
           <Text style={[styles.emptyText, { color: c.textMuted }]}>
             Termine des leçons pour débloquer des recettes dans ton carnet !
           </Text>
+          <TouchableOpacity
+            style={[styles.cta, { backgroundColor: c.primary }]}
+            onPress={() => router.push('/(tabs)/explore' as any)}
+          >
+            <Text style={styles.ctaText}>Explorer les parcours</Text>
+          </TouchableOpacity>
         </View>
       ) : (
         <>
@@ -107,7 +110,6 @@ export default function RecipeBookScreen() {
           />
         </>
       )}
-
     </ScreenWrapper>
   );
 }
@@ -126,6 +128,8 @@ const styles = StyleSheet.create({
   emptyEmoji: { fontSize: 56 },
   emptyTitle: { fontSize: Layout.fontSize.xl, fontWeight: '800' },
   emptyText: { fontSize: Layout.fontSize.md, textAlign: 'center', lineHeight: 22 },
+  cta: { paddingHorizontal: Layout.spacing.xl, paddingVertical: Layout.spacing.md, borderRadius: Layout.radius.full, marginTop: Layout.spacing.sm },
+  ctaText: { color: '#fff', fontWeight: '700', fontSize: Layout.fontSize.md },
   countText: { fontSize: Layout.fontSize.sm, paddingBottom: Layout.spacing.sm },
   grid: { padding: Layout.spacing.md, paddingBottom: 40 },
   row: { gap: Layout.spacing.sm, marginBottom: Layout.spacing.sm },

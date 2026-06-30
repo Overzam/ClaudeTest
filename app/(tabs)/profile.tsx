@@ -1,6 +1,7 @@
 import React, { useCallback } from 'react';
 import { Alert, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { router, useFocusEffect } from 'expo-router';
+import { Ionicons } from '@expo/vector-icons';
 import { ScreenWrapper } from '@/components/ui/ScreenWrapper';
 import { Card } from '@/components/ui/Card';
 import { Avatar } from '@/components/ui/Avatar';
@@ -59,10 +60,24 @@ export default function ProfileScreen() {
       <ScrollView contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
         {/* Header */}
         <View style={[styles.header, { backgroundColor: c.primary + '12', borderRadius: Layout.radius.xl }]}>
-          <Avatar name={user?.username} size={80} />
+          <TouchableOpacity onPress={() => router.push('/edit-profile')} activeOpacity={0.85} style={styles.avatarWrap}>
+            <Avatar name={user?.username} uri={user?.avatar_url} size={80} />
+            <View style={[styles.editBadge, { backgroundColor: c.primary }]}>
+              <Ionicons name="camera" size={13} color="#fff" />
+            </View>
+          </TouchableOpacity>
           <Text style={[styles.username, { color: c.text }]}>{user?.username ?? '—'}</Text>
-          <View style={[styles.levelBadge, { backgroundColor: c.primary }]}>
-            <Text style={styles.levelText}>Niv. {level}</Text>
+          <View style={styles.headerActions}>
+            <View style={[styles.levelBadge, { backgroundColor: c.primary }]}>
+              <Text style={styles.levelText}>Niv. {level}</Text>
+            </View>
+            <TouchableOpacity
+              style={[styles.editProfileBtn, { borderColor: c.border }]}
+              onPress={() => router.push('/edit-profile')}
+            >
+              <Ionicons name="create-outline" size={14} color={c.textMuted} />
+              <Text style={[styles.editProfileText, { color: c.textMuted }]}>Modifier</Text>
+            </TouchableOpacity>
           </View>
         </View>
 
@@ -95,28 +110,30 @@ export default function ProfileScreen() {
 
         {/* Actions */}
         <View style={styles.actionGrid}>
-          {[
-            { emoji: '👥', label: 'Amis', route: '/friends' },
-            { emoji: '🏅', label: 'Classement', route: '/leaderboard' },
-            { emoji: '🏆', label: `Trophées${userBadges.length > 0 ? ` (${userBadges.length})` : ''}`, route: '/badges' },
-            { emoji: isPremium() ? '✨' : '⭐', label: isPremium() ? 'Premium actif' : 'RecipeQuest+', route: '/premium', highlight: isPremium() },
-            { emoji: '🛒', label: `Boutique · 🪙${coins}`, route: '/shop' },
-            { emoji: '📖', label: 'Carnet de Recettes', route: '/recipe-book' },
-            { emoji: '💡', label: 'Astuces & Techniques', route: '/tips' },
-            { emoji: '📚', label: 'Glossaire Culinaire', route: '/glossary' },
-          ].map(({ emoji, label, route, highlight }) => (
+          {([
+            { icon: 'people', label: 'Amis', route: '/friends', color: c.primary },
+            { icon: 'podium', label: 'Classement', route: '/leaderboard', color: '#f59e0b' },
+            { icon: 'trophy', label: `Trophées${userBadges.length > 0 ? ` (${userBadges.length})` : ''}`, route: '/badges', color: '#f59e0b' },
+            { icon: isPremium() ? 'star' : 'star-outline', label: isPremium() ? 'Premium actif' : 'RecipeQuest+', route: '/premium', color: c.secondary, highlight: isPremium() },
+            { icon: 'cart', label: `Boutique · 🪙${coins}`, route: '/shop', color: '#22c55e' },
+            { icon: 'book', label: 'Carnet de Recettes', route: '/recipe-book', color: '#8b5cf6' },
+            { icon: 'bulb', label: 'Astuces & Techniques', route: '/tips', color: '#f59e0b' },
+            { icon: 'library', label: 'Glossaire Culinaire', route: '/glossary', color: '#3b82f6' },
+          ] as const).map(({ icon, label, route, color, highlight }: any) => (
             <TouchableOpacity
               key={route}
               style={[
                 styles.actionBtn,
-                { backgroundColor: c.surfaceElevated, borderColor: highlight ? c.secondary : c.border },
+                { backgroundColor: c.surfaceElevated, borderColor: highlight ? color : c.border },
                 highlight && { borderWidth: 2 },
               ]}
               onPress={() => router.push(route as any)}
               activeOpacity={0.8}
             >
-              <Text style={styles.actionEmoji}>{emoji}</Text>
-              <Text style={[styles.actionLabel, { color: highlight ? c.secondary : c.text }]} numberOfLines={1}>
+              <View style={[styles.actionIconWrap, { backgroundColor: color + '18' }]}>
+                <Ionicons name={icon as any} size={22} color={color} />
+              </View>
+              <Text style={[styles.actionLabel, { color: highlight ? color : c.text }]} numberOfLines={1}>
                 {label}
               </Text>
             </TouchableOpacity>
@@ -127,7 +144,8 @@ export default function ProfileScreen() {
           style={[styles.settingsLink, { backgroundColor: c.surfaceElevated, borderColor: c.border, borderWidth: 1 }]}
           onPress={() => router.push('/settings')}
         >
-          <Text style={[styles.settingsText, { color: c.textSecondary }]}>⚙️ Paramètres</Text>
+          <Ionicons name="settings-outline" size={18} color={c.textSecondary} />
+          <Text style={[styles.settingsText, { color: c.textSecondary }]}>Paramètres</Text>
         </TouchableOpacity>
 
         {/* Recent badges */}
@@ -162,7 +180,10 @@ function WeeklyCalendar({ streakDays, c }: { streakDays: number; c: any }) {
   const todayIdx = today === 0 ? 6 : today - 1;
   return (
     <View style={calStyles.container}>
-      <Text style={[calStyles.title, { color: c.text }]}>🔥 Activité de la semaine</Text>
+      <View style={calStyles.titleRow}>
+        <Ionicons name="flame" size={16} color={c.streakOrange} />
+        <Text style={[calStyles.title, { color: c.text }]}>Activité de la semaine</Text>
+      </View>
       <View style={calStyles.row}>
         {DAY_LABELS.map((label, i) => {
           const isPast = i <= todayIdx;
@@ -174,7 +195,7 @@ function WeeklyCalendar({ streakDays, c }: { streakDays: number; c: any }) {
                 calStyles.dot,
                 { backgroundColor: isActive ? c.streakOrange : isToday ? c.border : 'transparent', borderColor: isToday ? c.streakOrange : c.border, borderWidth: 1 },
               ]}>
-                {isActive && <Text style={calStyles.flame}>🔥</Text>}
+                {isActive && <Ionicons name="flame" size={18} color="#fff" />}
               </View>
               <Text style={[calStyles.label, { color: isToday ? c.streakOrange : c.textMuted }]}>{label}</Text>
             </View>
@@ -190,11 +211,11 @@ function WeeklyCalendar({ streakDays, c }: { streakDays: number; c: any }) {
 
 const calStyles = StyleSheet.create({
   container: { borderRadius: Layout.radius.xl, padding: Layout.spacing.md, gap: Layout.spacing.sm, backgroundColor: 'transparent', borderWidth: 1, borderColor: 'rgba(255,150,0,0.25)' },
+  titleRow: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 6 },
   title: { fontSize: Layout.fontSize.sm, fontWeight: '700', textAlign: 'center' },
   row: { flexDirection: 'row', justifyContent: 'space-around' },
   dayCol: { alignItems: 'center', gap: 4 },
   dot: { width: 36, height: 36, borderRadius: 18, alignItems: 'center', justifyContent: 'center' },
-  flame: { fontSize: 18 },
   label: { fontSize: 11, fontWeight: '600' },
   streak: { fontSize: Layout.fontSize.sm, fontWeight: '800', textAlign: 'center' },
 });
@@ -202,13 +223,37 @@ const calStyles = StyleSheet.create({
 const styles = StyleSheet.create({
   content: { padding: Layout.spacing.lg, gap: Layout.spacing.md, paddingBottom: 40 },
   header: { alignItems: 'center', gap: Layout.spacing.sm, paddingVertical: Layout.spacing.xl },
+  avatarWrap: { position: 'relative' },
+  editBadge: {
+    position: 'absolute',
+    bottom: 2,
+    right: 2,
+    width: 24,
+    height: 24,
+    borderRadius: 12,
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderWidth: 2,
+    borderColor: '#fff',
+  },
   username: { fontSize: Layout.fontSize.xl, fontWeight: '800' },
+  headerActions: { flexDirection: 'row', alignItems: 'center', gap: Layout.spacing.sm },
   levelBadge: {
     paddingHorizontal: Layout.spacing.md,
     paddingVertical: 4,
     borderRadius: 20,
   },
   levelText: { color: '#fff', fontWeight: '800', fontSize: Layout.fontSize.sm },
+  editProfileBtn: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 4,
+    paddingHorizontal: Layout.spacing.sm,
+    paddingVertical: 4,
+    borderRadius: Layout.radius.full,
+    borderWidth: 1,
+  },
+  editProfileText: { fontSize: Layout.fontSize.xs, fontWeight: '600' },
   statsRow: { flexDirection: 'row', gap: Layout.spacing.sm },
   statCard: {
     flex: 1,
@@ -232,10 +277,13 @@ const styles = StyleSheet.create({
     gap: 6,
     borderWidth: 1,
   },
-  actionEmoji: { fontSize: 28 },
+  actionIconWrap: { width: 44, height: 44, borderRadius: 22, alignItems: 'center', justifyContent: 'center' },
   actionLabel: { fontSize: Layout.fontSize.sm, fontWeight: '700', textAlign: 'center' },
   settingsLink: {
+    flexDirection: 'row',
     alignItems: 'center',
+    justifyContent: 'center',
+    gap: Layout.spacing.sm,
     paddingVertical: Layout.spacing.md,
     borderRadius: Layout.radius.lg,
   },

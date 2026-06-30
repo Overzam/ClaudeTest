@@ -143,12 +143,14 @@ export default function LessonScreen() {
       />
       <View style={styles.exercise}>{renderExercise()}</View>
       {lessonStore.phase === 'feedback' && lessonStore.lastAnswerCorrect !== null && (
-        <AnswerFeedback
-          correct={lessonStore.lastAnswerCorrect}
-          correctAnswerText={lessonStore.correctAnswerText}
-          explanation={lessonStore.lastAnswerCorrect && (exercise?.data as any)?.anecdote ? (exercise.data as any).anecdote : undefined}
-          onContinue={lessonStore.nextExercise}
-        />
+        <View style={styles.feedbackOverlay}>
+          <AnswerFeedback
+            correct={lessonStore.lastAnswerCorrect}
+            correctAnswerText={lessonStore.correctAnswerText}
+            explanation={lessonStore.lastAnswerCorrect && (exercise?.data as any)?.anecdote ? (exercise.data as any).anecdote : undefined}
+            onContinue={lessonStore.nextExercise}
+          />
+        </View>
       )}
       <NoHeartsModal
         visible={showNoHearts}
@@ -162,6 +164,7 @@ export default function LessonScreen() {
 const styles = StyleSheet.create({
   container: { flex: 1 },
   exercise: { flex: 1 },
+  feedbackOverlay: { position: 'absolute', bottom: 0, left: 0, right: 0 },
   comingSoon: { flex: 1, alignItems: 'center', justifyContent: 'center', paddingHorizontal: 32, gap: 16 },
   comingSoonEmoji: { fontSize: 64 },
   comingSoonTitle: { fontSize: 22, fontWeight: '700', textAlign: 'center' },

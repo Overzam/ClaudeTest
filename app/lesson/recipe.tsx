@@ -34,26 +34,26 @@ export default function RecipeScreen() {
 
   useEffect(() => {
     if (lessonId) {
-      fetchRecipe(lessonId, lessonTitle).then((r) => { setRecipe(r); setLoading(false); });
+      fetchRecipe(lessonId, lessonTitle || undefined).then((r) => { setRecipe(r); setLoading(false); });
     }
   }, [lessonId]);
 
-  function goToComplete() {
-    router.replace({
-      pathname: '/lesson/complete',
-      params: { xpEarned: xpEarned ?? '0', score: score ?? '100', mistakes: mistakes ?? '0' },
-    });
-  }
+  useEffect(() => {
+    if (!loading && !recipe) {
+      router.replace({
+        pathname: '/lesson/complete',
+        params: { xpEarned: xpEarned ?? '0', score: score ?? '100', mistakes: mistakes ?? '0' },
+      });
+    }
+  }, [loading, recipe]);
 
-  if (loading) {
+  if (loading || !recipe) {
     return (
       <View style={[styles.center, { backgroundColor: c.background }]}>
         <ActivityIndicator size="large" color={c.primary} />
       </View>
     );
   }
-
-  if (!recipe) { goToComplete(); return null; }
 
   const totalTime = recipe.prep_time_min + recipe.cook_time_min;
   const diffColor = DIFFICULTY_COLOR[recipe.difficulty] ?? c.primary;
