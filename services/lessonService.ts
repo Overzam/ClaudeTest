@@ -114,4 +114,7 @@ export async function unlockNextLesson(
     path_id: pathId,
     status: 'available',
   });
+
+  // Update local state immediately so UI reflects unlock without waiting for next loadProgress
+  useProgressStore.getState().unlockLesson(nextLesson.id);
 }
