@@ -148,6 +148,8 @@ export interface PathDetail {
   history: string;
   key_ingredients: string[];
   famous_chefs: string[];
+  signature_dishes?: string[];
+  essential_techniques?: string[];
 }
 
 export interface LeaderboardEntry {

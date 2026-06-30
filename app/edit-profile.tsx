@@ -11,13 +11,41 @@ import { pickAndUploadAvatar, updateUsername } from '@/services/profileService';
 
 export default function EditProfileScreen() {
   const { theme } = useThemeStore();
-  const { user, setUser, session } = useAuthStore();
+  const { user, setUser, session, isGuest } = useAuthStore();
   const c = theme.colors;
 
   const [username, setUsername] = useState(user?.username ?? '');
   const [avatarUrl, setAvatarUrl] = useState(user?.avatar_url ?? null);
   const [uploadingPhoto, setUploadingPhoto] = useState(false);
   const [savingUsername, setSavingUsername] = useState(false);
+
+  if (isGuest) {
+    return (
+      <ScreenWrapper>
+        <View style={[styles.header, { borderBottomColor: c.border }]}>
+          <TouchableOpacity onPress={() => router.back()} hitSlop={8}>
+            <Ionicons name="arrow-back" size={24} color={c.primary} />
+          </TouchableOpacity>
+          <Text style={[styles.title, { color: c.text }]}>Modifier le profil</Text>
+        </View>
+        <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center', padding: 32, gap: 16 }}>
+          <Text style={{ fontSize: 56 }}>🔒</Text>
+          <Text style={{ fontSize: 20, fontWeight: '800', color: c.text, textAlign: 'center' }}>
+            Fonctionnalité réservée aux membres
+          </Text>
+          <Text style={{ color: c.textMuted, textAlign: 'center', lineHeight: 22 }}>
+            Crée un compte gratuit pour personnaliser ton profil, ajouter une photo et rejoindre des amis.
+          </Text>
+          <TouchableOpacity
+            style={{ backgroundColor: c.primary, paddingHorizontal: 32, paddingVertical: 14, borderRadius: 99, marginTop: 8 }}
+            onPress={() => router.replace('/(auth)/login')}
+          >
+            <Text style={{ color: '#fff', fontWeight: '800', fontSize: 16 }}>Créer un compte</Text>
+          </TouchableOpacity>
+        </View>
+      </ScreenWrapper>
+    );
+  }
 
   const userId = session?.user.id;
 

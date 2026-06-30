@@ -61,3 +61,28 @@ function makeLocalRecipe(lessonId: string, lessonTitle: string): Recipe {
     hero_image_url: RECIPE_IMAGE_MAP[lessonTitle],
   };
 }
+
+// Fetch by lesson title (for the recipe book screen which navigates by title, not ID)
+export async function fetchRecipeByTitle(lessonTitle: string): Promise<Recipe | null> {
+  if (isSupabaseConfigured) {
+    try {
+      const { data: lesson } = await supabase
+        .from('lessons')
+        .select('id')
+        .eq('title', lessonTitle)
+        .limit(1)
+        .single();
+
+      if (lesson?.id) {
+        const { data, error } = await supabase
+          .from('recipes')
+          .select('*')
+          .eq('lesson_id', lesson.id)
+          .single();
+        if (!error && data) return attachHeroImage(data as Recipe);
+      }
+    } catch {}
+  }
+  // No Supabase record — return null so the caller can show local RECIPES fallback
+  return null;
+}

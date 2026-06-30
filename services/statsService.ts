@@ -44,6 +44,26 @@ export async function updateHearts(userId: string, hearts: number) {
   if (error) throw error;
 }
 
+// Returns the ISO date strings (YYYY-MM-DD) of days the user completed at least one lesson
+// in the last 7 days, used to render the weekly activity calendar accurately.
+export async function fetchWeeklyActivity(userId: string): Promise<string[]> {
+  if (userId === GUEST_USER_ID || !isSupabaseConfigured) return [];
+  const sevenDaysAgo = new Date();
+  sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 6);
+  sevenDaysAgo.setHours(0, 0, 0, 0);
+
+  const { data } = await supabase
+    .from('user_progress')
+    .select('completed_at')
+    .eq('user_id', userId)
+    .eq('status', 'completed')
+    .gte('completed_at', sevenDaysAgo.toISOString())
+    .not('completed_at', 'is', null);
+
+  if (!data) return [];
+  return [...new Set(data.map((r) => r.completed_at!.split('T')[0]))];
+}
+
 export async function incrementLessonsCompleted(userId: string) {
   if (userId === GUEST_USER_ID || !isSupabaseConfigured) return;
   const { error } = await supabase.rpc('increment_lessons_completed', { p_user_id: userId });

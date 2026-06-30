@@ -32,7 +32,7 @@ import type { UserProfile, LeaderboardEntry } from '@/types/database.types';
 type Tab = 'friends' | 'leaderboard';
 
 export default function FriendsScreen() {
-  const { session } = useAuthStore();
+  const { session, isGuest } = useAuthStore();
   const { theme } = useThemeStore();
   const c = theme.colors;
   const userId = session?.user.id ?? '';
@@ -49,9 +49,38 @@ export default function FriendsScreen() {
 
   useFocusEffect(
     useCallback(() => {
-      loadFriends();
-    }, [userId])
+      if (!isGuest) loadFriends();
+    }, [userId, isGuest])
   );
+
+  if (isGuest) {
+    return (
+      <ScreenWrapper>
+        <View style={[styles.header, { borderBottomColor: c.border }]}>
+          <TouchableOpacity onPress={() => router.back()} hitSlop={8}>
+            <Ionicons name="arrow-back" size={24} color={c.primary} />
+          </TouchableOpacity>
+          <Ionicons name="people" size={22} color={c.primary} />
+          <Text style={[styles.title, { color: c.text }]}>Amis</Text>
+        </View>
+        <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center', padding: 32, gap: 16 }}>
+          <Text style={{ fontSize: 56 }}>👨‍🍳</Text>
+          <Text style={{ fontSize: 20, fontWeight: '800', color: c.text, textAlign: 'center' }}>
+            Rejoins la communauté
+          </Text>
+          <Text style={{ color: c.textMuted, textAlign: 'center', lineHeight: 22 }}>
+            Crée un compte pour ajouter des amis, voir leur progression et te mesurer à eux dans le classement.
+          </Text>
+          <TouchableOpacity
+            style={{ backgroundColor: c.primary, paddingHorizontal: 32, paddingVertical: 14, borderRadius: 99, marginTop: 8 }}
+            onPress={() => router.replace('/(auth)/login')}
+          >
+            <Text style={{ color: '#fff', fontWeight: '800', fontSize: 16 }}>Créer un compte</Text>
+          </TouchableOpacity>
+        </View>
+      </ScreenWrapper>
+    );
+  }
 
   async function loadFriends() {
     const [friendList, pendingList] = await Promise.all([
@@ -68,7 +97,6 @@ export default function FriendsScreen() {
   }
 
   async function loadLeaderboard() {
-    if (leaderboard.length > 0) return;
     setLoadingLb(true);
     const lb = await fetchLeaderboard(userId);
     setLeaderboard(lb);

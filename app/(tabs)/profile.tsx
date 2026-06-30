@@ -17,7 +17,7 @@ import { useAuthStore } from '@/stores/authStore';
 import { useGameStore } from '@/stores/gameStore';
 import { useBadgeStore } from '@/stores/badgeStore';
 import { usePremiumStore } from '@/stores/premiumStore';
-import { fetchUserStats } from '@/services/statsService';
+import { fetchUserStats, fetchWeeklyActivity } from '@/services/statsService';
 
 export default function ProfileScreen() {
   const { user, session, signOut } = useAuthStore();
@@ -26,6 +26,7 @@ export default function ProfileScreen() {
   const { isPremium, coins } = usePremiumStore();
   const { theme } = useThemeStore();
   const c = theme.colors;
+  const [weeklyActiveDates, setWeeklyActiveDates] = React.useState<string[]>([]);
 
   useFocusEffect(
     useCallback(() => {
@@ -35,6 +36,7 @@ export default function ProfileScreen() {
       });
       loadBadges(session.user.id);
       checkBadges(session.user.id);
+      fetchWeeklyActivity(session.user.id).then(setWeeklyActiveDates);
     }, [session?.user.id])
   );
 
@@ -106,7 +108,7 @@ export default function ProfileScreen() {
         </View>
 
         {/* Weekly activity calendar */}
-        <WeeklyCalendar streakDays={streakDays} c={c} />
+        <WeeklyCalendar activeDates={weeklyActiveDates} c={c} />
 
         {/* Actions */}
         <View style={styles.actionGrid}>
@@ -175,9 +177,16 @@ export default function ProfileScreen() {
 
 const DAY_LABELS = ['L', 'M', 'M', 'J', 'V', 'S', 'D'];
 
-function WeeklyCalendar({ streakDays, c }: { streakDays: number; c: any }) {
-  const today = new Date().getDay(); // 0=Sun..6=Sat → remap to Mon=0
-  const todayIdx = today === 0 ? 6 : today - 1;
+function WeeklyCalendar({ activeDates, c }: { activeDates: string[]; c: any }) {
+  // Build the last 7 calendar days (Mon–Sun order, starting from 6 days ago)
+  const days = Array.from({ length: 7 }, (_, i) => {
+    const d = new Date();
+    d.setDate(d.getDate() - (6 - i));
+    return d;
+  });
+  const todayStr = new Date().toISOString().split('T')[0];
+  const activeSet = new Set(activeDates);
+
   return (
     <View style={calStyles.container}>
       <View style={calStyles.titleRow}>
@@ -185,25 +194,26 @@ function WeeklyCalendar({ streakDays, c }: { streakDays: number; c: any }) {
         <Text style={[calStyles.title, { color: c.text }]}>Activité de la semaine</Text>
       </View>
       <View style={calStyles.row}>
-        {DAY_LABELS.map((label, i) => {
-          const isPast = i <= todayIdx;
-          const isToday = i === todayIdx;
-          const isActive = isPast && streakDays > todayIdx - i;
+        {days.map((date, i) => {
+          const dateStr = date.toISOString().split('T')[0];
+          const isToday = dateStr === todayStr;
+          const isActive = activeSet.has(dateStr);
+          const dayLabel = DAY_LABELS[date.getDay() === 0 ? 6 : date.getDay() - 1];
           return (
             <View key={i} style={calStyles.dayCol}>
               <View style={[
                 calStyles.dot,
-                { backgroundColor: isActive ? c.streakOrange : isToday ? c.border : 'transparent', borderColor: isToday ? c.streakOrange : c.border, borderWidth: 1 },
+                { backgroundColor: isActive ? c.streakOrange : 'transparent', borderColor: isToday ? c.streakOrange : c.border, borderWidth: 1 },
               ]}>
                 {isActive && <Ionicons name="flame" size={18} color="#fff" />}
               </View>
-              <Text style={[calStyles.label, { color: isToday ? c.streakOrange : c.textMuted }]}>{label}</Text>
+              <Text style={[calStyles.label, { color: isToday ? c.streakOrange : c.textMuted }]}>{dayLabel}</Text>
             </View>
           );
         })}
       </View>
       <Text style={[calStyles.streak, { color: c.streakOrange }]}>
-        {streakDays} jour{streakDays > 1 ? 's' : ''} de série !
+        {activeDates.length} jour{activeDates.length > 1 ? 's' : ''} actif{activeDates.length > 1 ? 's' : ''} cette semaine
       </Text>
     </View>
   );

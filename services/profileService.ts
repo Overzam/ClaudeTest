@@ -1,4 +1,6 @@
 import * as ImagePicker from 'expo-image-picker';
+import * as FileSystem from 'expo-file-system';
+import { decode } from 'base64-arraybuffer';
 import { supabase } from './supabase';
 import type { UserProfile, UserStats, UserBadge } from '@/types/database.types';
 
@@ -16,20 +18,23 @@ export async function pickAndUploadAvatar(userId: string): Promise<string | null
   if (result.canceled || !result.assets[0]) return null;
 
   const asset = result.assets[0];
-  const ext = asset.uri.split('.').pop() ?? 'jpg';
-  const path = `${userId}/avatar.${ext}`;
+  // Always store as jpeg for consistency
+  const path = `${userId}/avatar.jpg`;
 
-  const response = await fetch(asset.uri);
-  const blob = await response.blob();
-  const arrayBuffer = await new Response(blob).arrayBuffer();
+  // Read as base64 — reliable on both iOS and Android with file:// URIs
+  const base64 = await FileSystem.readAsStringAsync(asset.uri, {
+    encoding: FileSystem.EncodingType.Base64,
+  });
+  const arrayBuffer = decode(base64);
 
   const { error } = await supabase.storage
     .from('avatars')
-    .upload(path, arrayBuffer, { contentType: `image/${ext}`, upsert: true });
+    .upload(path, arrayBuffer, { contentType: 'image/jpeg', upsert: true });
 
   if (error) throw error;
 
   const { data } = supabase.storage.from('avatars').getPublicUrl(path);
+  // Cache-bust so the Image component reloads the new photo
   const publicUrl = data.publicUrl + `?t=${Date.now()}`;
 
   await supabase.from('users').update({ avatar_url: publicUrl }).eq('id', userId);
