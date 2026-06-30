@@ -1,6 +1,7 @@
 import React, { useCallback, useState } from 'react';
 import { FlatList, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { router, useFocusEffect } from 'expo-router';
+import { Ionicons } from '@expo/vector-icons';
 import { ScreenWrapper } from '@/components/ui/ScreenWrapper';
 import { useThemeStore } from '@/stores/themeStore';
 import { useProgressStore } from '@/stores/progressStore';
@@ -50,10 +51,11 @@ export default function RecipeBookScreen() {
   return (
     <ScreenWrapper>
       <View style={[styles.header, { borderBottomColor: c.border }]}>
-        <TouchableOpacity onPress={() => router.back()}>
-          <Text style={[styles.back, { color: c.primary }]}>← Retour</Text>
+        <TouchableOpacity onPress={() => router.back()} hitSlop={8}>
+          <Ionicons name="arrow-back" size={24} color={c.primary} />
         </TouchableOpacity>
-        <Text style={[styles.title, { color: c.text }]}>📖 Carnet de Recettes</Text>
+        <Ionicons name="book" size={22} color={c.primary} />
+        <Text style={[styles.title, { color: c.text }]}>Carnet de Recettes</Text>
       </View>
 
       {loading ? (
@@ -118,7 +120,6 @@ const styles = StyleSheet.create({
     padding: Layout.spacing.lg,
     borderBottomWidth: 1,
   },
-  back: { fontSize: Layout.fontSize.md, fontWeight: '600' },
   title: { fontSize: Layout.fontSize.xl, fontWeight: '900' },
   center: { flex: 1, alignItems: 'center', justifyContent: 'center', gap: Layout.spacing.md, padding: Layout.spacing.xl },
   loadingText: { fontSize: Layout.fontSize.md },

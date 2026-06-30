@@ -2,11 +2,22 @@ import React from 'react';
 import { ScrollView, StyleSheet, Text, View, TouchableOpacity } from 'react-native';
 import { useLocalSearchParams, router } from 'expo-router';
 import { LinearGradient } from 'expo-linear-gradient';
+import { Ionicons } from '@expo/vector-icons';
 import { ScreenWrapper } from '@/components/ui/ScreenWrapper';
 import { useThemeStore } from '@/stores/themeStore';
 import { RECIPES } from '@/constants/recipesData';
 import { LESSON_DETAILS } from '@/constants/pathsData';
 import { Layout } from '@/constants/Layout';
+
+function SectionHeader({ icon, label, color }: { icon: any; label: string; color: string }) {
+  return (
+    <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6, marginBottom: 2 }}>
+      <Ionicons name={icon} size={18} color={color} />
+      <Text style={[sectionHeaderStyle, { color }]}>{label}</Text>
+    </View>
+  );
+}
+const sectionHeaderStyle = { fontSize: 15, fontWeight: '800' as const };
 
 export default function RecipeDetailScreen() {
   const { lessonTitle } = useLocalSearchParams<{ lessonTitle: string }>();
@@ -29,8 +40,8 @@ export default function RecipeDetailScreen() {
     <ScreenWrapper>
       {/* Header */}
       <View style={[styles.header, { borderBottomColor: c.border }]}>
-        <TouchableOpacity onPress={() => router.back()}>
-          <Text style={[styles.back, { color: c.primary }]}>← Retour</Text>
+        <TouchableOpacity onPress={() => router.back()} hitSlop={8}>
+          <Ionicons name="arrow-back" size={24} color={c.primary} />
         </TouchableOpacity>
         <Text style={[styles.headerTitle, { color: c.text }]} numberOfLines={1}>{title}</Text>
       </View>
@@ -84,7 +95,7 @@ export default function RecipeDetailScreen() {
         {/* Ingredients */}
         {recipe && recipe.ingredients.length > 0 && (
           <View style={[styles.section, { backgroundColor: c.surfaceElevated, borderColor: c.border }]}>
-            <Text style={[styles.sectionTitle, { color: c.text }]}>🧄 Ingrédients</Text>
+            <SectionHeader icon="nutrition" label="Ingrédients" color={c.text} />
             <Text style={[styles.sectionSub, { color: c.textMuted }]}>Pour {recipe.servings} personne{recipe.servings > 1 ? 's' : ''}</Text>
             {recipe.ingredients.map((ing, i) => (
               <View key={i} style={[styles.ingRow, i < recipe.ingredients.length - 1 && { borderBottomColor: c.border, borderBottomWidth: 1 }]}>
@@ -102,7 +113,7 @@ export default function RecipeDetailScreen() {
         {/* Steps */}
         {recipe && recipe.steps.length > 0 && (
           <View style={[styles.section, { backgroundColor: c.surfaceElevated, borderColor: c.border }]}>
-            <Text style={[styles.sectionTitle, { color: c.text }]}>👨‍🍳 Étapes</Text>
+            <SectionHeader icon="list" label="Étapes" color={c.text} />
             {recipe.steps.map((step, i) => (
               <View key={i} style={styles.stepRow}>
                 <LinearGradient
@@ -120,7 +131,7 @@ export default function RecipeDetailScreen() {
         {/* Chef tip */}
         {(recipe?.chef_tip || lessonDetail?.chef_tip) && (
           <View style={[styles.section, { backgroundColor: c.primary + '10', borderColor: c.primary + '30' }]}>
-            <Text style={[styles.sectionTitle, { color: c.primary }]}>💡 Conseil du Chef</Text>
+            <SectionHeader icon="bulb" label="Conseil du Chef" color={c.primary} />
             <Text style={[styles.sectionText, { color: c.text }]}>{recipe?.chef_tip ?? lessonDetail?.chef_tip}</Text>
           </View>
         )}
@@ -128,7 +139,7 @@ export default function RecipeDetailScreen() {
         {/* Anecdote */}
         {(recipe?.anecdote || lessonDetail?.anecdote) && (
           <View style={[styles.section, { backgroundColor: c.surfaceElevated, borderColor: c.border }]}>
-            <Text style={[styles.sectionTitle, { color: c.text }]}>📖 Anecdote</Text>
+            <SectionHeader icon="book-outline" label="Anecdote" color={c.text} />
             <Text style={[styles.sectionText, { color: c.textMuted }]}>{recipe?.anecdote ?? lessonDetail?.anecdote}</Text>
           </View>
         )}
@@ -138,13 +149,13 @@ export default function RecipeDetailScreen() {
           <>
             {lessonDetail.cultural_note && (
               <View style={[styles.section, { backgroundColor: c.surfaceElevated, borderColor: c.border }]}>
-                <Text style={[styles.sectionTitle, { color: c.text }]}>🌍 Note Culturelle</Text>
+                <SectionHeader icon="globe-outline" label="Note Culturelle" color={c.text} />
                 <Text style={[styles.sectionText, { color: c.textMuted }]}>{lessonDetail.cultural_note}</Text>
               </View>
             )}
             {lessonDetail.ingredients.length > 0 && (
               <View style={[styles.section, { backgroundColor: c.surfaceElevated, borderColor: c.border }]}>
-                <Text style={[styles.sectionTitle, { color: c.text }]}>🧄 Ingrédients clés</Text>
+                <SectionHeader icon="nutrition" label="Ingrédients clés" color={c.text} />
                 {lessonDetail.ingredients.map((ing, i) => (
                   <View key={i} style={[styles.ingRow, i < lessonDetail.ingredients.length - 1 && { borderBottomColor: c.border, borderBottomWidth: 1 }]}>
                     <Text style={styles.ingEmoji}>{ing.emoji}</Text>
@@ -183,7 +194,6 @@ const styles = StyleSheet.create({
     padding: Layout.spacing.lg,
     borderBottomWidth: 1,
   },
-  back: { fontSize: Layout.fontSize.md, fontWeight: '600' },
   headerTitle: { flex: 1, fontSize: Layout.fontSize.lg, fontWeight: '800' },
   content: { padding: Layout.spacing.lg, gap: Layout.spacing.md, paddingBottom: 48 },
   hero: {
