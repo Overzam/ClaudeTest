@@ -17,6 +17,13 @@ import { fetchUserStats } from '@/services/statsService';
 import { DuoCuistot } from '@/components/mascot/DuoCuistot';
 import type { Path, Lesson } from '@/types/database.types';
 
+function todayLocalDate(): string {
+  const d = new Date();
+  const mm = String(d.getMonth() + 1).padStart(2, '0');
+  const dd = String(d.getDate()).padStart(2, '0');
+  return `${d.getFullYear()}-${mm}-${dd}`;
+}
+
 function getGreeting(username: string | undefined): { text: string; sub: string } {
   const hour = new Date().getHours();
   const name = username ? ` ${username}` : '';
@@ -173,8 +180,10 @@ export default function HomeScreen() {
           </TouchableOpacity>
         )}
 
-        {/* Streak at risk banner (evening warning) */}
-        {gameStore.streakDays > 0 && new Date().getHours() >= 18 && (
+        {/* Streak at risk banner (evening warning) — only if today's lesson isn't done yet */}
+        {gameStore.streakDays > 0 &&
+          new Date().getHours() >= 18 &&
+          gameStore.lastActivityDate !== todayLocalDate() && (
           <TouchableOpacity
             style={[styles.streakWarning, { backgroundColor: '#FF6B2B' + '18', borderColor: '#FF6B2B' + '40' }]}
             onPress={() => nextLesson && router.push({ pathname: '/lesson/[lessonId]', params: { lessonId: nextLesson.lesson.id, lessonTitle: nextLesson.lesson.title } })}
