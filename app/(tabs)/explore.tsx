@@ -64,14 +64,14 @@ export default function ExploreScreen() {
       <ScreenWrapper>
         <View style={[styles.pathHeader, { backgroundColor: activePath.color + '18' }]}>
           <TouchableOpacity onPress={() => { setSelectedPath(null); setLessonSearch(''); }} style={styles.backBtn}>
-            <Text style={[styles.backText, { color: c.primary }]}>{String.fromCharCode(0x2190)} Parcours</Text>
+            <Text style={[styles.backText, { color: c.primary }]}>← Parcours</Text>
           </TouchableOpacity>
           <View style={styles.pathMeta}>
             <Text style={styles.pathEmoji}>{activePath.emoji}</Text>
             <View style={styles.pathInfo}>
               <Text style={[styles.pathTitle, { color: c.text }]}>{activePath.title}</Text>
               <Text style={[styles.pathStats, { color: c.textSecondary }]}>
-                {completed}/{allLessons.length} le{String.fromCharCode(0xE7)}ons termin{String.fromCharCode(0xE9)}es
+                {completed}/{allLessons.length} leçons terminées
               </Text>
               <View style={[styles.progressTrack, { backgroundColor: c.border }]}>
                 <View style={[styles.progressFill, { width: `${progress * 100}%`, backgroundColor: activePath.color }]} />
@@ -82,14 +82,14 @@ export default function ExploreScreen() {
             style={[styles.detailBtn, { borderColor: activePath.color, backgroundColor: activePath.color + '10' }]}
             onPress={() => router.push({ pathname: '/path/[slug]', params: { slug: activePath.slug } })}
           >
-            <Text style={[styles.detailBtnText, { color: activePath.color }]}>{String.fromCharCode(0xC0)} propos de ce parcours {String.fromCharCode(0x2192)}</Text>
+            <Text style={[styles.detailBtnText, { color: activePath.color }]}>À propos de ce parcours →</Text>
           </TouchableOpacity>
 
           <View style={[styles.lessonSearchBox, { backgroundColor: c.surfaceElevated, borderColor: c.border }]}>
             <Ionicons name="search" size={14} color={c.textMuted} />
             <TextInput
               style={[styles.lessonSearchInput, { color: c.text }]}
-              placeholder="Rechercher une le{String.fromCharCode(0xE7)}on{String.fromCharCode(0x2026)}"
+              placeholder="Rechercher une leçon…"
               placeholderTextColor={c.textMuted}
               value={lessonSearch}
               onChangeText={setLessonSearch}
@@ -106,8 +106,8 @@ export default function ExploreScreen() {
           {lessons.length === 0 && lessonSearch.trim() ? (
             <View style={{ alignItems: 'center', paddingTop: 40, gap: 8 }}>
               <Text style={{ fontSize: 32 }}>{String.fromCodePoint(0x1F50D)}</Text>
-              <Text style={{ fontSize: Layout.fontSize.md, fontWeight: '700', color: c.text }}>Aucune le{String.fromCharCode(0xE7)}on trouv{String.fromCharCode(0xE9)}e</Text>
-              <Text style={{ fontSize: Layout.fontSize.sm, color: c.textMuted }}>Essaie un autre mot-cl{String.fromCharCode(0xE9)}.</Text>
+              <Text style={{ fontSize: Layout.fontSize.md, fontWeight: '700', color: c.text }}>Aucune leçon trouvée</Text>
+              <Text style={{ fontSize: Layout.fontSize.sm, color: c.textMuted }}>Essaie un autre mot-clé.</Text>
             </View>
           ) : null}
           {(() => {
@@ -175,7 +175,7 @@ export default function ExploreScreen() {
                             })
                           }
                         >
-                          <Text style={[styles.ingTagText, { color: activePath.color }]}>{String.fromCodePoint(0x1F9C4)} Ingr{String.fromCharCode(0xE9)}dients</Text>
+                          <Text style={[styles.ingTagText, { color: activePath.color }]}>🧄 Ingrédients</Text>
                         </TouchableOpacity>
                       )}
                     </View>
@@ -206,7 +206,7 @@ export default function ExploreScreen() {
           <Ionicons name="search" size={16} color={c.textMuted} />
           <TextInput
             style={[styles.searchInput, { color: c.text }]}
-            placeholder="Rechercher un parcours{String.fromCharCode(0x2026)}"
+            placeholder="Rechercher un parcours…"
             placeholderTextColor={c.textMuted}
             value={search}
             onChangeText={setSearch}
@@ -259,7 +259,7 @@ export default function ExploreScreen() {
                   <View style={styles.progressTrackWhite}>
                     <View style={[styles.progressFillWhite, { width: `${progress * 100}%` }]} />
                   </View>
-                  <Text style={styles.pathCardCount}>{completed}/{lessons.length} le{String.fromCharCode(0xE7)}ons</Text>
+                  <Text style={styles.pathCardCount}>{completed}/{lessons.length} leçons</Text>
                 </View>
               </View>
             </TouchableOpacity>
