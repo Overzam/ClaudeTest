@@ -41,6 +41,7 @@ export function Button({ label, onPress, variant = 'primary', disabled, loading,
 
   return (
     <Pressable
+      collapsable={false}
       style={({ pressed }) => [
         styles.base,
         { backgroundColor: bgMap[variant] },
@@ -51,13 +52,13 @@ export function Button({ label, onPress, variant = 'primary', disabled, loading,
       ]}
       onPress={onPress}
       disabled={disabled || loading}
-      hitSlop={8}
+      hitSlop={12}
       android_ripple={{ color: colorMap[variant] + '30' }}
     >
       {loading ? (
         <ActivityIndicator color={colorMap[variant]} />
       ) : (
-        <Text style={[styles.text, { color: colorMap[variant] }, textStyle]}>{label}</Text>
+        <Text style={[styles.text, { color: colorMap[variant] }, textStyle]} pointerEvents="none">{label}</Text>
       )}
     </Pressable>
   );

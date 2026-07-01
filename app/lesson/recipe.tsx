@@ -232,12 +232,13 @@ export default function RecipeScreen() {
       {/* CTA flottant */}
       <View style={[styles.cta, { backgroundColor: c.background, paddingBottom: insets.bottom + 12, borderTopColor: c.border }]}>
         <Pressable
+          collapsable={false}
           style={({ pressed }) => [styles.ctaBtn, { backgroundColor: c.primary }, pressed && { opacity: 0.85 }]}
           onPress={goToComplete}
-          hitSlop={8}
+          hitSlop={12}
           android_ripple={{ color: '#ffffff30' }}
         >
-          <Text style={styles.ctaBtnText}>🎉 Voir mes résultats</Text>
+          <Text style={styles.ctaBtnText} pointerEvents="none">🎉 Voir mes résultats</Text>
         </Pressable>
       </View>
     </View>

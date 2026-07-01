@@ -85,6 +85,7 @@ export function FillInBlank({ question, data, onSubmit }: Props) {
 
       <View style={[styles.footer, { borderTopColor: c.border }]}>
         <Pressable
+          collapsable={false}
           style={({ pressed }) => [
             styles.button,
             { backgroundColor: value ? c.primary : c.border },
@@ -92,10 +93,10 @@ export function FillInBlank({ question, data, onSubmit }: Props) {
           ]}
           onPress={handleVerify}
           disabled={!value}
-          hitSlop={8}
+          hitSlop={12}
           android_ripple={{ color: '#ffffff30' }}
         >
-          <Text style={styles.buttonText}>Vérifier</Text>
+          <Text style={styles.buttonText} pointerEvents="none">Vérifier</Text>
         </Pressable>
       </View>
     </View>
