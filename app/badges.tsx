@@ -8,12 +8,29 @@ import { useThemeStore } from '@/stores/themeStore';
 import { Layout } from '@/constants/Layout';
 import { useAuthStore } from '@/stores/authStore';
 import { useBadgeStore } from '@/stores/badgeStore';
+import { useGameStore } from '@/stores/gameStore';
 import { fetchAllBadges } from '@/services/badgeService';
 import type { Badge } from '@/types/database.types';
+
+function progressFor(badge: Badge, stats: { xp: number; streakDays: number; lessonsCompleted: number }) {
+  switch (badge.condition_type) {
+    case 'lessons_completed':
+      return { current: stats.lessonsCompleted, target: badge.condition_value };
+    case 'first_lesson':
+      return { current: Math.min(stats.lessonsCompleted, 1), target: 1 };
+    case 'streak_days':
+      return { current: stats.streakDays, target: badge.condition_value };
+    case 'xp_total':
+      return { current: stats.xp, target: badge.condition_value };
+    default:
+      return null;
+  }
+}
 
 export default function BadgesScreen() {
   const { session } = useAuthStore();
   const { userBadges, loadBadges } = useBadgeStore();
+  const { xp, streakDays, lessonsCompleted } = useGameStore();
   const [allBadges, setAllBadges] = useState<Badge[]>([]);
   const [loading, setLoading] = useState(true);
   const { theme } = useThemeStore();
@@ -53,7 +70,16 @@ export default function BadgesScreen() {
         contentContainerStyle={styles.grid}
         renderItem={({ item }) => {
           const ub = earnedMap[item.id];
-          return <BadgeCard badge={item} earned={!!ub} earnedAt={ub?.earned_at} />;
+          const progress = progressFor(item, { xp, streakDays, lessonsCompleted });
+          return (
+            <BadgeCard
+              badge={item}
+              earned={!!ub}
+              earnedAt={ub?.earned_at}
+              progressCurrent={progress?.current}
+              progressTarget={progress?.target}
+            />
+          );
         }}
       />
     </ScreenWrapper>

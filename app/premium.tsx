@@ -21,7 +21,7 @@ export default function PremiumScreen() {
   const { t } = useTranslation();
   const { theme } = useThemeStore();
   const c = theme.colors;
-  const { isPremium, setPlan } = usePremiumStore();
+  const { isPremium, setPlan, planExpiresAt, plan } = usePremiumStore();
   const [selected, setSelected] = useState<PlanOption>('yearly');
   const [loading, setLoading] = useState(false);
 
@@ -37,12 +37,23 @@ export default function PremiumScreen() {
   }
 
   if (isPremium()) {
+    const daysLeft = planExpiresAt
+      ? Math.max(0, Math.ceil((new Date(planExpiresAt).getTime() - Date.now()) / 86400000))
+      : 0;
     return (
       <ScreenWrapper>
         <View style={styles.alreadyPremium}>
           <Text style={styles.bigEmoji}>✨</Text>
           <Text style={[styles.title, { color: c.text }]}>{t('premium.title')}</Text>
           <Text style={[styles.alreadyText, { color: c.textMuted }]}>{t('premium.alreadyPremium')}</Text>
+          <View style={[styles.expiryBox, { backgroundColor: c.primary + '15', borderColor: c.primary }]}>
+            <Text style={[styles.expiryPlan, { color: c.primary }]}>
+              {plan === 'yearly' ? t('premium.yearly') : t('premium.monthly')}
+            </Text>
+            <Text style={[styles.expiryDays, { color: c.text }]}>
+              {daysLeft} jour{daysLeft > 1 ? 's' : ''} restant{daysLeft > 1 ? 's' : ''}
+            </Text>
+          </View>
           <Button label={t('common.back')} onPress={() => router.back()} variant="ghost" />
         </View>
       </ScreenWrapper>
@@ -140,4 +151,7 @@ const styles = StyleSheet.create({
   legal: { fontSize: 11, textAlign: 'center', marginTop: Layout.spacing.sm },
   alreadyPremium: { flex: 1, alignItems: 'center', justifyContent: 'center', gap: Layout.spacing.lg, padding: Layout.spacing.xl },
   alreadyText: { fontSize: Layout.fontSize.md, textAlign: 'center' },
+  expiryBox: { borderWidth: 1, borderRadius: Layout.radius.lg, paddingVertical: Layout.spacing.md, paddingHorizontal: Layout.spacing.xl, alignItems: 'center', gap: 2 },
+  expiryPlan: { fontSize: Layout.fontSize.sm, fontWeight: '700' },
+  expiryDays: { fontSize: Layout.fontSize.lg, fontWeight: '900' },
 });
