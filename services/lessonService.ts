@@ -75,14 +75,22 @@ export async function submitLessonProgress(
     return;
   }
   if (!isSupabaseConfigured) return;
-  const { error } = await supabase.from('user_progress').upsert({
-    user_id: userId,
-    lesson_id: lessonId,
-    path_id: _pathId,
-    status: 'completed',
-    score: _score,
-    completed_at: new Date().toISOString(),
-  });
+  // user_progress has a UNIQUE(user_id, lesson_id) constraint distinct from
+  // its primary key — without onConflict, upsert() targets the PK by
+  // default, so it tries to INSERT a duplicate row and fails once a row
+  // already exists for this lesson (e.g. after unlockNextLesson set it to
+  // 'available').
+  const { error } = await supabase.from('user_progress').upsert(
+    {
+      user_id: userId,
+      lesson_id: lessonId,
+      path_id: _pathId,
+      status: 'completed',
+      score: _score,
+      completed_at: new Date().toISOString(),
+    },
+    { onConflict: 'user_id,lesson_id' }
+  );
   if (error) throw error;
 }
 
@@ -108,12 +116,15 @@ export async function unlockNextLesson(
 
   if (!nextLesson) return;
 
-  await supabase.from('user_progress').upsert({
-    user_id: userId,
-    lesson_id: nextLesson.id,
-    path_id: pathId,
-    status: 'available',
-  });
+  await supabase.from('user_progress').upsert(
+    {
+      user_id: userId,
+      lesson_id: nextLesson.id,
+      path_id: pathId,
+      status: 'available',
+    },
+    { onConflict: 'user_id,lesson_id' }
+  );
 
   // Update local state immediately so UI reflects unlock without waiting for next loadProgress
   useProgressStore.getState().unlockLesson(nextLesson.id);
