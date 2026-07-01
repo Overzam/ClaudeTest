@@ -22,7 +22,7 @@ export function BadgeCard({ badge, earned = false, earnedAt, progressCurrent, pr
   const isClose = showProgress && ratio >= 0.5;
 
   return (
-    <Card style={[styles.card, !earned && styles.locked, isClose && { opacity: 0.75, borderColor: c.primary, borderWidth: 1 }, style]}>
+    <Card style={[styles.card, !earned && styles.locked, isClose && { opacity: 0.75, borderColor: c.primary, borderWidth: 1 }, style] as ViewStyle}>
       <Text style={styles.emoji}>{badge.emoji}</Text>
       <Text style={[styles.title, { color: earned ? c.text : c.textMuted }]} numberOfLines={1}>
         {badge.title}

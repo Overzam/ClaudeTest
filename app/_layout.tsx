@@ -11,6 +11,14 @@ import { usePremiumStore } from '@/stores/premiumStore';
 import { useSettingsStore } from '@/stores/settingsStore';
 import i18n, { getSavedLanguage } from '@/i18n';
 import * as Notifications from 'expo-notifications';
+import { initAds } from '@/services/adsService';
+import {
+  initPurchases,
+  getCustomerInfo,
+  isEntitlementActive,
+  entitlementExpiryDate,
+  onCustomerInfoUpdate,
+} from '@/services/purchasesService';
 
 Notifications.setNotificationHandler({
   handleNotification: async () => ({
@@ -28,15 +36,28 @@ export default function RootLayout() {
   const loadProgress = useProgressStore((s) => s.loadProgress);
   const regenHearts = useGameStore((s) => s.regenHearts);
   const checkExpiry = usePremiumStore((s) => s.checkExpiry);
+  const syncFromEntitlement = usePremiumStore((s) => s.syncFromEntitlement);
   const { language } = useSettingsStore();
 
   useEffect(() => {
     initialize();
     getSavedLanguage().then((lang) => i18n.changeLanguage(lang));
+    initAds().catch(() => {});
   }, []);
 
   useEffect(() => {
     if (session?.user?.id) loadProgress(session.user.id);
+  }, [session?.user?.id]);
+
+  useEffect(() => {
+    if (!session?.user?.id) return;
+    initPurchases(session.user.id);
+    getCustomerInfo()
+      .then((info) => syncFromEntitlement(isEntitlementActive(info), entitlementExpiryDate(info)))
+      .catch(() => {});
+    return onCustomerInfoUpdate((info) =>
+      syncFromEntitlement(isEntitlementActive(info), entitlementExpiryDate(info))
+    );
   }, [session?.user?.id]);
 
   useEffect(() => {

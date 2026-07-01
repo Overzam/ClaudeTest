@@ -9,6 +9,7 @@ import { usePremiumStore, SHOP_ITEMS } from '@/stores/premiumStore';
 import { useGameStore } from '@/stores/gameStore';
 import { MAX_HEARTS } from '@/constants/Config';
 import { useTranslation } from 'react-i18next';
+import { showRewardedAd } from '@/services/adsService';
 
 function formatCooldown(seconds: number): string {
   const m = Math.floor(seconds / 60);
@@ -20,10 +21,11 @@ export default function ShopScreen() {
   const { t } = useTranslation();
   const { theme } = useThemeStore();
   const c = theme.colors;
-  const { coins, spendCoins, isPremium, activateXPBoost, watchAd, adCooldownSecondsLeft, xpBoostMultiplier, xpBoostExpiresAt } = usePremiumStore();
+  const { coins, spendCoins, isPremium, activateXPBoost, grantAdReward, canWatchAd, adCooldownSecondsLeft, xpBoostMultiplier, xpBoostExpiresAt } = usePremiumStore();
   const { hearts } = useGameStore();
   const premium = isPremium();
   const [now, setNow] = useState(Date.now());
+  const [loadingAd, setLoadingAd] = useState(false);
 
   useEffect(() => {
     const id = setInterval(() => setNow(Date.now()), 1000);
@@ -55,12 +57,25 @@ export default function ShopScreen() {
     }
   }
 
-  function handleWatchAd() {
-    if (!watchAd()) {
+  async function handleWatchAd() {
+    if (!canWatchAd()) {
       Alert.alert('Pas encore disponible', `Reviens dans ${formatCooldown(cooldownLeft)} pour regarder une nouvelle pub.`);
       return;
     }
-    Alert.alert('🎉 +25 pièces !', 'Merci d\'avoir regardé la pub.');
+    setLoadingAd(true);
+    try {
+      const earned = await showRewardedAd();
+      if (earned) {
+        grantAdReward();
+        Alert.alert('🎉 +25 pièces !', 'Merci d\'avoir regardé la pub.');
+      } else {
+        Alert.alert('Pub non terminée', 'Regarde la pub jusqu\'au bout pour recevoir tes pièces.');
+      }
+    } catch {
+      Alert.alert('Erreur', 'Impossible de charger une pub pour le moment. Réessaie plus tard.');
+    } finally {
+      setLoadingAd(false);
+    }
   }
 
   return (
@@ -93,12 +108,12 @@ export default function ShopScreen() {
         <Card style={styles.freeCoinsCard}>
           <Text style={[styles.freeCoinsText, { color: c.text }]}>{t('shop.freeCoins')}</Text>
           <TouchableOpacity
-            style={[styles.watchBtn, { backgroundColor: cooldownLeft > 0 ? c.border : c.xpBlue }]}
+            style={[styles.watchBtn, { backgroundColor: cooldownLeft > 0 || loadingAd ? c.border : c.xpBlue }]}
             onPress={handleWatchAd}
-            disabled={cooldownLeft > 0}
+            disabled={cooldownLeft > 0 || loadingAd}
           >
             <Text style={styles.watchBtnText}>
-              {cooldownLeft > 0 ? formatCooldown(cooldownLeft) : `${t('shop.watch')} 🎥`}
+              {loadingAd ? '…' : cooldownLeft > 0 ? formatCooldown(cooldownLeft) : `${t('shop.watch')} 🎥`}
             </Text>
           </TouchableOpacity>
         </Card>

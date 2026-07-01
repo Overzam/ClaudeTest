@@ -37,10 +37,12 @@ interface PremiumState {
   adCooldownSecondsLeft: () => number;
 
   // Actions
-  setPlan: (plan: PlanType, expiresAt: string) => void;
+  setPlan: (plan: PlanType, expiresAt: string | null) => void;
+  syncFromEntitlement: (active: boolean, expiresAt: string | null, planHint?: PlanType) => void;
   addCoins: (amount: number) => void;
   spendCoins: (amount: number) => boolean;
-  watchAd: () => boolean;
+  /** Call once a rewarded ad has actually finished playing (see adsService.showRewardedAd). */
+  grantAdReward: () => void;
   activateXPBoost: (multiplier: number, durationHours?: number) => void;
   checkExpiry: () => void;
   reset: () => void;
@@ -66,10 +68,8 @@ export const usePremiumStore = create<PremiumState>()(
         return Math.max(0, Math.ceil(remainingMs / 1000));
       },
 
-      watchAd: () => {
-        if (!get().canWatchAd()) return false;
+      grantAdReward: () => {
         set((s) => ({ coins: s.coins + 25, lastAdWatchAt: new Date().toISOString() }));
-        return true;
       },
 
       isPremium: () => {
@@ -87,6 +87,17 @@ export const usePremiumStore = create<PremiumState>()(
       },
 
       setPlan: (plan, expiresAt) => set({ plan, planExpiresAt: expiresAt }),
+
+      /** Reconciles local state with RevenueCat's source of truth. Call after
+       * purchase, restore, app foreground, and on the CustomerInfo listener. */
+      syncFromEntitlement: (active: boolean, expiresAt: string | null, planHint?: PlanType) => {
+        if (!active) {
+          set({ plan: 'free', planExpiresAt: null });
+          return;
+        }
+        const currentPlan = get().plan;
+        set({ plan: planHint ?? (currentPlan === 'free' ? 'monthly' : currentPlan), planExpiresAt: expiresAt });
+      },
 
       addCoins: (amount) => set((s) => ({ coins: s.coins + amount })),
 
