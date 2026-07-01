@@ -9,6 +9,7 @@ import { signUp } from '@/services/authService';
 import { requestNotificationPermissions, scheduleStreakReminder } from '@/services/notificationService';
 import { useAuthStore, GUEST_USER_ID } from '@/stores/authStore';
 import { useProgressStore } from '@/stores/progressStore';
+import { friendlyAuthError } from '@/utils/errorMessages';
 
 export default function SignupScreen() {
   const [email, setEmail] = useState('');
@@ -32,7 +33,7 @@ export default function SignupScreen() {
       if (granted) await scheduleStreakReminder();
       router.replace('/(tabs)');
     } catch (e: unknown) {
-      Alert.alert('Erreur', e instanceof Error ? e.message : 'Inscription impossible');
+      Alert.alert('Erreur', friendlyAuthError(e));
     } finally {
       setLoading(false);
     }

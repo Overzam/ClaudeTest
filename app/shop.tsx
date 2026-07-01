@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Alert, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import * as Haptics from 'expo-haptics';
 import { router } from 'expo-router';
 import { ScreenWrapper } from '@/components/ui/ScreenWrapper';
 import { Card } from '@/components/ui/Card';
@@ -40,13 +41,16 @@ export default function ShopScreen() {
     const item = SHOP_ITEMS.find((i) => i.id === itemId);
     if (!item) return;
     if (item.type === 'hearts' && hearts >= MAX_HEARTS) {
+      Haptics.notificationAsync(Haptics.NotificationFeedbackType.Warning);
       Alert.alert('Cœurs déjà au maximum', `Tu as déjà ${MAX_HEARTS} cœurs.`);
       return;
     }
     if (!spendCoins(item.coinCost)) {
+      Haptics.notificationAsync(Haptics.NotificationFeedbackType.Warning);
       Alert.alert('Pas assez de pièces', `Il te faut ${item.coinCost} pièces.`);
       return;
     }
+    Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
     if (item.type === 'hearts') {
       const toAdd = Math.min(item.amount, MAX_HEARTS - hearts);
       useGameStore.setState((s) => ({ hearts: Math.min(MAX_HEARTS, s.hearts + toAdd) }));
@@ -62,11 +66,13 @@ export default function ShopScreen() {
       Alert.alert('Pas encore disponible', `Reviens dans ${formatCooldown(cooldownLeft)} pour regarder une nouvelle pub.`);
       return;
     }
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
     setLoadingAd(true);
     try {
       const earned = await showRewardedAd();
       if (earned) {
         grantAdReward();
+        Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
         Alert.alert('🎉 +25 pièces !', 'Merci d\'avoir regardé la pub.');
       } else {
         Alert.alert('Pub non terminée', 'Regarde la pub jusqu\'au bout pour recevoir tes pièces.');

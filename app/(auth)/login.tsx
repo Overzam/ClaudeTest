@@ -9,6 +9,7 @@ import { useProgressStore } from '@/stores/progressStore';
 import { Layout } from '@/constants/Layout';
 import { signIn } from '@/services/authService';
 import { GUEST_USER_ID } from '@/stores/authStore';
+import { friendlyAuthError } from '@/utils/errorMessages';
 
 export default function LoginScreen() {
   const [email, setEmail] = useState('');
@@ -26,14 +27,9 @@ export default function LoginScreen() {
       await signIn(email.trim(), password);
       router.replace('/(tabs)');
     } catch (e: unknown) {
-      const msg = e instanceof Error ? e.message : 'Connexion impossible';
-      const isConfirm = msg.toLowerCase().includes('confirm') || msg.toLowerCase().includes('email not confirmed');
-      Alert.alert(
-        isConfirm ? 'Email non confirmé' : 'Erreur',
-        isConfirm
-          ? 'Tu dois confirmer ton adresse email avant de te connecter. Vérifie ta boîte mail (et les spams).'
-          : msg
-      );
+      const rawMsg = e instanceof Error ? e.message.toLowerCase() : '';
+      const isConfirm = rawMsg.includes('confirm');
+      Alert.alert(isConfirm ? 'Email non confirmé' : 'Erreur', friendlyAuthError(e));
     } finally {
       setLoading(false);
     }

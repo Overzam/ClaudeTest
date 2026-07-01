@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { ActivityIndicator, Alert, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
+import * as Haptics from 'expo-haptics';
 import { router } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { ScreenWrapper } from '@/components/ui/ScreenWrapper';
@@ -57,9 +58,11 @@ export default function EditProfileScreen() {
       if (url) {
         setAvatarUrl(url);
         setUser({ ...user!, avatar_url: url });
+        Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
       }
-    } catch (e: any) {
-      Alert.alert('Erreur', e.message ?? 'Impossible de télécharger la photo');
+    } catch (e) {
+      console.warn('[EditProfile] avatar upload error:', e);
+      Alert.alert('Erreur', 'Impossible de télécharger la photo. Réessaie dans un instant.');
     } finally {
       setUploadingPhoto(false);
     }
@@ -72,9 +75,11 @@ export default function EditProfileScreen() {
     try {
       await updateUsername(userId, username.trim());
       setUser({ ...user!, username: username.trim() });
+      Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
       router.back();
-    } catch (e: any) {
-      Alert.alert('Erreur', e.message ?? 'Impossible de sauvegarder');
+    } catch (e) {
+      console.warn('[EditProfile] username save error:', e);
+      Alert.alert('Erreur', 'Impossible de sauvegarder ce pseudo. Réessaie dans un instant.');
     } finally {
       setSavingUsername(false);
     }

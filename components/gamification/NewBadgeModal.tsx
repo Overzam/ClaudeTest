@@ -1,5 +1,6 @@
 import React, { useEffect, useRef } from 'react';
-import { Animated, Modal, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { Animated, Modal, Pressable, StyleSheet, Text } from 'react-native';
+import * as Haptics from 'expo-haptics';
 import { useThemeStore } from '@/stores/themeStore';
 import { Layout } from '@/constants/Layout';
 import type { Badge } from '@/types/database.types';
@@ -17,6 +18,7 @@ export function NewBadgeModal({ badge, onClose }: Props) {
 
   useEffect(() => {
     if (badge) {
+      Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
       Animated.parallel([
         Animated.spring(scale, { toValue: 1, useNativeDriver: true, tension: 60, friction: 7 }),
         Animated.timing(opacity, { toValue: 1, duration: 200, useNativeDriver: true }),
@@ -37,9 +39,15 @@ export function NewBadgeModal({ badge, onClose }: Props) {
           <Text style={styles.emoji}>{badge.emoji}</Text>
           <Text style={[styles.title, { color: c.text }]}>{badge.title}</Text>
           <Text style={[styles.desc, { color: c.textMuted }]}>{badge.description}</Text>
-          <TouchableOpacity style={[styles.btn, { backgroundColor: c.primary }]} onPress={onClose}>
-            <Text style={styles.btnText}>Super !</Text>
-          </TouchableOpacity>
+          <Pressable
+            collapsable={false}
+            style={({ pressed }) => [styles.btn, { backgroundColor: c.primary }, pressed && { opacity: 0.85 }]}
+            onPress={onClose}
+            hitSlop={12}
+            android_ripple={{ color: '#ffffff30' }}
+          >
+            <Text style={styles.btnText} pointerEvents="none">Super !</Text>
+          </Pressable>
         </Animated.View>
       </Animated.View>
     </Modal>

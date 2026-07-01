@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Alert, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import * as Haptics from 'expo-haptics';
 import { router } from 'expo-router';
 import type { PurchasesOffering, PurchasesPackage } from 'react-native-purchases';
 import { ScreenWrapper } from '@/components/ui/ScreenWrapper';
@@ -63,12 +64,14 @@ export default function PremiumScreen() {
       const active = isEntitlementActive(info);
       syncFromEntitlement(active, entitlementExpiryDate(info), selected);
       if (active) {
+        Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
         Alert.alert('✨ Bienvenue Premium !', 'Profite de tous tes avantages.', [
           { text: 'Super !', onPress: () => router.back() },
         ]);
       }
     } catch (e: any) {
       if (!e?.userCancelled) {
+        Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
         Alert.alert('Erreur', 'L\'achat n\'a pas pu être finalisé. Réessaie plus tard.');
       }
     } finally {
