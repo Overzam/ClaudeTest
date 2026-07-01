@@ -1,6 +1,6 @@
 import React from 'react';
 import {
-  TouchableOpacity,
+  Pressable,
   Text,
   StyleSheet,
   ActivityIndicator,
@@ -40,29 +40,32 @@ export function Button({ label, onPress, variant = 'primary', disabled, loading,
   };
 
   return (
-    <TouchableOpacity
-      style={[
+    <Pressable
+      style={({ pressed }) => [
         styles.base,
         { backgroundColor: bgMap[variant] },
         variant === 'ghost' && { borderWidth: 2, borderColor: c.primary },
         (disabled || loading) && styles.disabled,
+        pressed && !disabled && !loading && styles.pressed,
         style,
       ]}
       onPress={onPress}
       disabled={disabled || loading}
-      activeOpacity={0.85}
+      hitSlop={8}
+      android_ripple={{ color: colorMap[variant] + '30' }}
     >
       {loading ? (
         <ActivityIndicator color={colorMap[variant]} />
       ) : (
         <Text style={[styles.text, { color: colorMap[variant] }, textStyle]}>{label}</Text>
       )}
-    </TouchableOpacity>
+    </Pressable>
   );
 }
 
 const styles = StyleSheet.create({
   base: {
+    width: '100%',
     paddingVertical: Layout.spacing.md,
     paddingHorizontal: Layout.spacing.xl,
     borderRadius: Layout.radius.xl,
@@ -71,5 +74,6 @@ const styles = StyleSheet.create({
     minHeight: 52,
   },
   disabled: { opacity: 0.5 },
+  pressed: { opacity: 0.85 },
   text: { fontSize: Layout.fontSize.md, fontWeight: '700' },
 });

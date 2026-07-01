@@ -1,5 +1,5 @@
 import React, { useState, useRef } from 'react';
-import { Keyboard, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
+import { Keyboard, Pressable, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
 import { useThemeStore } from '@/stores/themeStore';
 import { Layout } from '@/constants/Layout';
 import type { FillInBlankData } from '@/types/lesson.types';
@@ -84,14 +84,19 @@ export function FillInBlank({ question, data, onSubmit }: Props) {
       </ScrollView>
 
       <View style={[styles.footer, { borderTopColor: c.border }]}>
-        <TouchableOpacity
-          style={[styles.button, { backgroundColor: value ? c.primary : c.border }]}
+        <Pressable
+          style={({ pressed }) => [
+            styles.button,
+            { backgroundColor: value ? c.primary : c.border },
+            pressed && !!value && { opacity: 0.85 },
+          ]}
           onPress={handleVerify}
           disabled={!value}
-          activeOpacity={0.85}
+          hitSlop={8}
+          android_ripple={{ color: '#ffffff30' }}
         >
           <Text style={styles.buttonText}>Vérifier</Text>
-        </TouchableOpacity>
+        </Pressable>
       </View>
     </View>
   );
