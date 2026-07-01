@@ -53,7 +53,9 @@ export default function RootLayout() {
     if (!session?.user?.id) return;
     initPurchases(session.user.id);
     getCustomerInfo()
-      .then((info) => syncFromEntitlement(isEntitlementActive(info), entitlementExpiryDate(info)))
+      .then((info) => {
+        if (info) syncFromEntitlement(isEntitlementActive(info), entitlementExpiryDate(info));
+      })
       .catch(() => {});
     return onCustomerInfoUpdate((info) =>
       syncFromEntitlement(isEntitlementActive(info), entitlementExpiryDate(info))

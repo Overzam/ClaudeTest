@@ -8,8 +8,15 @@ import {
 
 let configured = false;
 
+// True once REVENUECAT_API_KEY_IOS/ANDROID in constants/Config.ts have been
+// replaced with real keys from the RevenueCat dashboard.
+function hasRealApiKey(): boolean {
+  const apiKey = Platform.OS === 'ios' ? REVENUECAT_API_KEY_IOS : REVENUECAT_API_KEY_ANDROID;
+  return !apiKey.includes('XXXX');
+}
+
 export function initPurchases(appUserId?: string) {
-  if (configured) return;
+  if (configured || !hasRealApiKey()) return;
   const apiKey = Platform.OS === 'ios' ? REVENUECAT_API_KEY_IOS : REVENUECAT_API_KEY_ANDROID;
   if (__DEV__) Purchases.setLogLevel(LOG_LEVEL.DEBUG);
   Purchases.configure({ apiKey, appUserID: appUserId });
@@ -27,6 +34,7 @@ export function logOutPurchases() {
 }
 
 export async function getOfferings(): Promise<PurchasesOffering | null> {
+  if (!configured) return null;
   const offerings = await Purchases.getOfferings();
   return offerings.current ?? null;
 }
@@ -40,7 +48,8 @@ export async function restorePurchases(): Promise<CustomerInfo> {
   return Purchases.restorePurchases();
 }
 
-export async function getCustomerInfo(): Promise<CustomerInfo> {
+export async function getCustomerInfo(): Promise<CustomerInfo | null> {
+  if (!configured) return null;
   return Purchases.getCustomerInfo();
 }
 
@@ -53,6 +62,7 @@ export function entitlementExpiryDate(info: CustomerInfo): string | null {
 }
 
 export function onCustomerInfoUpdate(listener: (info: CustomerInfo) => void): () => void {
+  if (!configured) return () => {};
   Purchases.addCustomerInfoUpdateListener(listener);
   return () => {
     Purchases.removeCustomerInfoUpdateListener(listener);
