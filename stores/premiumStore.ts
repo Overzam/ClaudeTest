@@ -20,21 +20,29 @@ export const SHOP_ITEMS: ShopItem[] = [
   { id: 'xp_boost_3x', type: 'xp_boost', amount: 3, coinCost: 200, label: 'Boost XP ×3 (1h)', emoji: '🚀' },
 ];
 
+export const AD_COOLDOWN_MINUTES = 20;
+
 interface PremiumState {
   plan: PlanType;
   planExpiresAt: string | null;
   coins: number;
   xpBoostMultiplier: number;
   xpBoostExpiresAt: string | null;
+  lastAdWatchAt: string | null;
 
   // Computed
   isPremium: () => boolean;
   getXPMultiplier: () => number;
+  canWatchAd: () => boolean;
+  adCooldownSecondsLeft: () => number;
 
   // Actions
-  setPlan: (plan: PlanType, expiresAt: string) => void;
+  setPlan: (plan: PlanType, expiresAt: string | null) => void;
+  syncFromEntitlement: (active: boolean, expiresAt: string | null, planHint?: PlanType) => void;
   addCoins: (amount: number) => void;
   spendCoins: (amount: number) => boolean;
+  /** Call once a rewarded ad has actually finished playing (see adsService.showRewardedAd). */
+  grantAdReward: () => void;
   activateXPBoost: (multiplier: number, durationHours?: number) => void;
   checkExpiry: () => void;
   reset: () => void;
@@ -48,6 +56,21 @@ export const usePremiumStore = create<PremiumState>()(
       coins: 0,
       xpBoostMultiplier: 1,
       xpBoostExpiresAt: null,
+      lastAdWatchAt: null,
+
+      canWatchAd: () => get().adCooldownSecondsLeft() <= 0,
+
+      adCooldownSecondsLeft: () => {
+        const { lastAdWatchAt } = get();
+        if (!lastAdWatchAt) return 0;
+        const elapsedMs = Date.now() - new Date(lastAdWatchAt).getTime();
+        const remainingMs = AD_COOLDOWN_MINUTES * 60000 - elapsedMs;
+        return Math.max(0, Math.ceil(remainingMs / 1000));
+      },
+
+      grantAdReward: () => {
+        set((s) => ({ coins: s.coins + 25, lastAdWatchAt: new Date().toISOString() }));
+      },
 
       isPremium: () => {
         const { plan, planExpiresAt } = get();
@@ -64,6 +87,17 @@ export const usePremiumStore = create<PremiumState>()(
       },
 
       setPlan: (plan, expiresAt) => set({ plan, planExpiresAt: expiresAt }),
+
+      /** Reconciles local state with RevenueCat's source of truth. Call after
+       * purchase, restore, app foreground, and on the CustomerInfo listener. */
+      syncFromEntitlement: (active: boolean, expiresAt: string | null, planHint?: PlanType) => {
+        if (!active) {
+          set({ plan: 'free', planExpiresAt: null });
+          return;
+        }
+        const currentPlan = get().plan;
+        set({ plan: planHint ?? (currentPlan === 'free' ? 'monthly' : currentPlan), planExpiresAt: expiresAt });
+      },
 
       addCoins: (amount) => set((s) => ({ coins: s.coins + amount })),
 
@@ -91,7 +125,7 @@ export const usePremiumStore = create<PremiumState>()(
       },
 
       reset: () =>
-        set({ plan: 'free', planExpiresAt: null, coins: 0, xpBoostMultiplier: 1, xpBoostExpiresAt: null }),
+        set({ plan: 'free', planExpiresAt: null, coins: 0, xpBoostMultiplier: 1, xpBoostExpiresAt: null, lastAdWatchAt: null }),
     }),
     { name: 'recipequest-premium', storage: createJSONStorage(() => AsyncStorage) }
   )

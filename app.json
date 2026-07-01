@@ -8,7 +8,8 @@
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier": "com.recipequest.app"
     },
     "android": {
       "package": "com.recipequest.app",
@@ -33,7 +34,15 @@
           "icon": "./assets/icon.png",
           "color": "#58CC02"
         }
-      ]
+      ],
+      [
+        "react-native-google-mobile-ads",
+        {
+          "androidAppId": "ca-app-pub-XXXXXXXXXXXXXXXX~XXXXXXXXXX",
+          "iosAppId": "ca-app-pub-XXXXXXXXXXXXXXXX~XXXXXXXXXX"
+        }
+      ],
+      "expo-build-properties"
     ],
     "experiments": {
       "typedRoutes": true
