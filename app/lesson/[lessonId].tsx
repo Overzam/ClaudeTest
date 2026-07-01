@@ -120,17 +120,23 @@ export default function LessonScreen() {
       }
     };
 
+    // Keying by exercise id/index forces React to remount the exercise
+    // component when moving to the next question — otherwise it reuses the
+    // same instance and its internal answer state (e.g. selected option)
+    // leaks into the next question, leaving "Vérifier" wrongly enabled.
+    const key = exercise.id ?? lessonStore.currentIndex;
+
     switch (exercise.type) {
       case 'multiple_choice':
-        return <MultipleChoice question={exercise.question} data={exercise.data} onSubmit={submit} />;
+        return <MultipleChoice key={key} question={exercise.question} data={exercise.data} onSubmit={submit} />;
       case 'step_ordering':
-        return <StepOrdering question={exercise.question} data={exercise.data} onSubmit={submit} />;
+        return <StepOrdering key={key} question={exercise.question} data={exercise.data} onSubmit={submit} />;
       case 'photo_identification':
-        return <PhotoIdentification question={exercise.question} data={exercise.data} onSubmit={submit} />;
+        return <PhotoIdentification key={key} question={exercise.question} data={exercise.data} onSubmit={submit} />;
       case 'association':
-        return <Association question={exercise.question} data={exercise.data} onSubmit={submit} />;
+        return <Association key={key} question={exercise.question} data={exercise.data} onSubmit={submit} />;
       case 'fill_in_blank':
-        return <FillInBlank question={exercise.question} data={exercise.data} onSubmit={submit} />;
+        return <FillInBlank key={key} question={exercise.question} data={exercise.data} onSubmit={submit} />;
     }
   }
 
