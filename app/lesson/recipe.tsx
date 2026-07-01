@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
 import {
-  ActivityIndicator, Animated, Dimensions, ScrollView,
+  ActivityIndicator, Animated, Dimensions, Pressable, ScrollView,
   StyleSheet, Text, TouchableOpacity, View,
 } from 'react-native';
 import { Image } from 'expo-image';
@@ -231,9 +231,14 @@ export default function RecipeScreen() {
 
       {/* CTA flottant */}
       <View style={[styles.cta, { backgroundColor: c.background, paddingBottom: insets.bottom + 12, borderTopColor: c.border }]}>
-        <TouchableOpacity style={[styles.ctaBtn, { backgroundColor: c.primary }]} onPress={goToComplete} activeOpacity={0.85}>
+        <Pressable
+          style={({ pressed }) => [styles.ctaBtn, { backgroundColor: c.primary }, pressed && { opacity: 0.85 }]}
+          onPress={goToComplete}
+          hitSlop={8}
+          android_ripple={{ color: '#ffffff30' }}
+        >
           <Text style={styles.ctaBtnText}>🎉 Voir mes résultats</Text>
-        </TouchableOpacity>
+        </Pressable>
       </View>
     </View>
   );

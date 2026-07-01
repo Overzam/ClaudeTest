@@ -48,18 +48,25 @@ export default function LessonScreen() {
 
     markComplete(lessonId);
 
-    const lessonData = await fetchLessonById(lessonId);
-    if (lessonData) {
-      const pathId = lessonData.path_id ?? '';
-      await submitLessonProgress(userId, lessonId, pathId, lessonStore.score);
-      await unlockNextLesson(userId, lessonData.order_index, pathId);
-    }
+    // Best-effort progress sync: a Supabase hiccup (network, RLS, etc.) here
+    // must never block navigation to the completion screen — the player
+    // already finished the lesson and should always see their results.
+    try {
+      const lessonData = await fetchLessonById(lessonId);
+      if (lessonData) {
+        const pathId = lessonData.path_id ?? '';
+        await submitLessonProgress(userId, lessonId, pathId, lessonStore.score);
+        await unlockNextLesson(userId, lessonData.order_index, pathId);
+      }
 
-    await gameStore.gainXP(lessonStore.xpEarned);
-    if (session?.user.id) {
-      await updateStreak(userId);
-      await incrementLessonsCompleted(userId);
-      checkBadges(userId);
+      await gameStore.gainXP(lessonStore.xpEarned);
+      if (session?.user.id) {
+        await updateStreak(userId);
+        await incrementLessonsCompleted(userId);
+        checkBadges(userId);
+      }
+    } catch (e) {
+      console.warn('[LessonScreen] handleComplete sync error:', e);
     }
 
     router.replace({
