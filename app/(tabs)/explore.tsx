@@ -1,11 +1,11 @@
 import React, { useCallback, useMemo, useState } from 'react';
-import { ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
+import { RefreshControl, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
 import { Image } from 'expo-image';
 import { router, useFocusEffect, useLocalSearchParams } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { LESSON_THUMBNAIL_MAP, PATH_IMAGE_MAP } from '@/constants/recipeImages';
 import { ScreenWrapper } from '@/components/ui/ScreenWrapper';
-import { LoadingScreen } from '@/components/ui/LoadingScreen';
+import { ExploreSkeleton } from '@/components/ui/ExploreSkeleton';
 import { useThemeStore } from '@/stores/themeStore';
 import { Layout } from '@/constants/Layout';
 import { useAuthStore } from '@/stores/authStore';
@@ -21,31 +21,34 @@ export default function ExploreScreen() {
   const [lessonsMap, setLessonsMap] = useState<Record<string, Lesson[]>>({});
   const [selectedPath, setSelectedPath] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
+  const [refreshing, setRefreshing] = useState(false);
   const [search, setSearch] = useState('');
   const [lessonSearch, setLessonSearch] = useState('');
   const { pathId } = useLocalSearchParams<{ pathId?: string }>();
   const { theme } = useThemeStore();
   const c = theme.colors;
 
+  const load = useCallback(async () => {
+    if (!session?.user.id) return;
+    try {
+      const pathList = await fetchPaths();
+      await loadProgress(session.user.id);
+      const map: Record<string, Lesson[]> = {};
+      await Promise.all(pathList.map(async (p) => { map[p.id] = await fetchLessons(p.id); }));
+      setPaths(pathList);
+      setLessonsMap(map);
+      if (pathId) setSelectedPath(pathId);
+    } finally {
+      setLoading(false);
+      setRefreshing(false);
+    }
+  }, [session?.user.id]);
+
   useFocusEffect(
     useCallback(() => {
-      if (!session?.user.id) return;
-      async function load() {
-        setLoading(true);
-        try {
-          const pathList = await fetchPaths();
-          await loadProgress(session!.user.id);
-          const map: Record<string, Lesson[]> = {};
-          await Promise.all(pathList.map(async (p) => { map[p.id] = await fetchLessons(p.id); }));
-          setPaths(pathList);
-          setLessonsMap(map);
-          if (pathId) setSelectedPath(pathId);
-        } finally {
-          setLoading(false);
-        }
-      }
+      setLoading(true);
       load();
-    }, [session?.user.id])
+    }, [load])
   );
 
   const filteredPaths = useMemo(() => {
@@ -56,7 +59,7 @@ export default function ExploreScreen() {
     );
   }, [paths, search]);
 
-  if (loading) return <LoadingScreen />;
+  if (loading) return <ExploreSkeleton />;
 
   const activePath = paths.find((p) => p.id === selectedPath);
 
@@ -218,7 +221,16 @@ export default function ExploreScreen() {
           )}
         </View>
       </View>
-      <ScrollView contentContainerStyle={styles.content}>
+      <ScrollView
+        contentContainerStyle={styles.content}
+        refreshControl={
+          <RefreshControl
+            refreshing={refreshing}
+            onRefresh={() => { setRefreshing(true); load(); }}
+            tintColor={c.primary}
+          />
+        }
+      >
         <Text style={[styles.screenSubtitle, { color: c.textMuted }]}>
           {filteredPaths.length} parcours disponible{filteredPaths.length > 1 ? 's' : ''}
         </Text>

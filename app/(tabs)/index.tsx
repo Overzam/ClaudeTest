@@ -6,7 +6,7 @@ import { ScreenWrapper } from '@/components/ui/ScreenWrapper';
 import { StreakBadge } from '@/components/gamification/StreakBadge';
 import { HeartsDisplay } from '@/components/gamification/HeartsDisplay';
 import { XPBar } from '@/components/gamification/XPBar';
-import { LoadingScreen } from '@/components/ui/LoadingScreen';
+import { HomeSkeleton } from '@/components/ui/HomeSkeleton';
 import { useThemeStore } from '@/stores/themeStore';
 import { Layout } from '@/constants/Layout';
 import { useAuthStore } from '@/stores/authStore';
@@ -113,7 +113,7 @@ export default function HomeScreen() {
     }, [session?.user.id])
   );
 
-  if (loading) return <LoadingScreen />;
+  if (loading) return <HomeSkeleton />;
 
   // Find the next available (unlocked but not completed) lesson across all paths
   let nextLesson: { lesson: Lesson; path: Path } | null = null;

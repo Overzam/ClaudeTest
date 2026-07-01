@@ -1,8 +1,9 @@
 import React, { useCallback, useMemo, useState } from 'react';
-import { FlatList, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
+import { FlatList, RefreshControl, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
 import { router, useFocusEffect } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { ScreenWrapper } from '@/components/ui/ScreenWrapper';
+import { Skeleton } from '@/components/ui/Skeleton';
 import { useThemeStore } from '@/stores/themeStore';
 import { useProgressStore } from '@/stores/progressStore';
 import { useAuthStore } from '@/stores/authStore';
@@ -26,30 +27,33 @@ export default function RecipesTabScreen() {
 
   const [recipes, setRecipes] = useState<RecipeEntry[]>([]);
   const [loading, setLoading] = useState(true);
+  const [refreshing, setRefreshing] = useState(false);
   const [search, setSearch] = useState('');
   const [showFavoritesOnly, setShowFavoritesOnly] = useState(false);
 
+  const load = useCallback(async () => {
+    if (!session?.user.id) return;
+    await loadProgress(session.user.id);
+    const freshProgress = useProgressStore.getState().lessonProgress;
+    const paths = await fetchPaths();
+    const entries: RecipeEntry[] = [];
+    for (const path of paths) {
+      const lessons = await fetchLessons(path.id);
+      for (const lesson of lessons) {
+        if (freshProgress[lesson.id] === 'completed' && (LESSON_DETAILS[lesson.id] ?? LESSON_DETAILS[lesson.title])) {
+          entries.push({ lesson, path });
+        }
+      }
+    }
+    setRecipes(entries);
+    setLoading(false);
+    setRefreshing(false);
+  }, [session?.user.id]);
+
   useFocusEffect(
     useCallback(() => {
-      if (!session?.user.id) return;
-      async function load() {
-        await loadProgress(session!.user.id);
-        const freshProgress = useProgressStore.getState().lessonProgress;
-        const paths = await fetchPaths();
-        const entries: RecipeEntry[] = [];
-        for (const path of paths) {
-          const lessons = await fetchLessons(path.id);
-          for (const lesson of lessons) {
-            if (freshProgress[lesson.id] === 'completed' && (LESSON_DETAILS[lesson.id] ?? LESSON_DETAILS[lesson.title])) {
-              entries.push({ lesson, path });
-            }
-          }
-        }
-        setRecipes(entries);
-        setLoading(false);
-      }
       load();
-    }, [session?.user.id])
+    }, [load])
   );
 
   const filtered = useMemo(() => {
@@ -103,8 +107,15 @@ export default function RecipesTabScreen() {
       )}
 
       {loading ? (
-        <View style={styles.center}>
-          <Text style={[styles.loadingText, { color: c.textMuted }]}>Chargement…</Text>
+        <View style={styles.grid}>
+          <View style={styles.row}>
+            <Skeleton height={150} borderRadius={Layout.radius.xl} style={{ flex: 1 }} />
+            <Skeleton height={150} borderRadius={Layout.radius.xl} style={{ flex: 1 }} />
+          </View>
+          <View style={styles.row}>
+            <Skeleton height={150} borderRadius={Layout.radius.xl} style={{ flex: 1 }} />
+            <Skeleton height={150} borderRadius={Layout.radius.xl} style={{ flex: 1 }} />
+          </View>
         </View>
       ) : recipes.length === 0 ? (
         <View style={styles.center}>
@@ -144,6 +155,9 @@ export default function RecipesTabScreen() {
             numColumns={2}
             contentContainerStyle={styles.grid}
             columnWrapperStyle={styles.row}
+            refreshControl={
+              <RefreshControl refreshing={refreshing} onRefresh={() => { setRefreshing(true); load(); }} tintColor={c.primary} />
+            }
             renderItem={({ item }) => {
               const d = LESSON_DETAILS[item.lesson.id] ?? LESSON_DETAILS[item.lesson.title];
               const fav = isFavorite(item.lesson.title);
