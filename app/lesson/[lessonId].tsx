@@ -154,7 +154,15 @@ export default function LessonScreen() {
         hearts={gameStore.hearts}
         onClose={handleClose}
       />
-      <View style={styles.exercise}>{renderExercise()}</View>
+      {/* Hidden (not unmounted, to preserve state) and non-interactive during
+          feedback — otherwise its own "Vérifier" button stays tappable and
+          visually peeks out from behind the feedback overlay's "Continuer". */}
+      <View
+        style={[styles.exercise, lessonStore.phase === 'feedback' && styles.exerciseHidden]}
+        pointerEvents={lessonStore.phase === 'feedback' ? 'none' : 'auto'}
+      >
+        {renderExercise()}
+      </View>
       {lessonStore.phase === 'feedback' && lessonStore.lastAnswerCorrect !== null && (
         <View style={styles.feedbackOverlay}>
           <AnswerFeedback
@@ -177,7 +185,8 @@ export default function LessonScreen() {
 const styles = StyleSheet.create({
   container: { flex: 1 },
   exercise: { flex: 1 },
-  feedbackOverlay: { position: 'absolute', bottom: 0, left: 0, right: 0 },
+  exerciseHidden: { opacity: 0 },
+  feedbackOverlay: { position: 'absolute', top: 0, bottom: 0, left: 0, right: 0, justifyContent: 'flex-end' },
   comingSoon: { flex: 1, alignItems: 'center', justifyContent: 'center', paddingHorizontal: 32, gap: 16 },
   comingSoonEmoji: { fontSize: 64 },
   comingSoonTitle: { fontSize: 22, fontWeight: '700', textAlign: 'center' },
