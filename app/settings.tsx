@@ -11,7 +11,7 @@ import { themes, type ThemeName } from '@/constants/themes';
 
 export default function SettingsScreen() {
   const { t } = useTranslation();
-  const { streakNotifEnabled, toggleStreakNotif } = useSettingsStore();
+  const { streakNotifEnabled, toggleStreakNotif, soundsEnabled, toggleSounds } = useSettingsStore();
   const { themeName, setTheme, theme } = useThemeStore();
   const c = theme.colors;
 
@@ -64,6 +64,23 @@ export default function SettingsScreen() {
             <Switch
               value={streakNotifEnabled}
               onValueChange={toggleStreakNotif}
+              trackColor={{ true: c.primary }}
+              thumbColor="#fff"
+            />
+          </View>
+        </View>
+
+        {/* Sound */}
+        <Text style={[styles.sectionTitle, { color: c.text }]}>Audio</Text>
+        <View style={[styles.card, { backgroundColor: c.surfaceElevated, borderColor: c.border }]}>
+          <View style={styles.notifRow}>
+            <View style={styles.notifInfo}>
+              <Text style={[styles.notifLabel, { color: c.text }]}>🔊 Effets sonores</Text>
+              <Text style={[styles.notifDesc, { color: c.textMuted }]}>Sons de réussite, badges, fin de leçon</Text>
+            </View>
+            <Switch
+              value={soundsEnabled}
+              onValueChange={toggleSounds}
               trackColor={{ true: c.primary }}
               thumbColor="#fff"
             />

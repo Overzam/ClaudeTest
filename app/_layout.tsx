@@ -12,6 +12,7 @@ import { useSettingsStore } from '@/stores/settingsStore';
 import i18n, { getSavedLanguage } from '@/i18n';
 import * as Notifications from 'expo-notifications';
 import { initAds } from '@/services/adsService';
+import { initSounds } from '@/services/soundService';
 import {
   initPurchases,
   getCustomerInfo,
@@ -43,6 +44,7 @@ export default function RootLayout() {
     initialize();
     getSavedLanguage().then((lang) => i18n.changeLanguage(lang));
     initAds().catch(() => {});
+    initSounds();
   }, []);
 
   useEffect(() => {

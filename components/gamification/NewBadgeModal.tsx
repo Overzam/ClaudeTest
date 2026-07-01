@@ -3,6 +3,7 @@ import { Animated, Modal, Pressable, StyleSheet, Text } from 'react-native';
 import * as Haptics from 'expo-haptics';
 import { useThemeStore } from '@/stores/themeStore';
 import { Layout } from '@/constants/Layout';
+import { playSound } from '@/services/soundService';
 import type { Badge } from '@/types/database.types';
 
 interface Props {
@@ -19,6 +20,7 @@ export function NewBadgeModal({ badge, onClose }: Props) {
   useEffect(() => {
     if (badge) {
       Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+      playSound('badgeUnlock');
       Animated.parallel([
         Animated.spring(scale, { toValue: 1, useNativeDriver: true, tension: 60, friction: 7 }),
         Animated.timing(opacity, { toValue: 1, duration: 200, useNativeDriver: true }),

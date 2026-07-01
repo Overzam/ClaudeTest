@@ -7,8 +7,10 @@ import { saveLanguage } from '@/i18n';
 interface SettingsState {
   language: SupportedLanguage;
   streakNotifEnabled: boolean;
+  soundsEnabled: boolean;
   setLanguage: (lang: SupportedLanguage) => Promise<void>;
   toggleStreakNotif: () => void;
+  toggleSounds: () => void;
 }
 
 export const useSettingsStore = create<SettingsState>()(
@@ -16,11 +18,14 @@ export const useSettingsStore = create<SettingsState>()(
     (set, get) => ({
       language: 'fr',
       streakNotifEnabled: true,
+      soundsEnabled: true,
 
       setLanguage: async (lang) => {
         await saveLanguage(lang);
         set({ language: lang });
       },
+
+      toggleSounds: () => set((s) => ({ soundsEnabled: !s.soundsEnabled })),
 
       toggleStreakNotif: () => {
         const { streakNotifEnabled } = get();

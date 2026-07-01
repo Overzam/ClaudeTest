@@ -19,6 +19,7 @@ import { submitLessonProgress, unlockNextLesson, fetchLessonById } from '@/servi
 import { updateStreak, incrementLessonsCompleted } from '@/services/statsService';
 import { useBadgeStore } from '@/stores/badgeStore';
 import { NoHeartsModal } from '@/components/gamification/NoHeartsModal';
+import { playSound } from '@/services/soundService';
 
 export default function LessonScreen() {
   const insets = useSafeAreaInsets();
@@ -46,6 +47,7 @@ export default function LessonScreen() {
     if (!lessonId) return;
     const userId = session?.user.id ?? 'guest-local';
 
+    playSound('lessonComplete');
     markComplete(lessonId);
 
     // Best-effort progress sync: a Supabase hiccup (network, RLS, etc.) here
@@ -119,7 +121,11 @@ export default function LessonScreen() {
   function renderExercise() {
     const submit = (correct: boolean, correctAnswerText?: string) => {
       lessonStore.submitAnswer(correct, correctAnswerText);
-      if (!correct) {
+      if (correct) {
+        playSound('correct');
+        setTimeout(() => playSound('xpGain'), 120);
+      } else {
+        playSound('incorrect');
         gameStore.loseHeart();
         if (gameStore.hearts <= 1) {
           setTimeout(() => setShowNoHearts(true), 600);
