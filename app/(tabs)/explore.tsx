@@ -48,6 +48,14 @@ export default function ExploreScreen() {
     }, [session?.user.id])
   );
 
+  const filteredPaths = useMemo(() => {
+    if (!search.trim()) return paths;
+    const q = search.toLowerCase();
+    return paths.filter(
+      (p) => p.title.toLowerCase().includes(q) || p.description?.toLowerCase().includes(q)
+    );
+  }, [paths, search]);
+
   if (loading) return <LoadingScreen />;
 
   const activePath = paths.find((p) => p.id === selectedPath);
@@ -189,14 +197,6 @@ export default function ExploreScreen() {
       </ScreenWrapper>
     );
   }
-
-  const filteredPaths = useMemo(() => {
-    if (!search.trim()) return paths;
-    const q = search.toLowerCase();
-    return paths.filter(
-      (p) => p.title.toLowerCase().includes(q) || p.description?.toLowerCase().includes(q)
-    );
-  }, [paths, search]);
 
   return (
     <ScreenWrapper>
