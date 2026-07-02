@@ -1,5 +1,5 @@
 import React from 'react';
-import { StyleSheet, Text, View, ViewStyle } from 'react-native';
+import { StyleProp, StyleSheet, Text, View, ViewStyle } from 'react-native';
 import { Card } from '@/components/ui/Card';
 import { useThemeStore } from '@/stores/themeStore';
 import { Layout } from '@/constants/Layout';
@@ -11,7 +11,7 @@ interface Props {
   earnedAt?: string;
   progressCurrent?: number;
   progressTarget?: number;
-  style?: ViewStyle;
+  style?: StyleProp<ViewStyle>;
 }
 
 export function BadgeCard({ badge, earned = false, earnedAt, progressCurrent, progressTarget, style }: Props) {
@@ -22,7 +22,7 @@ export function BadgeCard({ badge, earned = false, earnedAt, progressCurrent, pr
   const isClose = showProgress && ratio >= 0.5;
 
   return (
-    <Card style={[styles.card, !earned && styles.locked, isClose && { opacity: 0.75, borderColor: c.primary, borderWidth: 1 }, style] as ViewStyle}>
+    <Card style={[styles.card, !earned && styles.locked, isClose && { opacity: 0.75, borderColor: c.primary, borderWidth: 1 }, style]}>
       <Text style={styles.emoji}>{badge.emoji}</Text>
       <Text style={[styles.title, { color: earned ? c.text : c.textMuted }]} numberOfLines={1}>
         {badge.title}

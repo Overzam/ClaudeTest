@@ -9,6 +9,7 @@ import {
 } from 'react-native';
 import { useThemeStore } from '@/stores/themeStore';
 import { Layout } from '@/constants/Layout';
+import { playSound } from '@/services/soundService';
 
 type Variant = 'primary' | 'secondary' | 'ghost' | 'danger';
 
@@ -50,7 +51,10 @@ export function Button({ label, onPress, variant = 'primary', disabled, loading,
         pressed && !disabled && !loading && styles.pressed,
         style,
       ]}
-      onPress={onPress}
+      onPress={() => {
+        playSound('tap');
+        onPress();
+      }}
       disabled={disabled || loading}
       hitSlop={12}
       android_ripple={{ color: colorMap[variant] + '30' }}

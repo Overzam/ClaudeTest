@@ -8,6 +8,9 @@ import type { Exercise } from '@/types/lesson.types';
 import type { ExerciseRow } from '@/types/database.types';
 
 function rowToExercise(row: ExerciseRow): Exercise {
+  // Exercise is a discriminated union on `type`; the DB row stores type and
+  // data as independent columns, so TS can't correlate them statically —
+  // the shape is validated by the DB's CHECK constraint on `type`.
   return {
     id: row.id,
     lessonId: row.lesson_id,
@@ -15,9 +18,9 @@ function rowToExercise(row: ExerciseRow): Exercise {
     question: row.question,
     imageUrl: row.image_url ?? undefined,
     xpReward: row.xp_reward,
-    type: row.type as Exercise['type'],
-    data: row.data as Exercise['data'],
-  };
+    type: row.type,
+    data: row.data,
+  } as unknown as Exercise;
 }
 
 export async function fetchExercises(lessonId: string, lessonTitle?: string): Promise<Exercise[]> {
@@ -100,7 +103,13 @@ export async function unlockNextLesson(
   pathId: string
 ) {
   if (userId === GUEST_USER_ID) {
-    const lessons = LOCAL_LESSONS[pathId] ?? [];
+    // Guests browse the same Supabase lessons as everyone (public read), so
+    // pathId is usually a Supabase UUID — look the next lesson up through
+    // pathService (Supabase + cache), falling back to bundled local data
+    // only when fully offline.
+    const { fetchLessons } = await import('./pathService');
+    let lessons = await fetchLessons(pathId);
+    if (lessons.length === 0) lessons = LOCAL_LESSONS[pathId] ?? [];
     const next = lessons.find((l) => l.order_index === currentLessonOrderIndex + 1);
     if (next) useProgressStore.getState().unlockLesson(next.id);
     return;

@@ -22,7 +22,7 @@ interface GlobalEntry {
 type Tab = 'global' | 'friends';
 
 export default function LeaderboardScreen() {
-  const { session } = useAuthStore();
+  const { session, isGuest } = useAuthStore();
   const [tab, setTab] = useState<Tab>('global');
   const [friendEntries, setFriendEntries] = useState<LeaderboardEntry[]>([]);
   const [globalEntries, setGlobalEntries] = useState<GlobalEntry[]>([]);
@@ -89,9 +89,20 @@ export default function LeaderboardScreen() {
       {tab === 'global' ? (
         globalEntries.length === 0 ? (
           <View style={styles.empty}>
-            <Text style={styles.emptyEmoji}>🌍</Text>
-            <Text style={[styles.emptyTitle, { color: c.text }]}>Aucun joueur</Text>
-            <Text style={[styles.emptyText, { color: c.textMuted }]}>Sois le premier à rejoindre !</Text>
+            <Text style={styles.emptyEmoji}>{isGuest ? '🔒' : '🌍'}</Text>
+            <Text style={[styles.emptyTitle, { color: c.text }]}>
+              {isGuest ? 'Réservé aux membres' : 'Aucun joueur'}
+            </Text>
+            <Text style={[styles.emptyText, { color: c.textMuted }]}>
+              {isGuest
+                ? 'Crée un compte gratuit pour voir le classement mondial et te mesurer aux autres chefs !'
+                : 'Sois le premier à rejoindre !'}
+            </Text>
+            {isGuest && (
+              <TouchableOpacity style={[styles.addBtn, { backgroundColor: c.primary }]} onPress={() => router.replace('/(auth)/login')}>
+                <Text style={styles.addBtnText}>Créer un compte</Text>
+              </TouchableOpacity>
+            )}
           </View>
         ) : (
           <FlatList

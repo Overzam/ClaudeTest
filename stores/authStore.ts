@@ -70,6 +70,13 @@ export const useAuthStore = create<AuthState>((set) => ({
       try { await authSignOut(); } catch (_) {}
     }
     set({ session: null, user: null, isGuest: false });
+    // Wipe device-persisted gameplay state so the account's XP/hearts/streak
+    // don't leak into a later guest session on the same device. Dynamic
+    // imports avoid a require cycle (those stores import authStore).
+    import('./gameStore').then(({ useGameStore }) => useGameStore.getState().reset());
+    import('./progressStore').then(({ useProgressStore }) =>
+      useProgressStore.setState({ lessonProgress: {} })
+    );
   },
 
   initialize: async () => {

@@ -1,5 +1,6 @@
 import React, { useEffect } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Button } from '@/components/ui/Button';
 import { useThemeStore } from '@/stores/themeStore';
 import { Layout } from '@/constants/Layout';
@@ -15,6 +16,7 @@ interface Props {
 export function AnswerFeedback({ correct, correctAnswerText, explanation, onContinue }: Props) {
   const { theme } = useThemeStore();
   const c = theme.colors;
+  const insets = useSafeAreaInsets();
 
   useEffect(() => {
     if (correct) {
@@ -25,7 +27,21 @@ export function AnswerFeedback({ correct, correctAnswerText, explanation, onCont
   }, [correct]);
 
   return (
-    <View style={[styles.container, { backgroundColor: correct ? c.primary + '18' : c.danger + '18' }]}>
+    <View
+      style={[
+        styles.container,
+        // The overlay is absolutely positioned at the true screen bottom, so
+        // the parent's safe-area padding doesn't apply — pad for the gesture
+        // bar here or the Continue button sits under it. Solid surface (not
+        // a translucent tint) so nothing shows through from behind.
+        {
+          backgroundColor: c.surface,
+          borderTopWidth: 3,
+          borderTopColor: correct ? c.primary : c.danger,
+          paddingBottom: Layout.spacing.lg + insets.bottom,
+        },
+      ]}
+    >
       <Text style={styles.emoji}>{correct ? '✅' : '❌'}</Text>
       <Text style={[styles.label, { color: correct ? c.primary : c.danger }]}>
         {correct ? 'Correct !' : 'Pas tout à fait…'}

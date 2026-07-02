@@ -2,11 +2,20 @@ import React, { useEffect, useState } from 'react';
 import { ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import * as Haptics from 'expo-haptics';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { router } from 'expo-router';
 import { ScreenWrapper } from '@/components/ui/ScreenWrapper';
 import { useThemeStore } from '@/stores/themeStore';
 import { useGameStore } from '@/stores/gameStore';
 import { Layout } from '@/constants/Layout';
+import { playSound } from '@/services/soundService';
+
+const CHALLENGE_DONE_KEY = 'daily_challenge_done_date';
+
+function todayLocalDate(): string {
+  const d = new Date();
+  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+}
 
 interface Challenge {
   emoji: string;
@@ -418,9 +427,20 @@ export default function DailyChallengeScreen() {
   const [challenge] = useState<Challenge>(getDailyChallenge);
   const [completed, setCompleted] = useState(false);
 
+  // Persisted per-day: prevents re-claiming the same challenge's XP by
+  // simply reopening the screen.
+  useEffect(() => {
+    AsyncStorage.getItem(CHALLENGE_DONE_KEY).then((date) => {
+      if (date === todayLocalDate()) setCompleted(true);
+    });
+  }, []);
+
   async function handleComplete() {
+    if (completed) return;
     setCompleted(true);
+    AsyncStorage.setItem(CHALLENGE_DONE_KEY, todayLocalDate()).catch(() => {});
     Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+    playSound('lessonComplete');
     await gameStore.gainXP(challenge.xpReward);
   }
 

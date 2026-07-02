@@ -182,6 +182,7 @@ export default function LessonScreen() {
       <NoHeartsModal
         visible={showNoHearts}
         onClose={() => { setShowNoHearts(false); router.back(); }}
+        onShop={() => { setShowNoHearts(false); router.push('/shop' as any); }}
         onRefill={() => { setShowNoHearts(false); router.push('/premium' as any); }}
       />
     </View>

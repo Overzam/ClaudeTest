@@ -29,6 +29,7 @@ import { Button } from '@/components/ui/Button';
 import { DuoCuistot } from '@/components/mascot/DuoCuistot';
 import { useThemeStore } from '@/stores/themeStore';
 import { Layout } from '@/constants/Layout';
+import { playSound } from '@/services/soundService';
 
 export default function LessonCompleteScreen() {
   const { xpEarned, score, mistakes } = useLocalSearchParams<{
@@ -60,6 +61,7 @@ export default function LessonCompleteScreen() {
       Animated.stagger(150, starAnims.slice(0, stars).map((anim, i) => {
         const step = Animated.spring(anim, { toValue: 1, useNativeDriver: true, tension: 100, friction: 5 });
         step.start(() => {
+          playSound('xpGain');
           if (i === 0) Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
           if (i === 1) Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
           if (i === 2) Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy);
@@ -67,7 +69,10 @@ export default function LessonCompleteScreen() {
         return step;
       })),
     ]).start(() => {
-      if (perfect) Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+      if (perfect) {
+        Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+        playSound('streak');
+      }
     });
   }, []);
 

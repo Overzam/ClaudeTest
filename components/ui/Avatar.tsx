@@ -1,12 +1,12 @@
 import React from 'react';
-import { Image, StyleSheet, Text, View, ViewStyle } from 'react-native';
+import { Image, ImageStyle, StyleProp, StyleSheet, Text, View, ViewStyle } from 'react-native';
 import { useThemeStore } from '@/stores/themeStore';
 
 interface Props {
   uri?: string | null;
   name?: string;
   size?: number;
-  style?: ViewStyle;
+  style?: StyleProp<ViewStyle>;
 }
 
 export function Avatar({ uri, name, size = 48, style }: Props) {
@@ -19,7 +19,7 @@ export function Avatar({ uri, name, size = 48, style }: Props) {
     return (
       <Image
         source={{ uri }}
-        style={[{ width: size, height: size, borderRadius: size / 2 }, style]}
+        style={[{ width: size, height: size, borderRadius: size / 2 }, style as StyleProp<ImageStyle>]}
       />
     );
   }

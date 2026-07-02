@@ -9,6 +9,7 @@ interface Props {
   visible: boolean;
   onClose: () => void;
   onRefill?: () => void;
+  onShop?: () => void;
 }
 
 function formatCountdown(ms: number): string {
@@ -21,7 +22,7 @@ function formatCountdown(ms: number): string {
   return `${m}:${String(s).padStart(2, '0')}`;
 }
 
-export function NoHeartsModal({ visible, onClose, onRefill }: Props) {
+export function NoHeartsModal({ visible, onClose, onRefill, onShop }: Props) {
   const { theme } = useThemeStore();
   const c = theme.colors;
   const { heartsLastRefill } = useGameStore();
@@ -61,6 +62,15 @@ export function NoHeartsModal({ visible, onClose, onRefill }: Props) {
           >
             <Text style={styles.btnText}>Revenir plus tard</Text>
           </TouchableOpacity>
+          {onShop && (
+            <TouchableOpacity
+              style={[styles.btnSecondary, { borderColor: c.secondary }]}
+              onPress={onShop}
+              activeOpacity={0.85}
+            >
+              <Text style={[styles.btnSecondaryText, { color: c.secondary }]}>🪙 Acheter des cœurs</Text>
+            </TouchableOpacity>
+          )}
           {onRefill && (
             <TouchableOpacity
               style={[styles.btnSecondary, { borderColor: c.primary }]}

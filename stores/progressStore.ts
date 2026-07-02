@@ -50,7 +50,7 @@ export const useProgressStore = create<ProgressState>((set) => ({
   markComplete: (lessonId) => {
     set((state) => {
       const updated = { ...state.lessonProgress, [lessonId]: 'completed' as const };
-      AsyncStorage.setItem(GUEST_PROGRESS_KEY, JSON.stringify(updated)).catch(() => {});
+      persistIfGuest(updated);
       return { lessonProgress: updated };
     });
   },
@@ -59,8 +59,19 @@ export const useProgressStore = create<ProgressState>((set) => ({
     set((state) => {
       if (state.lessonProgress[lessonId] === 'completed') return state;
       const updated = { ...state.lessonProgress, [lessonId]: 'available' as const };
-      AsyncStorage.setItem(GUEST_PROGRESS_KEY, JSON.stringify(updated)).catch(() => {});
+      persistIfGuest(updated);
       return { lessonProgress: updated };
     });
   },
 }));
+
+// Only guests persist progress locally — a signed-in user's progress lives in
+// Supabase, and writing it to the guest key would leak it into a later guest
+// session on the same device.
+function persistIfGuest(progress: Record<string, string>) {
+  import('./authStore').then(({ useAuthStore }) => {
+    if (useAuthStore.getState().isGuest) {
+      AsyncStorage.setItem(GUEST_PROGRESS_KEY, JSON.stringify(progress)).catch(() => {});
+    }
+  });
+}

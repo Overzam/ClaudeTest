@@ -134,8 +134,6 @@ export default function ShopScreen() {
               item={item}
               coins={coins}
               onBuy={() => handleBuy(item.id)}
-              t={t}
-              c={c}
               disabledReason={hearts >= MAX_HEARTS ? t('shop.owned') : undefined}
             />
           ))}
@@ -149,7 +147,7 @@ export default function ShopScreen() {
         )}
         <View style={styles.grid}>
           {SHOP_ITEMS.filter((i) => i.type === 'xp_boost').map((item) => (
-            <ShopCard key={item.id} item={item} coins={coins} onBuy={() => handleBuy(item.id)} t={t} c={c} />
+            <ShopCard key={item.id} item={item} coins={coins} onBuy={() => handleBuy(item.id)} />
           ))}
         </View>
       </ScrollView>
@@ -158,15 +156,16 @@ export default function ShopScreen() {
 }
 
 function ShopCard({
-  item, coins, onBuy, t, c, disabledReason,
+  item, coins, onBuy, disabledReason,
 }: {
   item: typeof SHOP_ITEMS[0];
   coins: number;
   onBuy: () => void;
-  t: (k: string, o?: object) => string;
-  c: ReturnType<typeof useThemeStore>['theme']['colors'];
   disabledReason?: string;
 }) {
+  const { t } = useTranslation();
+  const { theme } = useThemeStore();
+  const c = theme.colors;
   const canAfford = coins >= item.coinCost;
   const disabled = !canAfford || !!disabledReason;
   return (

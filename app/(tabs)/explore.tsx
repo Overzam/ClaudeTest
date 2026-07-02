@@ -116,7 +116,7 @@ export default function ExploreScreen() {
         <ScrollView contentContainerStyle={styles.lessonList}>
           {lessons.length === 0 && lessonSearch.trim() ? (
             <View style={{ alignItems: 'center', paddingTop: 40, gap: 8 }}>
-              <Text style={{ fontSize: 32 }}>{String.fromCodePoint(0x1F50D)}</Text>
+              <Text style={{ fontSize: 32 }}>🔍</Text>
               <Text style={{ fontSize: Layout.fontSize.md, fontWeight: '700', color: c.text }}>Aucune leçon trouvée</Text>
               <Text style={{ fontSize: Layout.fontSize.sm, color: c.textMuted }}>Essaie un autre mot-clé.</Text>
             </View>
@@ -260,7 +260,7 @@ export default function ExploreScreen() {
                 <View style={styles.pathCardTop}>
                   <Text style={styles.pathCardEmojiText}>{path.emoji}</Text>
                   {completed === lessons.length && lessons.length > 0 && (
-                    <Text style={styles.completedBadge}>{String.fromCodePoint(0x1F3C6)}</Text>
+                    <Text style={styles.completedBadge}>🏆</Text>
                   )}
                 </View>
                 <Text style={styles.pathCardTitle}>{path.title}</Text>
