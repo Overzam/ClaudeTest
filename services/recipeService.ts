@@ -62,6 +62,40 @@ function makeLocalRecipe(lessonId: string, lessonTitle: string): Recipe {
   };
 }
 
+export interface RecipeSummary {
+  title: string;
+  emoji: string;
+  prep_time_min: number;
+  cook_time_min: number;
+  difficulty: string;
+}
+
+/** Batch lookup of dish names for the recipe book: lesson_id → recipe info.
+ *  The book should show "Omelette Baveuse aux Herbes", not the lesson title. */
+export async function fetchRecipeSummaries(lessonIds: string[]): Promise<Record<string, RecipeSummary>> {
+  if (!isSupabaseConfigured || lessonIds.length === 0) return {};
+  try {
+    const { data } = await supabase
+      .from('recipes')
+      .select('lesson_id, title, emoji, prep_time_min, cook_time_min, difficulty')
+      .in('lesson_id', lessonIds);
+    return Object.fromEntries(
+      (data ?? []).map((r) => [
+        r.lesson_id,
+        {
+          title: r.title,
+          emoji: r.emoji ?? '🍽️',
+          prep_time_min: r.prep_time_min ?? 0,
+          cook_time_min: r.cook_time_min ?? 0,
+          difficulty: r.difficulty ?? 'facile',
+        },
+      ])
+    );
+  } catch {
+    return {};
+  }
+}
+
 // Fetch by lesson title (for the recipe book screen which navigates by title, not ID)
 export async function fetchRecipeByTitle(lessonTitle: string): Promise<Recipe | null> {
   if (isSupabaseConfigured) {

@@ -37,6 +37,9 @@ function supabaseToRecipeDetail(r: SupabaseRecipe): RecipeDetail {
     xp_reward: 0,
     thumbnail_url: r.hero_image_url ?? null,
     difficulty: diffMap[r.difficulty] ?? 'easy',
+    prep_time_min: r.prep_time_min ?? 0,
+    cook_time_min: r.cook_time_min ?? 0,
+    servings: r.servings ?? 1,
     ingredients: r.ingredients.map((ing) => ({
       name: ing.item,
       quantity: ing.qty,
@@ -344,12 +347,12 @@ export default function RecipeDetailScreen() {
 
   return (
     <ScreenWrapper>
-      {/* Header */}
+      {/* Header — show the dish name, not the lesson it came from */}
       <View style={[styles.header, { borderBottomColor: c.border }]}>
         <TouchableOpacity onPress={() => router.back()} hitSlop={8}>
           <Ionicons name="arrow-back" size={24} color={c.primary} />
         </TouchableOpacity>
-        <Text style={[styles.headerTitle, { color: c.text }]} numberOfLines={1}>{title}</Text>
+        <Text style={[styles.headerTitle, { color: c.text }]} numberOfLines={1}>{displayRecipe?.title ?? title}</Text>
         <View style={styles.headerActions}>
           <TouchableOpacity onPress={shareRecipe} hitSlop={8}>
             <Ionicons name="share-outline" size={24} color={c.primary} />

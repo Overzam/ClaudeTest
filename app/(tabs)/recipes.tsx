@@ -9,13 +9,16 @@ import { useProgressStore } from '@/stores/progressStore';
 import { useAuthStore } from '@/stores/authStore';
 import { useFavoritesStore } from '@/stores/favoritesStore';
 import { Layout } from '@/constants/Layout';
-import { LESSON_DETAILS } from '@/constants/pathsData';
 import { fetchLessons, fetchPaths } from '@/services/pathService';
+import { fetchRecipeSummaries, type RecipeSummary } from '@/services/recipeService';
 import type { Lesson, Path } from '@/types/database.types';
 
 interface RecipeEntry {
   lesson: Lesson;
   path: Path;
+  /** Real dish name/info from the recipes table (e.g. "Omelette Baveuse aux
+   *  Herbes" for the lesson "Les Bases du Couteau"). */
+  recipe?: RecipeSummary;
 }
 
 export default function RecipesTabScreen() {
@@ -40,11 +43,16 @@ export default function RecipesTabScreen() {
     for (const path of paths) {
       const lessons = await fetchLessons(path.id);
       for (const lesson of lessons) {
-        if (freshProgress[lesson.id] === 'completed' && (LESSON_DETAILS[lesson.id] ?? LESSON_DETAILS[lesson.title])) {
+        // Every completed lesson unlocks its recipe (all lessons have one in
+        // the DB); LESSON_DETAILS is only the offline fallback content.
+        if (freshProgress[lesson.id] === 'completed') {
           entries.push({ lesson, path });
         }
       }
     }
+    // Resolve real dish names (the book shows dishes, not lesson titles)
+    const summaries = await fetchRecipeSummaries(entries.map((e) => e.lesson.id));
+    for (const entry of entries) entry.recipe = summaries[entry.lesson.id];
     setRecipes(entries);
     setLoading(false);
     setRefreshing(false);
@@ -62,7 +70,10 @@ export default function RecipesTabScreen() {
     if (search.trim()) {
       const q = search.toLowerCase();
       list = list.filter(
-        (r) => r.lesson.title.toLowerCase().includes(q) || r.path.title.toLowerCase().includes(q)
+        (r) =>
+          (r.recipe?.title ?? '').toLowerCase().includes(q) ||
+          r.lesson.title.toLowerCase().includes(q) ||
+          r.path.title.toLowerCase().includes(q)
       );
     }
     return list;
@@ -159,8 +170,13 @@ export default function RecipesTabScreen() {
               <RefreshControl refreshing={refreshing} onRefresh={() => { setRefreshing(true); load(); }} tintColor={c.primary} />
             }
             renderItem={({ item }) => {
-              const d = LESSON_DETAILS[item.lesson.id] ?? LESSON_DETAILS[item.lesson.title];
               const fav = isFavorite(item.lesson.title);
+              const dishTitle = item.recipe?.title ?? item.lesson.title;
+              const dishEmoji = item.recipe?.emoji ?? item.path.emoji;
+              const totalTime = item.recipe ? item.recipe.prep_time_min + item.recipe.cook_time_min : null;
+              const diffLabel = item.recipe
+                ? item.recipe.difficulty.charAt(0).toUpperCase() + item.recipe.difficulty.slice(1)
+                : null;
               return (
                 <TouchableOpacity
                   style={[styles.card, { backgroundColor: item.path.color + '15', borderColor: item.path.color + '30' }]}
@@ -178,18 +194,21 @@ export default function RecipesTabScreen() {
                       color={fav ? '#ef4444' : c.textMuted}
                     />
                   </TouchableOpacity>
-                  <Text style={styles.cardEmoji}>{item.path.emoji}</Text>
+                  <Text style={styles.cardEmoji}>{dishEmoji}</Text>
                   <Text style={[styles.cardTitle, { color: c.text }]} numberOfLines={2}>
-                    {item.lesson.title}
+                    {dishTitle}
                   </Text>
-                  {d && (
-                    <View style={[styles.diffBadge, { backgroundColor: item.path.color + '30' }]}>
-                      <Text style={[styles.diffText, { color: item.path.color }]}>
-                        {d.difficulty === 'easy' ? 'Facile' : d.difficulty === 'medium' ? 'Moyen' : 'Expert'}
-                      </Text>
-                    </View>
-                  )}
-                  <Text style={[styles.cardPath, { color: c.textMuted }]}>{item.path.title}</Text>
+                  <View style={styles.cardMeta}>
+                    {totalTime != null && totalTime > 0 && (
+                      <Text style={[styles.cardTime, { color: c.textMuted }]}>⏱ {totalTime} min</Text>
+                    )}
+                    {diffLabel && (
+                      <View style={[styles.diffBadge, { backgroundColor: item.path.color + '30' }]}>
+                        <Text style={[styles.diffText, { color: item.path.color }]}>{diffLabel}</Text>
+                      </View>
+                    )}
+                  </View>
+                  <Text style={[styles.cardPath, { color: c.textMuted }]}>{item.path.emoji} {item.path.title}</Text>
                 </TouchableOpacity>
               );
             }}
@@ -269,6 +288,8 @@ const styles = StyleSheet.create({
   heartBtn: { alignSelf: 'flex-end', marginBottom: -8 },
   cardEmoji: { fontSize: 36 },
   cardTitle: { fontSize: Layout.fontSize.sm, fontWeight: '700', textAlign: 'center' },
+  cardMeta: { flexDirection: 'row', alignItems: 'center', gap: Layout.spacing.sm },
+  cardTime: { fontSize: Layout.fontSize.xs, fontWeight: '600' },
   diffBadge: { paddingHorizontal: Layout.spacing.sm, paddingVertical: 2, borderRadius: 12 },
   diffText: { fontSize: Layout.fontSize.xs, fontWeight: '700' },
   cardPath: { fontSize: Layout.fontSize.xs },
