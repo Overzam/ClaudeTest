@@ -14,6 +14,7 @@ import { useGameStore } from '@/stores/gameStore';
 import { useProgressStore } from '@/stores/progressStore';
 import { fetchPaths, fetchLessons } from '@/services/pathService';
 import { fetchUserStats } from '@/services/statsService';
+import { computeLessonStatus } from '@/utils/lessonUnlock';
 import { DuoCuistot } from '@/components/mascot/DuoCuistot';
 import type { Path, Lesson } from '@/types/database.types';
 
@@ -121,8 +122,7 @@ export default function HomeScreen() {
     const pathLessons = lessonsMap[path.id] ?? [];
     const minIdx = pathLessons.length > 0 ? Math.min(...pathLessons.map((l) => l.order_index)) : 0;
     for (const lesson of pathLessons) {
-      const effectiveStatus = lessonProgress[lesson.id] ?? (lesson.order_index === minIdx ? 'available' : 'locked');
-      if (effectiveStatus === 'available') {
+      if (computeLessonStatus(lesson, lessonProgress, minIdx) === 'available') {
         nextLesson = { lesson, path };
         break outer;
       }

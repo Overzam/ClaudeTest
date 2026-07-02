@@ -12,6 +12,7 @@ import { useAuthStore } from '@/stores/authStore';
 import { useProgressStore } from '@/stores/progressStore';
 import { fetchPaths, fetchLessons } from '@/services/pathService';
 import { LESSON_DETAILS } from '@/constants/pathsData';
+import { computeLessonStatus, computeLessonDepths, tierLabel } from '@/utils/lessonUnlock';
 import type { Path, Lesson } from '@/types/database.types';
 
 export default function ExploreScreen() {
@@ -123,78 +124,108 @@ export default function ExploreScreen() {
           ) : null}
           {(() => {
             const minOrderIndex = allLessons.length > 0 ? Math.min(...allLessons.map((l) => l.order_index)) : 0;
-            return lessons.map((lesson, idx) => {
-            const rawStatus = lessonProgress[lesson.id];
-            const status = rawStatus ?? (lesson.order_index === minOrderIndex ? 'available' : 'locked');
-            const isLocked = status === 'locked';
-            const isDone = status === 'completed';
-            const hasIngredients = !!(LESSON_DETAILS[lesson.id] ?? LESSON_DETAILS[lesson.title]);
+            const depths = computeLessonDepths(allLessons);
 
-            return (
-              <View key={lesson.id} style={styles.lessonRow}>
-                {idx > 0 && !lessonSearch.trim() && (
-                  <View style={[styles.connector, { backgroundColor: isDone ? activePath.color : c.border }]} />
-                )}
+            const renderLesson = (lesson: Lesson) => {
+              const status = computeLessonStatus(lesson, lessonProgress, minOrderIndex);
+              const isLocked = status === 'locked';
+              const isDone = status === 'completed';
+              const hasIngredients = !!(LESSON_DETAILS[lesson.id] ?? LESSON_DETAILS[lesson.title]);
 
-                <View style={styles.lessonRowContent}>
-                  <TouchableOpacity
-                    style={[
-                      styles.lessonNode,
-                      isDone && { backgroundColor: activePath.color },
-                      !isDone && !isLocked && { borderColor: activePath.color, borderWidth: 3, backgroundColor: c.surface },
-                      isLocked && { backgroundColor: c.locked },
-                    ]}
-                    onPress={() =>
-                      !isLocked && router.push({ pathname: '/lesson/[lessonId]', params: { lessonId: lesson.id, lessonTitle: lesson.title } })
-                    }
-                    disabled={isLocked}
-                    activeOpacity={0.85}
-                  >
-                    {(() => {
-                      const thumbUri = lesson.thumbnail_url ?? LESSON_THUMBNAIL_MAP[lesson.title];
-                      return thumbUri && !isLocked ? (
-                        <>
-                          <Image
-                            source={{ uri: thumbUri }}
-                            style={[StyleSheet.absoluteFill, { borderRadius: 36 }]}
-                            contentFit="cover"
-                          />
-                          <View style={[StyleSheet.absoluteFill, { borderRadius: 36, backgroundColor: isDone ? activePath.color + 'AA' : 'rgba(0,0,0,0.30)' }]} />
-                        </>
-                      ) : null;
-                    })()}
-                    <Text style={[styles.nodeIcon, isLocked && { color: c.textMuted }]}>
-                      {isDone ? '✓' : isLocked ? '🔒' : '▶'}
-                    </Text>
-                  </TouchableOpacity>
+              return (
+                <View key={lesson.id} style={styles.lessonRow}>
+                  <View style={styles.lessonRowContent}>
+                    <TouchableOpacity
+                      style={[
+                        styles.lessonNode,
+                        isDone && { backgroundColor: activePath.color },
+                        !isDone && !isLocked && { borderColor: activePath.color, borderWidth: 3, backgroundColor: c.surface },
+                        isLocked && { backgroundColor: c.locked },
+                      ]}
+                      onPress={() =>
+                        !isLocked && router.push({ pathname: '/lesson/[lessonId]', params: { lessonId: lesson.id, lessonTitle: lesson.title } })
+                      }
+                      disabled={isLocked}
+                      activeOpacity={0.85}
+                    >
+                      {(() => {
+                        const thumbUri = lesson.thumbnail_url ?? LESSON_THUMBNAIL_MAP[lesson.title];
+                        return thumbUri && !isLocked ? (
+                          <>
+                            <Image
+                              source={{ uri: thumbUri }}
+                              style={[StyleSheet.absoluteFill, { borderRadius: 36 }]}
+                              contentFit="cover"
+                            />
+                            <View style={[StyleSheet.absoluteFill, { borderRadius: 36, backgroundColor: isDone ? activePath.color + 'AA' : 'rgba(0,0,0,0.30)' }]} />
+                          </>
+                        ) : null;
+                      })()}
+                      <Text style={[styles.nodeIcon, isLocked && { color: c.textMuted }]}>
+                        {isDone ? '✓' : isLocked ? '🔒' : '▶'}
+                      </Text>
+                    </TouchableOpacity>
 
-                  <View style={styles.lessonMeta}>
-                    <Text style={[styles.lessonTitle, { color: isLocked ? c.textMuted : c.text }]} numberOfLines={1}>
-                      {lesson.title}
-                    </Text>
-                    <View style={styles.lessonTags}>
-                      <View style={[styles.xpTag, { backgroundColor: c.xpBlue + '20' }]}>
-                        <Text style={[styles.xpTagText, { color: c.xpBlue }]}>+{lesson.xp_reward} XP</Text>
+                    <View style={styles.lessonMeta}>
+                      <Text style={[styles.lessonTitle, { color: isLocked ? c.textMuted : c.text }]} numberOfLines={1}>
+                        {lesson.title}
+                      </Text>
+                      <View style={styles.lessonTags}>
+                        <View style={[styles.xpTag, { backgroundColor: c.xpBlue + '20' }]}>
+                          <Text style={[styles.xpTagText, { color: c.xpBlue }]}>+{lesson.xp_reward} XP</Text>
+                        </View>
+                        {hasIngredients && !isLocked && (
+                          <TouchableOpacity
+                            style={[styles.ingTag, { backgroundColor: activePath.color + '15', borderColor: activePath.color + '30' }]}
+                            onPress={() =>
+                              router.push({
+                                pathname: '/lesson/ingredients',
+                                params: { lessonId: lesson.id, lessonTitle: lesson.title },
+                              })
+                            }
+                          >
+                            <Text style={[styles.ingTagText, { color: activePath.color }]}>🧄 Ingrédients</Text>
+                          </TouchableOpacity>
+                        )}
                       </View>
-                      {hasIngredients && !isLocked && (
-                        <TouchableOpacity
-                          style={[styles.ingTag, { backgroundColor: activePath.color + '15', borderColor: activePath.color + '30' }]}
-                          onPress={() =>
-                            router.push({
-                              pathname: '/lesson/ingredients',
-                              params: { lessonId: lesson.id, lessonTitle: lesson.title },
-                            })
-                          }
-                        >
-                          <Text style={[styles.ingTagText, { color: activePath.color }]}>🧄 Ingrédients</Text>
-                        </TouchableOpacity>
-                      )}
                     </View>
                   </View>
                 </View>
-              </View>
-            );
-          });
+              );
+            };
+
+            // Search: flat list. Normal view: unlock tiers with headers.
+            if (lessonSearch.trim()) return lessons.map(renderLesson);
+
+            const tiers = new Map<number, Lesson[]>();
+            for (const lesson of lessons) {
+              const d = depths.get(lesson.id) ?? 0;
+              if (!tiers.has(d)) tiers.set(d, []);
+              tiers.get(d)!.push(lesson);
+            }
+
+            return [...tiers.keys()].sort((a, b) => a - b).map((depth) => {
+              const tierLessons = tiers.get(depth)!;
+              const tierDone = tierLessons.filter((l) => lessonProgress[l.id] === 'completed').length;
+              return (
+                <View key={depth} style={styles.tierSection}>
+                  <View style={styles.tierHeader}>
+                    <Text style={[styles.tierTitle, { color: c.text }]}>{tierLabel(depth)}</Text>
+                    <Text style={[styles.tierCount, { color: c.textMuted }]}>
+                      {tierDone}/{tierLessons.length}
+                    </Text>
+                  </View>
+                  {depth > 0 && (
+                    <Text style={[styles.tierHint, { color: c.textMuted }]}>
+                      {depth === 1
+                        ? 'Débloqué en terminant les fondamentaux'
+                        : 'Débloqué en progressant dans les techniques'}
+                    </Text>
+                  )}
+                  {tierLessons.map(renderLesson)}
+                </View>
+              );
+            });
           })()}
         </ScrollView>
       </ScreenWrapper>
@@ -364,8 +395,18 @@ const styles = StyleSheet.create({
   detailBtnText: { fontSize: Layout.fontSize.sm, fontWeight: '600' },
 
   lessonList: { padding: Layout.spacing.lg, gap: 0, paddingBottom: 40 },
-  lessonRow: { alignItems: 'center' },
-  connector: { width: 3, height: 24, marginLeft: 36 },
+  lessonRow: { alignItems: 'center', marginBottom: Layout.spacing.md },
+  tierSection: { marginBottom: Layout.spacing.md },
+  tierHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    marginBottom: 2,
+    marginTop: Layout.spacing.sm,
+  },
+  tierTitle: { fontSize: Layout.fontSize.lg, fontWeight: '900' },
+  tierCount: { fontSize: Layout.fontSize.sm, fontWeight: '700' },
+  tierHint: { fontSize: Layout.fontSize.xs, marginBottom: Layout.spacing.md },
   lessonRowContent: { flexDirection: 'row', alignItems: 'center', gap: Layout.spacing.md, width: '100%' },
   lessonNode: {
     width: 72,

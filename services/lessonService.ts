@@ -111,19 +111,27 @@ export async function unlockNextLesson(
     let lessons = await fetchLessons(pathId);
     if (lessons.length === 0) lessons = LOCAL_LESSONS[pathId] ?? [];
     const next = lessons.find((l) => l.order_index === currentLessonOrderIndex + 1);
-    if (next) useProgressStore.getState().unlockLesson(next.id);
+    // Skill-tree lessons derive their availability from prerequisites; only
+    // legacy/local lessons (no prerequisite data) still use linear unlock.
+    if (next && (next.prerequisite_lesson_ids == null || next.prerequisite_lesson_ids.length === 0)) {
+      useProgressStore.getState().unlockLesson(next.id);
+    }
     return;
   }
 
   if (!isSupabaseConfigured) return;
   const { data: nextLesson } = await supabase
     .from('lessons')
-    .select('id')
+    .select('id, prerequisite_lesson_ids')
     .eq('path_id', pathId)
     .eq('order_index', currentLessonOrderIndex + 1)
     .single();
 
   if (!nextLesson) return;
+  // Skill-tree lessons: availability is derived from prerequisites — writing
+  // a stored 'available' row here could unlock them before their tree
+  // requirements are met.
+  if (nextLesson.prerequisite_lesson_ids && nextLesson.prerequisite_lesson_ids.length > 0) return;
 
   await supabase.from('user_progress').upsert(
     {

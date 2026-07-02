@@ -38,6 +38,10 @@ export interface Lesson {
   order_index: number;
   xp_reward: number;
   thumbnail_url: string | null;
+  /** Skill-tree unlock: all listed lessons must be completed first.
+   *  Empty array = root lesson (always available).
+   *  undefined/null = legacy data without prerequisites (linear fallback). */
+  prerequisite_lesson_ids?: string[] | null;
 }
 
 export interface ExerciseRow {
